@@ -12,7 +12,7 @@ import SwiftUI
 
 @Observable
 @MainActor
-class LLMEvaluator: ObservableObject {
+class LLMEvaluator {
     var running = false
     var output = ""
     var modelInfo = ""
