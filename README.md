@@ -1,5 +1,5 @@
 # fullmoon iOS
-![fullmoon iOS](https://github.com/user-attachments/assets/b777e004-9ebd-4cc7-85ac-322d3513a7fb)
+![fullmoon iOS](https://fullmoon.app/images/app.png)
 
 [fullmoon](https://fullmoon.app) is an iOS app to chat with local large language models that’s optimized for Apple silicon and works on iPhone, iPad, and Mac. your chat history is saved locally, and you can customize the appearance of the app.
 
