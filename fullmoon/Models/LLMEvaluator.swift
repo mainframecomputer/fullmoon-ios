@@ -44,8 +44,6 @@ class LLMEvaluator {
 
     var loadState = LoadState.idle
     
-    let impactMed = UIImpactFeedbackGenerator(style: .soft)
-
     /// load and return the model -- can be called multiple times, subsequent calls will
     /// just return the loaded model
     func load(modelName: String) async throws -> ModelContainer {
@@ -106,7 +104,6 @@ class LLMEvaluator {
                         let text = tokenizer.decode(tokens: tokens)
                         Task { @MainActor in
                             self.output = text
-                            impactMed.impactOccurred()
                         }
                     }
 

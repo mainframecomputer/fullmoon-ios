@@ -75,6 +75,7 @@ struct ContentView: View {
                         }
                         .onChange(of: llm.output) { _, _ in
                             scrollView.scrollTo(bottomID)
+                            appManager.playHaptic()
                         }
                     }
                     .defaultScrollAnchor(.bottom)
@@ -91,7 +92,7 @@ struct ContentView: View {
                 
                 HStack(alignment: .bottom) {
                     Button {
-                        playHaptic()
+                        appManager.playHaptic()
                         showModelPicker.toggle()
                     } label: {
                         Group {
@@ -147,7 +148,7 @@ struct ContentView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     Button(action: {
-                        playHaptic()
+                        appManager.playHaptic()
                         showChats.toggle()
                     }) {
                         Image(systemName: "list.bullet")
@@ -156,7 +157,7 @@ struct ContentView: View {
                 
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action: {
-                        playHaptic()
+                        appManager.playHaptic()
                         showSettings.toggle()
                     }) {
                         Image(systemName: "gear")
@@ -179,7 +180,7 @@ struct ContentView: View {
             DragGesture()
                 .onChanged { gesture in
                     if !showChats && gesture.startLocation.x < 20 && gesture.translation.width > 100 {
-                        playHaptic()
+                        appManager.playHaptic()
                         showChats = true
                     }
                 }
@@ -246,7 +247,7 @@ struct ContentView: View {
                 Task {
                     let message = prompt
                     prompt = ""
-                    playHaptic()
+                    appManager.playHaptic()
                     sendMessage(Message(role: .user, content: message, thread: currentThread))
                     isPromptFocused = true
                     if let modelName = appManager.currentModelName {
@@ -259,14 +260,9 @@ struct ContentView: View {
     }
     
     private func sendMessage(_ message: Message) {
-        playHaptic()
+        appManager.playHaptic()
         modelContext.insert(message)
         try? modelContext.save()
-    }
-    
-    func playHaptic() {
-        let impact = UIImpactFeedbackGenerator(style: .soft)
-        impact.impactOccurred()
     }
     
     private func copyToClipboard(_ string: String) {

@@ -15,6 +15,7 @@ class AppManager: ObservableObject {
     @AppStorage("appFontSize") var appFontSize: AppFontSize = .medium
     @AppStorage("appFontWidth") var appFontWidth: AppFontWidth = .standard
     @AppStorage("currentModelName") var currentModelName: String?
+    @AppStorage("shouldPlayHaptics") var shouldPlayHaptics = false
         
     private let installedModelsKey = "installedModels"
         
@@ -42,6 +43,13 @@ class AppManager: ObservableObject {
             self.installedModels = decodedArray
         } else {
             self.installedModels = [] // Default to an empty array if there's no data
+        }
+    }
+    
+    func playHaptic() {
+        if shouldPlayHaptics {
+            let impact = UIImpactFeedbackGenerator(style: .soft)
+            impact.impactOccurred()
         }
     }
     
