@@ -10,7 +10,7 @@ import SwiftUI
 struct SettingsView: View {
     @EnvironmentObject var appManager: AppManager
     @Environment(\.dismiss) var dismiss
-    @EnvironmentObject var llm: LLMEvaluator
+    @Environment(LLMEvaluator.self) var llm
     @Binding var currentThread: Thread?
     
     var body: some View {

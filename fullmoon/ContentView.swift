@@ -12,7 +12,7 @@ struct ContentView: View {
     private var idiom : UIUserInterfaceIdiom { UIDevice.current.userInterfaceIdiom }
     @EnvironmentObject var appManager: AppManager
     @Environment(\.modelContext) var modelContext
-    @EnvironmentObject var llm: LLMEvaluator
+    @Environment(LLMEvaluator.self) var llm
     @State var showOnboarding = false
     @State var showSettings = false
     @State var showChats = false

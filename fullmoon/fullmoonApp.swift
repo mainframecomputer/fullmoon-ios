@@ -11,7 +11,7 @@ import MLXLLM
 @main
 struct fullmoonApp: App {
     @StateObject var appManager = AppManager()
-    @StateObject var llm = LLMEvaluator()
+    @State var llm = LLMEvaluator()
     
     var body: some Scene {
         WindowGroup {

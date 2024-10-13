@@ -12,7 +12,7 @@ struct OnboardingDownloadingModelProgressView: View {
     @Binding var showOnboarding: Bool
     @EnvironmentObject var appManager: AppManager
     @Binding var selectedModel: ModelConfiguration
-    @EnvironmentObject var llm: LLMEvaluator
+    @Environment(LLMEvaluator.self) var llm
     @State var installed = false
     
     let moonPhases = [

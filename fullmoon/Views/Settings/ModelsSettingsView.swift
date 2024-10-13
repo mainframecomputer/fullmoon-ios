@@ -10,7 +10,7 @@ import MLXLLM
 
 struct ModelsSettingsView: View {
     @EnvironmentObject var appManager: AppManager
-    @EnvironmentObject var llm: LLMEvaluator
+    @Environment(LLMEvaluator.self) var llm
     @State var showOnboardingInstallModelView = false
     
     var body: some View {
