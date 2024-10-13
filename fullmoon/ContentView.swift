@@ -7,6 +7,7 @@
 
 import SwiftData
 import SwiftUI
+import MarkdownUI
 
 struct ContentView: View {
     private var idiom : UIUserInterfaceIdiom { UIDevice.current.userInterfaceIdiom }
@@ -35,8 +36,7 @@ struct ContentView: View {
                                             Spacer()
                                         }
                                         
-                                        Text(try! AttributedString(markdown: message.content.trimmingCharacters(in: .whitespacesAndNewlines),
-                                             options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)))
+                                        Markdown(message.content)
                                             .textSelection(.enabled)
                                             .if(message.role == .user) { view in
                                                 view
@@ -56,10 +56,8 @@ struct ContentView: View {
                                 
                                 if llm.running && !llm.output.isEmpty {
                                     HStack {
-                                        Text(try! AttributedString(markdown: llm.output.trimmingCharacters(in: .whitespacesAndNewlines) + " 🌕",
-                                             options: .init(interpretedSyntax: .inlineOnlyPreservingWhitespace)))
+                                        Markdown(llm.output)
                                             .textSelection(.enabled)
-                                            .multilineTextAlignment(.leading)
                                             .padding(.trailing, 48)
                                         
                                             Spacer()
