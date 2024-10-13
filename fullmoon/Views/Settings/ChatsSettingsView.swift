@@ -21,6 +21,10 @@ struct ChatsSettingsView: View {
             }
             
             Section {
+                Toggle("haptics", isOn: $appManager.shouldPlayHaptics)
+            }
+            
+            Section {
                 Button {
                     deleteAllChats.toggle()
                 } label: {

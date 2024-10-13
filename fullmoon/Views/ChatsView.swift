@@ -102,8 +102,7 @@ struct ChatsView: View {
         currentThread = thread
         isPromptFocused = true
         dismiss()
-        let impact = UIImpactFeedbackGenerator(style: .soft)
-        impact.impactOccurred()
+        appManager.playHaptic()
     }
 }
 

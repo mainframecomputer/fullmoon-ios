@@ -60,8 +60,7 @@ struct ModelsSettingsView: View {
             $0.name == modelName
         }) {
             appManager.currentModelName = modelName
-            let impact = UIImpactFeedbackGenerator(style: .soft)
-            impact.impactOccurred()
+            appManager.playHaptic()
             await llm.switchModel(model)
         }
     }
