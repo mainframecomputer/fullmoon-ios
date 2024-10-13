@@ -89,7 +89,7 @@ struct ContentView: View {
                     Spacer()
                 }
                 
-                HStack {
+                HStack(alignment: .bottom) {
                     Button {
                         playHaptic()
                         showModelPicker.toggle()
@@ -108,8 +108,8 @@ struct ContentView: View {
                         )
                     }
                     
-                    HStack(spacing: 0) {
-                        TextField("message", text: $prompt)
+                    HStack(alignment: .bottom, spacing: 0) {
+                        TextField("message", text: $prompt, axis: .vertical)
                             .focused($isPromptFocused)
                             .textFieldStyle(.plain)
                             .padding(.horizontal)
@@ -120,7 +120,8 @@ struct ContentView: View {
                                     }
                                     .submitLabel(.send)
                             }
-                        
+                            .padding(.vertical, 8)
+                            .frame(minHeight: 48)
                         Button {
                             generate()
                         } label: {
@@ -131,10 +132,10 @@ struct ContentView: View {
                         }
                         .disabled(llm.running || prompt.isEmpty)
                         .padding(.trailing)
+                        .padding(.bottom, 12)
                     }
-                    .frame(height: 48)
                     .background(
-                        Capsule()
+                        RoundedRectangle(cornerRadius: 24)
                             .fill(Color(UIColor.secondarySystemBackground))
                     )
                 }
