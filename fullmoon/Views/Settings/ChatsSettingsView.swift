@@ -12,6 +12,7 @@ struct ChatsSettingsView: View {
     @Environment(\.modelContext) var modelContext
     @State var systemPrompt = ""
     @State var deleteAllChats = false
+    @State var showErrorAlert = false
     @Binding var currentThread: Thread?
     
     var body: some View {
@@ -43,6 +44,10 @@ struct ChatsSettingsView: View {
         }
         .navigationTitle("chats")
         .navigationBarTitleDisplayMode(.inline)
+        .alert("Failed to delete chats", isPresented: $showErrorAlert) {
+            Button("OK", role: .cancel, action: {})
+            Button("Try Again", action: deleteChats)
+        }
     }
     
     func deleteChats() {
@@ -51,7 +56,7 @@ struct ChatsSettingsView: View {
             try modelContext.delete(model: Thread.self)
             try modelContext.delete(model: Message.self)
         } catch {
-            print("Failed to delete.")
+            showErrorAlert.toggle()
         }
     }
 }

@@ -39,7 +39,6 @@ extension ModelConfiguration: @retroactive Equatable {
             history += "<|start_header_id|>system<|end_header_id|>\n\(systemPrompt)"
             
             for message in thread.sortedMessages {
-                print(message.content)
                 if message.role == .user {
                     history += "<|eot_id|>\n<|start_header_id|>user<|end_header_id|>\n\(message.content)\n<|eot_id|>\n<|start_header_id|>assistant<|end_header_id|>"
                 }
