@@ -33,17 +33,17 @@ struct OnboardingDownloadingModelProgressView: View {
             Spacer()
             
             VStack(spacing: 16) {
-                Image(systemName: isInstalled() ? "checkmark.circle.fill" : moonPhases[currentPhaseIndex])
+                Image(systemName: installed ? "checkmark.circle.fill" : moonPhases[currentPhaseIndex])
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 64, height: 64)
-                    .foregroundStyle(isInstalled() ? .green : .secondary)
+                    .foregroundStyle(installed ? .green : .secondary)
                     .onReceive(timer) { time in
                         currentPhaseIndex = (currentPhaseIndex + 1) % moonPhases.count
                     }
                 
                 VStack(spacing: 4) {
-                    Text(isInstalled() ? "installed" : "installing")
+                    Text(installed ? "installed" : "installing")
                         .font(.title)
                         .fontWeight(.semibold)
                     Text(appManager.modelDisplayName(selectedModel.name))
@@ -58,7 +58,7 @@ struct OnboardingDownloadingModelProgressView: View {
             
             Spacer()
             
-            if isInstalled() {
+            if installed {
                 Button(action: { showOnboarding = false }) {
                     Text("done")
                         .font(.headline)
@@ -79,17 +79,20 @@ struct OnboardingDownloadingModelProgressView: View {
         }
         .padding()
         .navigationTitle("sit back and relax")
-        .toolbar(isInstalled() ? .hidden : .visible)
+        .toolbar(installed ? .hidden : .visible)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden()
         .task {
             await loadLLM()
         }
-        .sensoryFeedback(.success, trigger: isInstalled())
-        .onChange(of: llm.progress) { _ in
-            addInstalledModel()
+        .sensoryFeedback(.success, trigger: installed)
+        .onChange(of: llm.progress) { _, newValue in
+            if newValue == 1 {
+                installed = true
+                addInstalledModel()
+            }
         }
-        .interactiveDismissDisabled(!isInstalled())
+        .interactiveDismissDisabled(!installed)
         .onAppear {
             UIApplication.shared.isIdleTimerDisabled = true
         }
@@ -102,19 +105,9 @@ struct OnboardingDownloadingModelProgressView: View {
         await llm.switchModel(selectedModel)
     }
     
-    func isInstalled() -> Bool {
-        if llm.progress == 1 {
-            installed = true
-        }
-        
-        return installed && llm.progress == 1
-    }
-    
     func addInstalledModel() {
-        if isInstalled() {
-            appManager.currentModelName = selectedModel.name
-            appManager.addInstalledModel(selectedModel.name)
-        }
+        appManager.currentModelName = selectedModel.name
+        appManager.addInstalledModel(selectedModel.name)
     }
 }
 
