@@ -15,81 +15,92 @@ struct OnboardingInstallModelView: View {
     let suggestedModel = ModelConfiguration.defaultModel
     
     var body: some View {
-        List {
-            Section {
-                VStack(spacing: 12) {
-                    Image(systemName: "arrow.down.circle.dotted")
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 64, height: 64)
-                        .foregroundStyle(.primary, .tertiary)
-                    
-                    VStack(spacing: 4) {
-                        Text("install a model")
-                            .font(.title)
-                            .fontWeight(.semibold)
-                        Text("select from models that are optimized for apple silicon")
-                            .foregroundStyle(.secondary)
-                            .multilineTextAlignment(.center)
+        VStack {
+            List {
+                Section {
+                    VStack(spacing: 12) {
+                        Image(systemName: "arrow.down.circle.dotted")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 64, height: 64)
+                            .foregroundStyle(.primary, .tertiary)
+                        
+                        VStack(spacing: 4) {
+                            Text("install a model")
+                                .font(.title)
+                                .fontWeight(.semibold)
+                            Text("select from models that are optimized for apple silicon")
+                                .foregroundStyle(.secondary)
+                                .multilineTextAlignment(.center)
+                        }
                     }
+                    .padding(.vertical)
+                    .frame(maxWidth: .infinity)
                 }
-                .padding(.vertical)
-                .frame(maxWidth: .infinity)
-            }
-            .listRowBackground(Color.clear)
-            
-            if appManager.installedModels.count > 0 {
-                Section(header: Text("Installed")) {
-                    ForEach(appManager.installedModels, id: \.self) { modelName in
-                        Button { } label: {
-                            Label {
-                                Text(appManager.modelDisplayName(modelName))
-                            } icon: {
-                                Image(systemName: "checkmark")
+                .listRowBackground(Color.clear)
+                
+                if appManager.installedModels.count > 0 {
+                    Section(header: Text("Installed")) {
+                        ForEach(appManager.installedModels, id: \.self) { modelName in
+                            Button { } label: {
+                                Label {
+                                    Text(appManager.modelDisplayName(modelName))
+                                } icon: {
+                                    Image(systemName: "checkmark")
+                                }
                             }
-                        }
-                        .foregroundStyle(.secondary)
-                        .disabled(true)
-                    }
-                }
-            } else {
-                Section(header: Text("Suggested")) {
-                    Button { selectedModel = suggestedModel } label: {
-                        Label {
-                            Text(appManager.modelDisplayName(suggestedModel.name))
-                                .tint(.primary)
-                        } icon: {
-                            Image(systemName: selectedModel.name == suggestedModel.name ? "checkmark.circle.fill" : "circle")
+                            .foregroundStyle(.secondary)
+                            .disabled(true)
                         }
                     }
-                }
-            }
-            
-            if filteredModels.count > 0 {
-                Section(header: Text("Other")) {
-                    ForEach(filteredModels, id: \.name) { model in
-                        Button { selectedModel = model } label: {
+                } else {
+                    Section(header: Text("Suggested")) {
+                        Button { selectedModel = suggestedModel } label: {
                             Label {
-                                Text(appManager.modelDisplayName(model.name))
+                                Text(appManager.modelDisplayName(suggestedModel.name))
                                     .tint(.primary)
                             } icon: {
-                                Image(systemName: selectedModel.name == model.name ? "checkmark.circle.fill" : "circle")
+                                Image(systemName: selectedModel.name == suggestedModel.name ? "checkmark.circle.fill" : "circle")
                             }
                         }
                     }
                 }
-            }
-        }
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                NavigationLink(destination: OnboardingDownloadingModelProgressView(showOnboarding: $showOnboarding, selectedModel: $selectedModel)) {
-                    Text("install")
-                        .font(.headline)
+                
+                if filteredModels.count > 0 {
+                    Section(header: Text("Other")) {
+                        ForEach(filteredModels, id: \.name) { model in
+                            Button { selectedModel = model } label: {
+                                Label {
+                                    Text(appManager.modelDisplayName(model.name))
+                                        .tint(.primary)
+                                } icon: {
+                                    Image(systemName: selectedModel.name == model.name ? "checkmark.circle.fill" : "circle")
+                                }
+                            }
+                        }
+                    }
                 }
-                .disabled(filteredModels.isEmpty)
+                
+                
             }
+            .listStyle(.insetGrouped)
+            .scrollContentBackground(.hidden)
+            
+            Spacer()
+            
+            NavigationLink(destination: OnboardingDownloadingModelProgressView(showOnboarding: $showOnboarding, selectedModel: $selectedModel)) {
+                Text("install")
+                    .font(.headline)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 40)
+                    .foregroundStyle(.background)
+            }
+            .buttonStyle(.borderedProminent)
+            .buttonBorderShape(.capsule)
+            .padding(.horizontal)
+            .disabled(filteredModels.isEmpty)
         }
-        .listStyle(.insetGrouped)
+        .padding()
         .task {
             checkModels()
         }
