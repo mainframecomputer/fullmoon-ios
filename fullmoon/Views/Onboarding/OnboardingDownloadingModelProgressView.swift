@@ -13,7 +13,7 @@ struct OnboardingDownloadingModelProgressView: View {
     @EnvironmentObject var appManager: AppManager
     @Binding var selectedModel: ModelConfiguration
     @Environment(LLMEvaluator.self) var llm
-    @State var installed = false
+    @State var isInstalled = false
     
     let moonPhases = [
         "moonphase.new.moon",
@@ -33,17 +33,17 @@ struct OnboardingDownloadingModelProgressView: View {
             Spacer()
             
             VStack(spacing: 16) {
-                Image(systemName: installed ? "checkmark.circle.fill" : moonPhases[currentPhaseIndex])
+                Image(systemName: isInstalled ? "checkmark.circle.fill" : moonPhases[currentPhaseIndex])
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 64, height: 64)
-                    .foregroundStyle(installed ? .green : .secondary)
+                    .foregroundStyle(isInstalled ? .green : .secondary)
                     .onReceive(timer) { time in
                         currentPhaseIndex = (currentPhaseIndex + 1) % moonPhases.count
                     }
                 
                 VStack(spacing: 4) {
-                    Text(installed ? "installed" : "installing")
+                    Text(isInstalled ? "installed" : "installing")
                         .font(.title)
                         .fontWeight(.semibold)
                     Text(appManager.modelDisplayName(selectedModel.name))
@@ -58,7 +58,7 @@ struct OnboardingDownloadingModelProgressView: View {
             
             Spacer()
             
-            if installed {
+            if isInstalled {
                 Button(action: { showOnboarding = false }) {
                     Text("done")
                         .font(.headline)
@@ -79,20 +79,20 @@ struct OnboardingDownloadingModelProgressView: View {
         }
         .padding()
         .navigationTitle("sit back and relax")
-        .toolbar(installed ? .hidden : .visible)
+        .toolbar(isInstalled ? .hidden : .visible)
         .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden()
         .task {
             await loadLLM()
         }
-        .sensoryFeedback(.success, trigger: installed)
+        .sensoryFeedback(.success, trigger: isInstalled)
         .onChange(of: llm.progress) { _, newValue in
             if newValue == 1 {
-                installed = true
+                isInstalled = true
                 addInstalledModel()
             }
         }
-        .interactiveDismissDisabled(!installed)
+        .interactiveDismissDisabled(!isInstalled)
         .onAppear {
             UIApplication.shared.isIdleTimerDisabled = true
         }
