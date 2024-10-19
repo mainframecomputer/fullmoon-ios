@@ -21,11 +21,21 @@ extension ModelConfiguration: @retroactive Equatable {
         id: "mlx-community/Llama-3.2-3B-Instruct-4bit"
     )
     
+    public static let qwen_2_5_3b_4bit = ModelConfiguration(
+        id: "mlx-community/Qwen2.5-3B-Instruct-4bit"
+    )
+    
+    public static let qwen_2_5_0_5b_4bit = ModelConfiguration(
+        id: "mlx-community/Qwen2.5-0.5B-Instruct-4bit"
+    )
+    
     public static var availableModels: [ModelConfiguration] = [
         llama_3_2_1B_4bit,
-        llama_3_2_3b_4bit
+        llama_3_2_3b_4bit,
+        qwen_2_5_3b_4bit,
+        qwen_2_5_0_5b_4bit
     ]
-    
+
     public static var defaultModel: ModelConfiguration {
         llama_3_2_1B_4bit
     }
@@ -42,6 +52,18 @@ extension ModelConfiguration: @retroactive Equatable {
                 print(message.content)
                 if message.role == .user {
                     history += "<|eot_id|>\n<|start_header_id|>user<|end_header_id|>\n\(message.content)\n<|eot_id|>\n<|start_header_id|>assistant<|end_header_id|>"
+                }
+                
+                if message.role == .assistant {
+                    history += message.content + "\n"
+                }
+            }
+        case .qwen_2_5_3b_4bit, .qwen_2_5_0_5b_4bit:
+            history = "<|im_start|>system\n\(systemPrompt)<|im_end|>\n"
+            for message in thread.sortedMessages {
+                print(message.content)
+                if message.role == .user {
+                    history += "<|im_start|>user\n\(message.content)<|im_end|>\n<|im_start|>assistant\n"
                 }
                 
                 if message.role == .assistant {
