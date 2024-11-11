@@ -12,6 +12,7 @@ import MarkdownUI
 struct ContentView: View {
     private var idiom : UIUserInterfaceIdiom { UIDevice.current.userInterfaceIdiom }
     @EnvironmentObject var appManager: AppManager
+    @EnvironmentObject var speechSynthesizer: SpeechSynthesizer
     @Environment(\.modelContext) var modelContext
     @Environment(LLMEvaluator.self) var llm
     @State var showOnboarding = false
@@ -31,7 +32,7 @@ struct ContentView: View {
                         ScrollView(.vertical) {
                             VStack(alignment: .leading, spacing: 0) {
                                 ForEach(currentThread.sortedMessages) { message in
-                                    HStack {
+                                    HStack(alignment: .lastTextBaseline) {
                                         if message.role == .user {
                                             Spacer()
                                         }
@@ -49,6 +50,14 @@ struct ContentView: View {
                                         
                                         if message.role == .assistant {
                                             Spacer()
+                                            
+                                            if !speechSynthesizer.auto {
+                                                Button {
+                                                    speechSynthesizer.speak(message.content)
+                                                } label: {
+                                                    Image(systemName: "speaker.wave.2")
+                                                }
+                                            }
                                         }
                                     }
                                     .padding()
@@ -74,6 +83,10 @@ struct ContentView: View {
                         .onChange(of: llm.output) { _, _ in
                             scrollView.scrollTo(bottomID)
                             appManager.playHaptic()
+                            
+                            if !llm.running && speechSynthesizer.auto {
+                                speechSynthesizer.speak(llm.output)
+                            }
                         }
                     }
                     .defaultScrollAnchor(.bottom)

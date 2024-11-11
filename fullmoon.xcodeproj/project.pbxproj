@@ -16,7 +16,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
-		860E9CF12CB0649400C5BB52 /* Exceptions for "fullmoon" folder in "fullmoon" target */ = {
+		8C48AC642CD5C74E00E5CCE9 /* Exceptions for "fullmoon" folder in "fullmoon" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
@@ -29,7 +29,7 @@
 		860E9CD02CB055B000C5BB52 /* fullmoon */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
-				860E9CF12CB0649400C5BB52 /* Exceptions for "fullmoon" folder in "fullmoon" target */,
+				8C48AC642CD5C74E00E5CCE9 /* Exceptions for "fullmoon" folder in "fullmoon" target */,
 			);
 			path = fullmoon;
 			sourceTree = "<group>";
