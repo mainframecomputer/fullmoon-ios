@@ -11,6 +11,7 @@ import MLXLLM
 @main
 struct fullmoonApp: App {
     @StateObject var appManager = AppManager()
+    @StateObject var speechSynthesizer = SpeechSynthesizer.shared
     @State var llm = LLMEvaluator()
     
     var body: some Scene {
@@ -18,6 +19,7 @@ struct fullmoonApp: App {
             ContentView()
                 .modelContainer(for: [Thread.self, Message.self])
                 .environmentObject(appManager)
+                .environmentObject(speechSynthesizer)
                 .environment(llm)
                 .environment(DeviceStat())
         }

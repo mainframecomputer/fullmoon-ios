@@ -25,6 +25,10 @@ struct SettingsView: View {
                         Label("chats", systemImage: "message")
                     }
                     
+                    NavigationLink(destination: SpeechSettingsView()) {
+                        Label("speech", systemImage: "speaker.wave.2.bubble")
+                    }
+                    
                     NavigationLink(destination: ModelsSettingsView()) {
                         Label("models", systemImage: "arrow.down.circle")
                             .badge(appManager.modelDisplayName(appManager.currentModelName ?? ""))
