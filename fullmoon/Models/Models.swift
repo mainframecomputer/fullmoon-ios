@@ -30,27 +30,23 @@ extension ModelConfiguration: @retroactive Equatable {
         llama_3_2_1B_4bit
     }
     
-    func getPromptHistory(thread: Thread, systemPrompt: String) -> String {
-        var history = ""
+    func getPromptHistory(thread: Thread, systemPrompt: String) -> [[String: String]] {
+        var history: [[String: String]] = []
         
-        switch self {
-        case .llama_3_2_1B_4bit, .llama_3_2_3b_4bit:
-            history = "<|begin_of_text|>"
-            history += "<|start_header_id|>system<|end_header_id|>\n\(systemPrompt)"
-            
-            for message in thread.sortedMessages {
-                print(message.content)
-                if message.role == .user {
-                    history += "<|eot_id|>\n<|start_header_id|>user<|end_header_id|>\n\(message.content)\n<|eot_id|>\n<|start_header_id|>assistant<|end_header_id|>"
-                }
-                
-                if message.role == .assistant {
-                    history += message.content + "\n"
-                }
-            }
-        default:
-            break;
+        // system prompt
+        history.append([
+            "role": "system",
+            "content": systemPrompt
+        ])
+
+        // messages
+        for message in thread.sortedMessages {
+            history.append([
+                "role": message.role.rawValue,
+                "content": message.content
+            ])
         }
+        
         return history
     }
 }

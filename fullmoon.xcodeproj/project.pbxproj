@@ -382,7 +382,7 @@
 			repositoryURL = "https://github.com/ml-explore/mlx-swift-examples/";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 1.16.0;
+				minimumVersion = 1.18.1;
 			};
 		};
 		860F26A22CBC31D6004E8D40 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */ = {

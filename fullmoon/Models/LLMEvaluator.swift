@@ -85,10 +85,9 @@ class LLMEvaluator {
 
             // augment the prompt as needed
             let promptHistory = modelConfiguration.getPromptHistory(thread: thread, systemPrompt: systemPrompt)
-            let prompt = modelConfiguration.prepare(prompt: promptHistory)
 
-            let promptTokens = await modelContainer.perform { _, tokenizer in
-                tokenizer.encode(text: prompt)
+            let promptTokens = try await modelContainer.perform { _, tokenizer in
+                try tokenizer.applyChatTemplate(messages: promptHistory)
             }
 
             // each time you generate you will get something new
