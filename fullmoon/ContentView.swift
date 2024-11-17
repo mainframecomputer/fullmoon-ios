@@ -22,6 +22,7 @@ struct ContentView: View {
     @FocusState var isPromptFocused: Bool
     @State var currentThread: Thread?
     @Namespace var bottomID
+    @State var activeMessage: Message?
 
     var body: some View {
         NavigationStack {
@@ -31,27 +32,7 @@ struct ContentView: View {
                         ScrollView(.vertical) {
                             VStack(alignment: .leading, spacing: 0) {
                                 ForEach(currentThread.sortedMessages) { message in
-                                    HStack {
-                                        if message.role == .user {
-                                            Spacer()
-                                        }
-                                        
-                                        Markdown(message.content)
-                                            .textSelection(.enabled)
-                                            .if(message.role == .user) { view in
-                                                view
-                                                    .padding(.horizontal, 16)
-                                                    .padding(.vertical, 12)
-                                                    .background(Color(UIColor.secondarySystemBackground))
-                                                    .mask(RoundedRectangle(cornerRadius: 24))
-                                            }
-                                            .padding(message.role == .user ? .leading : .trailing, 48)
-                                        
-                                        if message.role == .assistant {
-                                            Spacer()
-                                        }
-                                    }
-                                    .padding()
+                                    messageRow(message)
                                 }
                                 
                                 if llm.running && !llm.output.isEmpty {
@@ -220,8 +201,71 @@ struct ContentView: View {
         .fontDesign(appManager.appFontDesign.getFontDesign())
         .environment(\.dynamicTypeSize, appManager.appFontSize.getFontSize())
         .fontWidth(appManager.appFontWidth.getFontWidth())
+        .animation(.smooth, value: activeMessage)
     }
-    
+
+    @ViewBuilder
+    fileprivate func messageRow(_ message: Message) -> some View {
+        var isActiveMessage = message == activeMessage
+
+        VStack(alignment: message.role == .user ? .trailing : .leading, spacing: 6) {
+            HStack {
+                if message.role == .user {
+                    Spacer()
+                }
+
+                Markdown(message.content)
+                    .textSelection(.enabled)
+                    .if(message.role == .user) { view in
+                        view
+                            .padding(.horizontal, 16)
+                            .padding(.vertical, 12)
+                            .background(Color(UIColor.secondarySystemBackground))
+                            .mask(RoundedRectangle(cornerRadius: 24))
+                    }
+                    .padding(message.role == .user ? .leading : .trailing, 48)
+
+                if message.role == .assistant {
+                    Spacer()
+                }
+            }
+
+            messageActionButtons(message: message, isActive: isActiveMessage)
+        }
+        .padding()
+        .onHover { isHovering in
+            if isHovering {
+                self.activeMessage = message
+            } else {
+                self.activeMessage = nil
+            }
+        }
+        .contextMenu(menuItems: {
+            Button(action: {
+                copyMessage(message)
+            }, label: {
+                Label("Copy Message", systemImage: "document.on.document.fill")
+            })
+        })
+    }
+
+    func messageActionButtons(message: Message, isActive: Bool) -> some View {
+        // Always render but hide/disable when not active so view doesnt jump around
+        HStack {
+            Button(action: {
+                copyMessage(message)
+            }, label: {
+                Image(systemName: "document.on.document.fill")
+            })
+        }
+        .opacity(isActive ? 1 : 0)
+        .disabled(!isActive)
+    }
+
+    func copyMessage(_ message: Message) {
+        UIPasteboard.general.string = message.content
+    }
+
     var chatTitle: String {
         if let currentThread = currentThread {
             if let firstMessage = currentThread.sortedMessages.first {
