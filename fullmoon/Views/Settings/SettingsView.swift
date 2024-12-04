@@ -49,17 +49,30 @@ struct SettingsView: View {
                 .listRowBackground(Color.clear)
             }
             .navigationTitle("settings")
+            #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .toolbar {
+                #if os(iOS)
                 ToolbarItem(placement: .topBarLeading) {
                     Button(action: { dismiss() }) {
                         Image(systemName: "xmark")
                     }
                 }
+                #elseif os(macOS)
+                ToolbarItem(placement: .destructiveAction) {
+                    Button(action: { dismiss() }) {
+                        Text("close")
+                    }
+                }
+                #endif
             }
         }
         .tint(appManager.appTintColor.getColor())
         .environment(\.dynamicTypeSize, appManager.appFontSize.getFontSize())
+        #if os(macOS)
+        .frame(width: 320, height: 320)
+        #endif
     }
 }
 

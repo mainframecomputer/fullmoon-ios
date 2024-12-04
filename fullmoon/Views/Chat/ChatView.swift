@@ -20,6 +20,14 @@ struct ChatView: View {
     @Binding var showChats: Bool
     @Binding var showSettings: Bool
     
+    let platformBackgroundColor: Color = {
+        #if os(iOS)
+        return Color(UIColor.secondarySystemBackground)
+        #elseif os(macOS)
+        return Color(NSColor.secondarySystemFill)
+        #endif
+    }()
+    
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
@@ -39,7 +47,7 @@ struct ChatView: View {
                                                 view
                                                     .padding(.horizontal, 16)
                                                     .padding(.vertical, 12)
-                                                    .background(Color(UIColor.secondarySystemBackground))
+                                                    .background(platformBackgroundColor)
                                                     .mask(RoundedRectangle(cornerRadius: 24))
                                             }
                                             .padding(message.role == .user ? .leading : .trailing, 48)
@@ -94,15 +102,26 @@ struct ChatView: View {
                             Image(systemName: "chevron.up")
                                 .resizable()
                                 .aspectRatio(contentMode: .fit)
+                                #if os(iOS)
                                 .frame(width: 16)
+                                #elseif os(macOS)
+                                .frame(width: 12)
+                                #endif
                                 .tint(.primary)
                         }
+                        #if os(iOS)
                         .frame(width: 48, height: 48)
+                        #elseif os(macOS)
+                        .frame(width: 32, height: 32)
+                        #endif
                         .background(
                             Circle()
-                                .fill(Color(UIColor.secondarySystemBackground))
+                                .fill(platformBackgroundColor)
                         )
                     }
+                    #if os(macOS)
+                    .buttonStyle(.plain)
+                    #endif
                     
                     HStack(alignment: .bottom, spacing: 0) {
                         TextField("message", text: $prompt, axis: .vertical)
@@ -117,7 +136,13 @@ struct ChatView: View {
                                     .submitLabel(.send)
                             }
                             .padding(.vertical, 8)
+                            #if os(iOS)
                             .frame(minHeight: 48)
+                            #elseif os(macOS)
+                            .frame(minHeight: 32)
+                            #endif
+                        
+                        #if os(iOS)
                         Button {
                             generate()
                         } label: {
@@ -129,27 +154,42 @@ struct ChatView: View {
                         .disabled(llm.running || prompt.isEmpty)
                         .padding(.trailing)
                         .padding(.bottom, 12)
+                        #endif
                     }
                     .background(
                         RoundedRectangle(cornerRadius: 24)
-                            .fill(Color(UIColor.secondarySystemBackground))
+                            .fill(platformBackgroundColor)
                     )
                 }
                 .padding()
             }
             .navigationTitle(chatTitle)
+            #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
             .sheet(isPresented: $showModelPicker) {
                 NavigationStack {
                     ModelsSettingsView()
                         .environment(llm)
                 }
+                #if os(iOS)
                 .presentationDragIndicator(.visible)
                 .if(appManager.userInterfaceIdiom == .phone) { view in
                     view.presentationDetents([.fraction(0.4)])
                 }
+                #elseif os(macOS)
+                .toolbar {
+                    ToolbarItem(placement: .destructiveAction) {
+                        Button(action: { showModelPicker.toggle() }) {
+                            Text("close")
+                        }
+                    }
+                }
+                .frame(width: 320, height: 320)
+                #endif
             }
             .toolbar {
+                #if os(iOS)
                 if appManager.userInterfaceIdiom == .phone {
                     ToolbarItem(placement: .topBarLeading) {
                         Button(action: {
@@ -169,6 +209,16 @@ struct ChatView: View {
                         Image(systemName: "gear")
                     }
                 }
+                #elseif os(macOS)
+                ToolbarItem(placement: .primaryAction) {
+                    Button(action: {
+                        appManager.playHaptic()
+                        showSettings.toggle()
+                    }) {
+                        Label("settings", systemImage: "gear")
+                    }
+                }
+                #endif
             }
         }
     }
@@ -212,10 +262,6 @@ struct ChatView: View {
         appManager.playHaptic()
         modelContext.insert(message)
         try? modelContext.save()
-    }
-    
-    private func copyToClipboard(_ string: String) {
-        UIPasteboard.general.string = string
     }
 }
 

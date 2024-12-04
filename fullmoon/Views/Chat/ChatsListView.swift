@@ -53,13 +53,22 @@ struct ChatsListView: View {
                         }
                         .onDelete(perform: deleteThreads)
                     }
+                    #if os(iOS)
                     .listStyle(.insetGrouped)
+                    #elseif os(macOS)
+                    .listStyle(.sidebar)
+                    #endif
                 }
             }
-            .searchable(text: $search, prompt: "search")
             .navigationTitle("chats")
+            #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
+            .searchable(text: $search, prompt: "search")
+            #elseif os(macOS)
+            .searchable(text: $search, placement: .sidebar, prompt: "search")
+            #endif
             .toolbar {
+                #if os(iOS)
                 if appManager.userInterfaceIdiom == .phone {
                     ToolbarItem(placement: .topBarLeading) {
                         Button(action: { dismiss() }) {
@@ -73,6 +82,13 @@ struct ChatsListView: View {
                         Image(systemName: "plus")
                     }
                 }
+                #elseif os(macOS)
+                ToolbarItem(placement: .primaryAction) {
+                    Button(action: { setCurrentThread(nil) }) {
+                        Label("new", systemImage: "plus")
+                    }
+                }
+                #endif
             }
         }
         .tint(appManager.appTintColor.getColor())
@@ -93,7 +109,7 @@ struct ChatsListView: View {
             
             if let currentThread = currentThread {
                 if currentThread.id == thread.id {
-                    setCurrentThread()
+                    setCurrentThread(nil)
                 }
             }
             
@@ -109,7 +125,9 @@ struct ChatsListView: View {
             selection = nil
         }
         isPromptFocused = true
+        #if os(iOS)
         dismiss()
+        #endif
         appManager.playHaptic()
     }
 }

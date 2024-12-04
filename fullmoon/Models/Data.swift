@@ -9,7 +9,6 @@ import SwiftUI
 import SwiftData
 
 class AppManager: ObservableObject {
-    var userInterfaceIdiom: UIUserInterfaceIdiom { UIDevice.current.userInterfaceIdiom }
     @AppStorage("systemPrompt") var systemPrompt = "you are a helpful assistant"
     @AppStorage("appTintColor") var appTintColor: AppTintColor = .monochrome
     @AppStorage("appFontDesign") var appFontDesign: AppFontDesign = .standard
@@ -17,6 +16,20 @@ class AppManager: ObservableObject {
     @AppStorage("appFontWidth") var appFontWidth: AppFontWidth = .standard
     @AppStorage("currentModelName") var currentModelName: String?
     @AppStorage("shouldPlayHaptics") var shouldPlayHaptics = false
+    
+    var userInterfaceIdiom: LayoutType {
+        #if os(macOS)
+        return .mac
+        #elseif os(iOS)
+        return UIDevice.current.userInterfaceIdiom == .pad ? .pad : .phone
+        #else
+        return .unknown
+        #endif
+    }
+
+    enum LayoutType {
+        case mac, phone, pad, unknown
+    }
         
     private let installedModelsKey = "installedModels"
         
@@ -49,8 +62,10 @@ class AppManager: ObservableObject {
     
     func playHaptic() {
         if shouldPlayHaptics {
+            #if os(iOS)
             let impact = UIImpactFeedbackGenerator(style: .soft)
             impact.impactOccurred()
+            #endif
         }
     }
     

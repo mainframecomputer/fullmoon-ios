@@ -42,7 +42,9 @@ struct ChatsSettingsView: View {
             }
         }
         .navigationTitle("chats")
+        #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
+        #endif
     }
     
     func deleteChats() {

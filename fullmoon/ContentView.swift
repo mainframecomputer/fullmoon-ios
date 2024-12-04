@@ -20,16 +20,16 @@ struct ContentView: View {
 
     var body: some View {
         Group {
-            if appManager.userInterfaceIdiom == .pad {
+            if appManager.userInterfaceIdiom == .pad || appManager.userInterfaceIdiom == .mac {
                 // iPad
                 NavigationSplitView {
                     ChatsListView(currentThread: $currentThread, isPromptFocused: $isPromptFocused)
+                    #if os(macOS)
+                    .navigationSplitViewColumnWidth(min: 240, ideal: 240, max: 320)
+                    #endif
                 } detail: {
                     ChatView(currentThread: $currentThread, isPromptFocused: $isPromptFocused, showChats: $showChats, showSettings: $showSettings)
                 }
-            } else if appManager.userInterfaceIdiom == .mac {
-                // Mac
-                
             } else {
                 // iPhone
                 ChatView(currentThread: $currentThread, isPromptFocused: $isPromptFocused, showChats: $showChats, showSettings: $showSettings)

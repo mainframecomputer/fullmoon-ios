@@ -48,6 +48,9 @@ struct OnboardingInstallModelView: View {
                                 Image(systemName: "checkmark")
                             }
                         }
+                        #if os(macOS)
+                        .buttonStyle(.plain)
+                        #endif
                         .foregroundStyle(.secondary)
                         .disabled(true)
                     }
@@ -62,6 +65,9 @@ struct OnboardingInstallModelView: View {
                             Image(systemName: selectedModel.name == suggestedModel.name ? "checkmark.circle.fill" : "circle")
                         }
                     }
+                    #if os(macOS)
+                    .buttonStyle(.plain)
+                    #endif
                 }
             }
             
@@ -76,11 +82,15 @@ struct OnboardingInstallModelView: View {
                                 Image(systemName: selectedModel.name == model.name ? "checkmark.circle.fill" : "circle")
                             }
                         }
+                        #if os(macOS)
+                        .buttonStyle(.plain)
+                        #endif
                     }
                 }
             }
         }
         .toolbar {
+            #if os(iOS)
             ToolbarItem(placement: .topBarTrailing) {
                 NavigationLink(destination: OnboardingDownloadingModelProgressView(showOnboarding: $showOnboarding, selectedModel: $selectedModel)) {
                     Text("install")
@@ -88,8 +98,18 @@ struct OnboardingInstallModelView: View {
                 }
                 .disabled(filteredModels.isEmpty)
             }
+            #elseif os(macOS)
+            ToolbarItem(placement: .confirmationAction) {
+                NavigationLink(destination: OnboardingDownloadingModelProgressView(showOnboarding: $showOnboarding, selectedModel: $selectedModel)) {
+                    Text("install")
+                }
+                .disabled(filteredModels.isEmpty)
+            }
+            #endif
         }
+        #if os(iOS)
         .listStyle(.insetGrouped)
+        #endif
         .task {
             checkModels()
         }

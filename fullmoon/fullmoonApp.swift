@@ -20,6 +20,9 @@ struct fullmoonApp: App {
                 .environmentObject(appManager)
                 .environment(llm)
                 .environment(DeviceStat())
+                #if os(macOS)
+                .frame(minWidth: 640, maxWidth: .infinity, minHeight: 420, maxHeight: .infinity)
+                #endif
         }
     }
 }

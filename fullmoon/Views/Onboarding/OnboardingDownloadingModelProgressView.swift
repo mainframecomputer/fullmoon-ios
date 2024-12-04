@@ -80,7 +80,6 @@ struct OnboardingDownloadingModelProgressView: View {
         .padding()
         .navigationTitle("sit back and relax")
         .toolbar(isInstalled() ? .hidden : .visible)
-        .navigationBarTitleDisplayMode(.inline)
         .navigationBarBackButtonHidden()
         .task {
             await loadLLM()
@@ -90,12 +89,15 @@ struct OnboardingDownloadingModelProgressView: View {
             addInstalledModel()
         }
         .interactiveDismissDisabled(!isInstalled())
+        #if os(iOS)
+        .navigationBarTitleDisplayMode(.inline)
         .onAppear {
             UIApplication.shared.isIdleTimerDisabled = true
         }
         .onDisappear {
             UIApplication.shared.isIdleTimerDisabled = false
         }
+        #endif
     }
     
     func loadLLM() async {

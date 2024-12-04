@@ -18,7 +18,9 @@ struct CreditsView: View {
             }
         }
         .navigationTitle("credits")
+        #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
+        #endif
     }
 }
 
