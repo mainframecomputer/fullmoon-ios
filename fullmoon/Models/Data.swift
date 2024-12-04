@@ -9,6 +9,7 @@ import SwiftUI
 import SwiftData
 
 class AppManager: ObservableObject {
+    var userInterfaceIdiom: UIUserInterfaceIdiom { UIDevice.current.userInterfaceIdiom }
     @AppStorage("systemPrompt") var systemPrompt = "you are a helpful assistant"
     @AppStorage("appTintColor") var appTintColor: AppTintColor = .monochrome
     @AppStorage("appFontDesign") var appFontDesign: AppFontDesign = .standard
