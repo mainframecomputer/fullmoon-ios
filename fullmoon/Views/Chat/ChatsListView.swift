@@ -49,6 +49,15 @@ struct ChatsListView: View {
                             .onTapGesture {
                                 setCurrentThread(thread)
                             }
+                            #if os(macOS)
+                            .contextMenu {
+                                Button {
+                                    deleteThread(thread)
+                                } label: {
+                                    Text("delete")
+                                }
+                            }
+                            #endif
                             .tag(thread.id)
                         }
                         .onDelete(perform: deleteThreads)
@@ -81,12 +90,14 @@ struct ChatsListView: View {
                     Button(action: { setCurrentThread(nil) }) {
                         Image(systemName: "plus")
                     }
+                    .keyboardShortcut("N", modifiers: [.command])
                 }
                 #elseif os(macOS)
                 ToolbarItem(placement: .primaryAction) {
                     Button(action: { setCurrentThread(nil) }) {
                         Label("new", systemImage: "plus")
                     }
+                    .keyboardShortcut("N", modifiers: [.command])
                 }
                 #endif
             }
@@ -115,6 +126,15 @@ struct ChatsListView: View {
             
             modelContext.delete(thread)
         }
+    }
+    
+    private func deleteThread(_ thread: Thread) {
+        if let currentThread = currentThread {
+            if currentThread.id == thread.id {
+                setCurrentThread(nil)
+            }
+        }
+        modelContext.delete(thread)
     }
     
     private func setCurrentThread(_ thread: Thread? = nil) {

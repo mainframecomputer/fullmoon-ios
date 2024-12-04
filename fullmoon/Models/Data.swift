@@ -15,7 +15,7 @@ class AppManager: ObservableObject {
     @AppStorage("appFontSize") var appFontSize: AppFontSize = .medium
     @AppStorage("appFontWidth") var appFontWidth: AppFontWidth = .standard
     @AppStorage("currentModelName") var currentModelName: String?
-    @AppStorage("shouldPlayHaptics") var shouldPlayHaptics = false
+    @AppStorage("shouldPlayHaptics") var shouldPlayHaptics = true
     
     var userInterfaceIdiom: LayoutType {
         #if os(macOS)

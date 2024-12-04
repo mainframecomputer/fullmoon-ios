@@ -88,32 +88,22 @@ struct OnboardingView: View {
                 
                 Spacer()
                 
-                #if os(iOS)
                 NavigationLink(destination: OnboardingInstallModelView(showOnboarding: $showOnboarding)) {
                     Text("get started")
+                        #if os(iOS)
                         .font(.headline)
                         .frame(maxWidth: .infinity)
                         .frame(height: 40)
                         .foregroundStyle(.background)
+                        #endif
                 }
                 .buttonStyle(.borderedProminent)
                 .buttonBorderShape(.capsule)
                 .padding(.horizontal)
-                #endif
             }
             .padding()
             .navigationTitle("welcome")
-            #if os(iOS)
             .toolbar(.hidden)
-            #elseif os(macOS)
-            .toolbar {
-                ToolbarItem(placement: .confirmationAction) {
-                    NavigationLink(destination: OnboardingInstallModelView(showOnboarding: $showOnboarding)) {
-                        Text("get started")
-                    }
-                }
-            }
-            #endif
         }
         #if os(macOS)
         .frame(width: 420, height: 520)

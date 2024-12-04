@@ -88,9 +88,22 @@ struct OnboardingInstallModelView: View {
                     }
                 }
             }
+            
+            #if os(macOS)
+            Section {
+                NavigationLink(destination: OnboardingDownloadingModelProgressView(showOnboarding: $showOnboarding, selectedModel: $selectedModel)) {
+                    Button { } label: {
+                        Text("install")
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .allowsHitTesting(false)
+                }
+                .disabled(filteredModels.isEmpty)
+            }
+            #endif
         }
+        #if os(iOS)
         .toolbar {
-            #if os(iOS)
             ToolbarItem(placement: .topBarTrailing) {
                 NavigationLink(destination: OnboardingDownloadingModelProgressView(showOnboarding: $showOnboarding, selectedModel: $selectedModel)) {
                     Text("install")
@@ -98,16 +111,7 @@ struct OnboardingInstallModelView: View {
                 }
                 .disabled(filteredModels.isEmpty)
             }
-            #elseif os(macOS)
-            ToolbarItem(placement: .confirmationAction) {
-                NavigationLink(destination: OnboardingDownloadingModelProgressView(showOnboarding: $showOnboarding, selectedModel: $selectedModel)) {
-                    Text("install")
-                }
-                .disabled(filteredModels.isEmpty)
-            }
-            #endif
         }
-        #if os(iOS)
         .listStyle(.insetGrouped)
         #endif
         .task {

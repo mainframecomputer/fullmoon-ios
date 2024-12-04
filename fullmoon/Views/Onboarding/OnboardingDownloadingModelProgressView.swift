@@ -61,10 +61,12 @@ struct OnboardingDownloadingModelProgressView: View {
             if isInstalled() {
                 Button(action: { showOnboarding = false }) {
                     Text("done")
+                        #if os(iOS)
                         .font(.headline)
                         .frame(maxWidth: .infinity)
                         .frame(height: 40)
                         .foregroundStyle(.background)
+                        #endif
                 }
                 .buttonStyle(.borderedProminent)
                 .buttonBorderShape(.capsule)
