@@ -90,10 +90,12 @@ struct OnboardingView: View {
                 
                 NavigationLink(destination: OnboardingInstallModelView(showOnboarding: $showOnboarding)) {
                     Text("get started")
+                        #if os(iOS)
                         .font(.headline)
                         .frame(maxWidth: .infinity)
                         .frame(height: 40)
                         .foregroundStyle(.background)
+                        #endif
                 }
                 .buttonStyle(.borderedProminent)
                 .buttonBorderShape(.capsule)
@@ -103,6 +105,9 @@ struct OnboardingView: View {
             .navigationTitle("welcome")
             .toolbar(.hidden)
         }
+        #if os(macOS)
+        .frame(width: 420, height: 520)
+        #endif
     }
 }
 

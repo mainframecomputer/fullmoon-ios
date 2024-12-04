@@ -15,7 +15,21 @@ class AppManager: ObservableObject {
     @AppStorage("appFontSize") var appFontSize: AppFontSize = .medium
     @AppStorage("appFontWidth") var appFontWidth: AppFontWidth = .standard
     @AppStorage("currentModelName") var currentModelName: String?
-    @AppStorage("shouldPlayHaptics") var shouldPlayHaptics = false
+    @AppStorage("shouldPlayHaptics") var shouldPlayHaptics = true
+    
+    var userInterfaceIdiom: LayoutType {
+        #if os(macOS)
+        return .mac
+        #elseif os(iOS)
+        return UIDevice.current.userInterfaceIdiom == .pad ? .pad : .phone
+        #else
+        return .unknown
+        #endif
+    }
+
+    enum LayoutType {
+        case mac, phone, pad, unknown
+    }
         
     private let installedModelsKey = "installedModels"
         
@@ -48,8 +62,10 @@ class AppManager: ObservableObject {
     
     func playHaptic() {
         if shouldPlayHaptics {
+            #if os(iOS)
             let impact = UIImpactFeedbackGenerator(style: .soft)
             impact.impactOccurred()
+            #endif
         }
     }
     

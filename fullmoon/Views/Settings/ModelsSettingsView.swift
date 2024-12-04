@@ -29,6 +29,9 @@ struct ModelsSettingsView: View {
                             Image(systemName: appManager.currentModelName == modelName ? "checkmark.circle.fill" : "circle")
                         }
                     }
+                    #if os(macOS)
+                    .buttonStyle(.plain)
+                    #endif
                 }
             }
             
@@ -37,21 +40,37 @@ struct ModelsSettingsView: View {
             } label: {
                 Label("install a model", systemImage: "arrow.down.circle.dotted")
             }
+            #if os(macOS)
+            .buttonStyle(.plain)
+            #endif
         }
         .navigationTitle("models")
+        #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
+        #endif
         .sheet(isPresented: $showOnboardingInstallModelView) {
             NavigationStack {
                 OnboardingInstallModelView(showOnboarding: $showOnboardingInstallModelView)
                     .environment(llm)
                     .toolbar {
+                        #if os(iOS)
                         ToolbarItem(placement: .topBarLeading) {
                             Button(action: { showOnboardingInstallModelView = false }) {
                                 Image(systemName: "xmark")
                             }
                         }
+                        #elseif os(macOS)
+                        ToolbarItem(placement: .destructiveAction) {
+                            Button(action: { showOnboardingInstallModelView = false }) {
+                                Text("close")
+                            }
+                        }
+                        #endif
                     }
             }
+            #if os(macOS)
+            .frame(width: 360, height: 360)
+            #endif
         }
     }
     

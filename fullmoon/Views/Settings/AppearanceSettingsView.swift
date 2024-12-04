@@ -54,7 +54,9 @@ struct AppearanceSettingsView: View {
             }
         }
         .navigationTitle("appearance")
+        #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
+        #endif
     }
 }
 
