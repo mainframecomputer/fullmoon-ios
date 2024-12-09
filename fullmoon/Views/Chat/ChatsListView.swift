@@ -125,7 +125,8 @@ struct ChatsListView: View {
             }
             
             // Adding a delay fixes a crash on iOS following a deletion
-            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            let delay = appManager.userInterfaceIdiom == .phone ? 1.0 : 0.0
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
                 modelContext.delete(thread)
             }
         }
