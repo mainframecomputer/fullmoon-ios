@@ -8,7 +8,6 @@
 import SwiftUI
 import SwiftData
 
-@MainActor
 struct ChatsListView: View {
     @EnvironmentObject var appManager: AppManager
     @Environment(\.dismiss) var dismiss
