@@ -26,7 +26,7 @@ struct ChatsListView: View {
                         Label(threads.count == 0 ? "no chats yet" : "no results", systemImage: "message")
                     }
                 } else {
-                    List {
+                    List(selection: $selection) {
                         ForEach(filteredThreads) { thread in
                             VStack(alignment: .leading) {
                                 Group {
