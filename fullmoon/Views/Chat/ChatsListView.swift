@@ -124,7 +124,11 @@ struct ChatsListView: View {
                 }
             }
             
-            modelContext.delete(thread)
+            // Adding a delay fixes a crash on iOS following a deletion
+            let delay = appManager.userInterfaceIdiom == .phone ? 1.0 : 0.0
+            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
+                modelContext.delete(thread)
+            }
         }
     }
     
@@ -138,6 +142,7 @@ struct ChatsListView: View {
     }
     
     private func setCurrentThread(_ thread: Thread? = nil) {
+        
         currentThread = thread
         if let thread {
             selection = thread.id
