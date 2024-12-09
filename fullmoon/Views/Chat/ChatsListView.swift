@@ -8,6 +8,7 @@
 import SwiftUI
 import SwiftData
 
+@MainActor
 struct ChatsListView: View {
     @EnvironmentObject var appManager: AppManager
     @Environment(\.dismiss) var dismiss
@@ -26,7 +27,7 @@ struct ChatsListView: View {
                         Label(threads.count == 0 ? "no chats yet" : "no results", systemImage: "message")
                     }
                 } else {
-                    List(selection: $selection) {
+                    List {
                         ForEach(filteredThreads) { thread in
                             VStack(alignment: .leading) {
                                 Group {
@@ -124,7 +125,10 @@ struct ChatsListView: View {
                 }
             }
             
-            modelContext.delete(thread)
+            // Adding a delay fixes a crash on iOS following a deletion
+            DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+                modelContext.delete(thread)
+            }
         }
     }
     
@@ -138,6 +142,7 @@ struct ChatsListView: View {
     }
     
     private func setCurrentThread(_ thread: Thread? = nil) {
+        
         currentThread = thread
         if let thread {
             selection = thread.id

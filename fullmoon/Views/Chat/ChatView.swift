@@ -8,6 +8,7 @@
 import SwiftUI
 import MarkdownUI
 
+@MainActor
 struct ChatView: View {
     @EnvironmentObject var appManager: AppManager
     @Environment(\.modelContext) var modelContext
