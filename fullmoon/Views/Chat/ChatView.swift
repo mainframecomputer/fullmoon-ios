@@ -5,8 +5,8 @@
 //  Created by Jordan Singer on 12/3/24.
 //
 
-import SwiftUI
 import MarkdownUI
+import SwiftUI
 
 struct ChatView: View {
     @EnvironmentObject var appManager: AppManager
@@ -27,6 +27,77 @@ struct ChatView: View {
         return Color(NSColor.secondarySystemFill)
         #endif
     }()
+    
+    var chatInput: some View {
+        HStack(alignment: .bottom, spacing: 0) {
+            TextField("message", text: $prompt, axis: .vertical)
+                .focused($isPromptFocused)
+                .textFieldStyle(.plain)
+                .padding(.horizontal)
+                .if(appManager.userInterfaceIdiom == .pad || appManager.userInterfaceIdiom == .mac) { view in
+                    view
+                        .onSubmit {
+                            generate()
+                        }
+                        .submitLabel(.send)
+                }
+                .padding(.vertical, 8)
+            #if os(iOS)
+                .frame(minHeight: 48)
+            #elseif os(macOS)
+                .frame(minHeight: 32)
+            #endif
+            
+            #if os(iOS)
+            Button {
+                generate()
+            } label: {
+                Image(systemName: "arrow.up.circle.fill")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 24, height: 24)
+            }
+            .disabled(llm.running || prompt.isEmpty)
+            .padding(.trailing, 12)
+            .padding(.bottom, 12)
+            #endif
+        }
+        .background(
+            RoundedRectangle(cornerRadius: 24)
+                .fill(platformBackgroundColor)
+        )
+    }
+    
+    var modelPickerButton: some View {
+        Button {
+            appManager.playHaptic()
+            showModelPicker.toggle()
+        } label: {
+            Group {
+                Image(systemName: "chevron.up")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                #if os(iOS)
+                    .frame(width: 16)
+                #elseif os(macOS)
+                    .frame(width: 12)
+                #endif
+                    .tint(.primary)
+            }
+            #if os(iOS)
+            .frame(width: 48, height: 48)
+            #elseif os(macOS)
+            .frame(width: 32, height: 32)
+            #endif
+            .background(
+                Circle()
+                    .fill(platformBackgroundColor)
+            )
+        }
+        #if os(macOS)
+        .buttonStyle(.plain)
+        #endif
+    }
     
     var body: some View {
         NavigationStack {
@@ -94,132 +165,68 @@ struct ChatView: View {
                 }
                 
                 HStack(alignment: .bottom) {
-                    Button {
-                        appManager.playHaptic()
-                        showModelPicker.toggle()
-                    } label: {
-                        Group {
-                            Image(systemName: "chevron.up")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                #if os(iOS)
-                                .frame(width: 16)
-                                #elseif os(macOS)
-                                .frame(width: 12)
-                                #endif
-                                .tint(.primary)
-                        }
-                        #if os(iOS)
-                        .frame(width: 48, height: 48)
-                        #elseif os(macOS)
-                        .frame(width: 32, height: 32)
-                        #endif
-                        .background(
-                            Circle()
-                                .fill(platformBackgroundColor)
-                        )
-                    }
-                    #if os(macOS)
-                    .buttonStyle(.plain)
-                    #endif
-                    
-                    HStack(alignment: .bottom, spacing: 0) {
-                        TextField("message", text: $prompt, axis: .vertical)
-                            .focused($isPromptFocused)
-                            .textFieldStyle(.plain)
-                            .padding(.horizontal)
-                            .if(appManager.userInterfaceIdiom == .pad || appManager.userInterfaceIdiom == .mac) { view in
-                                view
-                                    .onSubmit {
-                                        generate()
-                                    }
-                                    .submitLabel(.send)
-                            }
-                            .padding(.vertical, 8)
-                            #if os(iOS)
-                            .frame(minHeight: 48)
-                            #elseif os(macOS)
-                            .frame(minHeight: 32)
-                            #endif
-                        
-                        #if os(iOS)
-                        Button {
-                            generate()
-                        } label: {
-                            Image(systemName: "arrow.up.circle.fill")
-                                .resizable()
-                                .aspectRatio(contentMode: .fit)
-                                .frame(width: 24, height: 24)
-                        }
-                        .disabled(llm.running || prompt.isEmpty)
-                        .padding(.trailing)
-                        .padding(.bottom, 12)
-                        #endif
-                    }
-                    .background(
-                        RoundedRectangle(cornerRadius: 24)
-                            .fill(platformBackgroundColor)
-                    )
+                    modelPickerButton
+                    chatInput
                 }
                 .padding()
             }
             .navigationTitle(chatTitle)
             #if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
+                .navigationBarTitleDisplayMode(.inline)
             #endif
-            .sheet(isPresented: $showModelPicker) {
-                NavigationStack {
-                    ModelsSettingsView()
-                        .environment(llm)
-                }
-                #if os(iOS)
-                .presentationDragIndicator(.visible)
-                .if(appManager.userInterfaceIdiom == .phone) { view in
-                    view.presentationDetents([.fraction(0.4)])
-                }
-                #elseif os(macOS)
-                .toolbar {
-                    ToolbarItem(placement: .destructiveAction) {
-                        Button(action: { showModelPicker.toggle() }) {
-                            Text("close")
+                .sheet(isPresented: $showModelPicker) {
+                    NavigationStack {
+                        ModelsSettingsView()
+                            .environment(llm)
+                    }
+                    #if os(iOS)
+                    .presentationDragIndicator(.visible)
+                    .if(appManager.userInterfaceIdiom == .phone) { view in
+                        view.presentationDetents([.fraction(0.4)])
+                    }
+                    #elseif os(macOS)
+                    .toolbar {
+                        ToolbarItem(placement: .destructiveAction) {
+                            Button(action: { showModelPicker.toggle() }) {
+                                Text("close")
+                            }
                         }
                     }
+                    .frame(width: 360, height: 360)
+                    #endif
                 }
-                .frame(width: 360, height: 360)
-                #endif
-            }
-            .toolbar {
-                #if os(iOS)
-                if appManager.userInterfaceIdiom == .phone {
-                    ToolbarItem(placement: .topBarLeading) {
+                .toolbar {
+                    #if os(iOS)
+                    if appManager.userInterfaceIdiom == .phone {
+                        ToolbarItem(placement: .topBarLeading) {
+                            Button(action: {
+                                appManager.playHaptic()
+                                showChats.toggle()
+                            }) {
+                                Image(systemName: "list.bullet")
+                            }
+                        }
+                    }
+                
+                    ToolbarItem(placement: .topBarTrailing) {
                         Button(action: {
                             appManager.playHaptic()
-                            showChats.toggle()
+                            showSettings.toggle()
                         }) {
-                            Image(systemName: "list.bullet")
+                            Image(systemName: "gear")
                         }
                     }
-                }
-                
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(action: {
-                        appManager.playHaptic()
-                        showSettings.toggle()
-                    }) {
-                        Image(systemName: "gear")
+                    #elseif os(macOS)
+                    ToolbarItem(placement: .primaryAction) {
+                        Button(action: {
+                            appManager.playHaptic()
+                            showSettings.toggle()
+                        }) {
+                            Label("settings", systemImage: "gear")
+                        }
                     }
+                    #endif
                 }
-                #elseif os(macOS)
-                ToolbarItem(placement: .primaryAction) {
-                    Button(action: {
-                        appManager.playHaptic()
-                        showSettings.toggle()
-                    }) {
-                        Label("settings", systemImage: "gear")
-                    }
-                }
-                #endif
-            }
         }
     }
     
