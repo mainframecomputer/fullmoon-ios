@@ -21,7 +21,7 @@ struct ChatsListView: View {
     var body: some View {
         NavigationStack {
             ZStack {
-                List {
+                List(selection: $selection) {
                     ForEach(filteredThreads) { thread in
                         VStack(alignment: .leading) {
                             Group {
