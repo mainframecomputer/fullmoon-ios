@@ -5,8 +5,8 @@
 //  Created by Jordan Singer on 10/5/24.
 //
 
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 struct ChatsListView: View {
     @EnvironmentObject var appManager: AppManager
@@ -20,87 +20,86 @@ struct ChatsListView: View {
     
     var body: some View {
         NavigationStack {
-            Group {
+            ZStack {
+                List(selection: $selection) {
+                    ForEach(filteredThreads) { thread in
+                        VStack(alignment: .leading) {
+                            Group {
+                                if let firstMessage = thread.sortedMessages.first {
+                                    Text(firstMessage.content)
+                                        .lineLimit(1)
+                                } else {
+                                    Text("untitled")
+                                }
+                            }
+                            .foregroundStyle(.primary)
+                            .font(.headline)
+                            
+                            Text("\(thread.timestamp.formatted())")
+                                .foregroundStyle(.secondary)
+                                .font(.subheadline)
+                        }
+                        .frame(maxWidth: .infinity, alignment: .leading)
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            setCurrentThread(thread)
+                        }
+                        #if os(macOS)
+                        .contextMenu {
+                            Button {
+                                deleteThread(thread)
+                            } label: {
+                                Text("delete")
+                            }
+                        }
+                        #endif
+                        .tag(thread.id)
+                    }
+                    .onDelete(perform: deleteThreads)
+                }
+                #if os(iOS)
+                .listStyle(.insetGrouped)
+                #elseif os(macOS)
+                .listStyle(.sidebar)
+                #endif
                 if filteredThreads.count == 0 {
                     ContentUnavailableView {
                         Label(threads.count == 0 ? "no chats yet" : "no results", systemImage: "message")
                     }
-                } else {
-                    List(selection: $selection) {
-                        ForEach(filteredThreads) { thread in
-                            VStack(alignment: .leading) {
-                                Group {
-                                    if let firstMessage = thread.sortedMessages.first {
-                                        Text(firstMessage.content)
-                                            .lineLimit(1)
-                                    } else {
-                                        Text("untitled")
-                                    }
-                                }
-                                .foregroundStyle(.primary)
-                                .font(.headline)
-                                
-                                Text("\(thread.timestamp.formatted())")
-                                    .foregroundStyle(.secondary)
-                                    .font(.subheadline)
-                            }
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .contentShape(Rectangle())
-                            .onTapGesture {
-                                setCurrentThread(thread)
-                            }
-                            #if os(macOS)
-                            .contextMenu {
-                                Button {
-                                    deleteThread(thread)
-                                } label: {
-                                    Text("delete")
-                                }
-                            }
-                            #endif
-                            .tag(thread.id)
-                        }
-                        .onDelete(perform: deleteThreads)
-                    }
-                    #if os(iOS)
-                    .listStyle(.insetGrouped)
-                    #elseif os(macOS)
-                    .listStyle(.sidebar)
-                    #endif
                 }
             }
             .navigationTitle("chats")
             #if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
-            .searchable(text: $search, prompt: "search")
+                .navigationBarTitleDisplayMode(.inline)
+                .searchable(text: $search, prompt: "search")
             #elseif os(macOS)
-            .searchable(text: $search, placement: .sidebar, prompt: "search")
+                .searchable(text: $search, placement: .sidebar, prompt: "search")
             #endif
-            .toolbar {
-                #if os(iOS)
-                if appManager.userInterfaceIdiom == .phone {
-                    ToolbarItem(placement: .topBarLeading) {
-                        Button(action: { dismiss() }) {
-                            Image(systemName: "xmark")
+                .toolbar {
+                    #if os(iOS)
+                    if appManager.userInterfaceIdiom == .phone {
+                        ToolbarItem(placement: .topBarLeading) {
+                            Button(action: { dismiss() }) {
+                                Image(systemName: "xmark")
+                            }
                         }
                     }
-                }
                 
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(action: { setCurrentThread(nil) }) {
-                        Image(systemName: "plus")
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button(action: { setCurrentThread(nil) }) {
+                            Image(systemName: "plus")
+                        }
+                        .keyboardShortcut("N", modifiers: [.command])
                     }
-                    .keyboardShortcut("N", modifiers: [.command])
-                }
-                #elseif os(macOS)
-                ToolbarItem(placement: .primaryAction) {
-                    Button(action: { setCurrentThread(nil) }) {
-                        Label("new", systemImage: "plus")
+                    #elseif os(macOS)
+                    ToolbarItem(placement: .primaryAction) {
+                        Button(action: { setCurrentThread(nil) }) {
+                            Label("new", systemImage: "plus")
+                        }
+                        .keyboardShortcut("N", modifiers: [.command])
                     }
-                    .keyboardShortcut("N", modifiers: [.command])
+                    #endif
                 }
-                #endif
-            }
         }
         .tint(appManager.appTintColor.getColor())
         .environment(\.dynamicTypeSize, appManager.appFontSize.getFontSize())
@@ -142,7 +141,6 @@ struct ChatsListView: View {
     }
     
     private func setCurrentThread(_ thread: Thread? = nil) {
-        
         currentThread = thread
         if let thread {
             selection = thread.id
