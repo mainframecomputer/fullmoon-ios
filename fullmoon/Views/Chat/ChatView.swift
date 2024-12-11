@@ -132,7 +132,7 @@ struct ChatView: View {
                                 
                                 if llm.running && !llm.output.isEmpty {
                                     HStack {
-                                        Markdown(llm.output)
+                                        Markdown(llm.output + " 🌕")
                                             .textSelection(.enabled)
                                             .padding(.trailing, 48)
                                         
