@@ -10,7 +10,7 @@ import SwiftUI
 
 struct OnboardingInstallModelView: View {
     @EnvironmentObject var appManager: AppManager
-    @State private var deviceSupportsMetal3: Bool = false
+    @State private var deviceSupportsMetal3: Bool = true
     @Binding var showOnboarding: Bool
     @State var selectedModel = ModelConfiguration.defaultModel
     let suggestedModel = ModelConfiguration.defaultModel
