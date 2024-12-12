@@ -9,6 +9,7 @@ import SwiftUI
 
 struct OnboardingView: View {
     @Binding var showOnboarding: Bool
+    @EnvironmentObject var appManager: AppManager
     
     var body: some View {
         NavigationStack {
