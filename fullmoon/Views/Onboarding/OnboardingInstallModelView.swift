@@ -5,16 +5,17 @@
 //  Created by Jordan Singer on 10/4/24.
 //
 
-import SwiftUI
 import MLXLLM
+import SwiftUI
 
 struct OnboardingInstallModelView: View {
     @EnvironmentObject var appManager: AppManager
+    @State private var deviceSupportsMetal3: Bool = false
     @Binding var showOnboarding: Bool
     @State var selectedModel = ModelConfiguration.defaultModel
     let suggestedModel = ModelConfiguration.defaultModel
-    
-    var body: some View {
+
+    var modelsList: some View {
         List {
             Section {
                 VStack(spacing: 12) {
@@ -23,7 +24,7 @@ struct OnboardingInstallModelView: View {
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 64, height: 64)
                         .foregroundStyle(.primary, .tertiary)
-                    
+
                     VStack(spacing: 4) {
                         Text("install a model")
                             .font(.title)
@@ -37,11 +38,11 @@ struct OnboardingInstallModelView: View {
                 .frame(maxWidth: .infinity)
             }
             .listRowBackground(Color.clear)
-            
+
             if appManager.installedModels.count > 0 {
                 Section(header: Text("Installed")) {
                     ForEach(appManager.installedModels, id: \.self) { modelName in
-                        Button { } label: {
+                        Button {} label: {
                             Label {
                                 Text(appManager.modelDisplayName(modelName))
                             } icon: {
@@ -70,7 +71,7 @@ struct OnboardingInstallModelView: View {
                     #endif
                 }
             }
-            
+
             if filteredModels.count > 0 {
                 Section(header: Text("Other")) {
                     ForEach(filteredModels, id: \.name) { model in
@@ -88,37 +89,50 @@ struct OnboardingInstallModelView: View {
                     }
                 }
             }
-            
+
             #if os(macOS)
-            Section {
-                NavigationLink(destination: OnboardingDownloadingModelProgressView(showOnboarding: $showOnboarding, selectedModel: $selectedModel)) {
-                    Button { } label: {
-                        Text("install")
+                Section {
+                    NavigationLink(destination: OnboardingDownloadingModelProgressView(showOnboarding: $showOnboarding, selectedModel: $selectedModel)) {
+                        Button {} label: {
+                            Text("install")
+                        }
+                        .buttonStyle(.borderedProminent)
+                        .allowsHitTesting(false)
                     }
-                    .buttonStyle(.borderedProminent)
-                    .allowsHitTesting(false)
+                    .disabled(filteredModels.isEmpty)
                 }
-                .disabled(filteredModels.isEmpty)
-            }
             #endif
         }
-        #if os(iOS)
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                NavigationLink(destination: OnboardingDownloadingModelProgressView(showOnboarding: $showOnboarding, selectedModel: $selectedModel)) {
-                    Text("install")
-                        .font(.headline)
+    }
+
+    var body: some View {
+        ZStack {
+            if deviceSupportsMetal3 {
+                modelsList
+                #if os(iOS)
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        NavigationLink(destination: OnboardingDownloadingModelProgressView(showOnboarding: $showOnboarding, selectedModel: $selectedModel)) {
+                            Text("install")
+                                .font(.headline)
+                        }
+                        .disabled(filteredModels.isEmpty)
+                    }
                 }
-                .disabled(filteredModels.isEmpty)
+                .listStyle(.insetGrouped)
+                #endif
+                .task {
+                    checkModels()
+                }
+            } else {
+                DeviceNotSupportedView()
             }
         }
-        .listStyle(.insetGrouped)
-        #endif
-        .task {
-            checkModels()
+        .onAppear {
+            checkMetal3Support()
         }
     }
-    
+
     var filteredModels: [ModelConfiguration] {
         ModelConfiguration.availableModels
             .filter { !appManager.installedModels.contains($0.name) }
@@ -127,7 +141,7 @@ struct OnboardingInstallModelView: View {
             }
             .sorted { $0.name < $1.name }
     }
-    
+
     func checkModels() {
         // automatically select the first available model
         if appManager.installedModels.contains(suggestedModel.name) {
@@ -135,6 +149,14 @@ struct OnboardingInstallModelView: View {
                 selectedModel = model
             }
         }
+    }
+
+    func checkMetal3Support() {
+        #if os(iOS)
+            if let device = MTLCreateSystemDefaultDevice() {
+                deviceSupportsMetal3 = device.supportsFamily(.metal3)
+            }
+        #endif
     }
 }
 
