@@ -240,7 +240,7 @@ struct ChatView: View {
 
     var stopButton: some View {
         Button {
-            stop()
+            llm.stop()
         } label: {
             Image(systemName: "stop.circle.fill")
                 .resizable()
@@ -260,10 +260,6 @@ struct ChatView: View {
         }
 
         return "chat"
-    }
-
-    private func stop() {
-        llm.stop()
     }
 
     private func generate() {
