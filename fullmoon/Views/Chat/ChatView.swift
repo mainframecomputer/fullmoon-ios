@@ -48,13 +48,11 @@ struct ChatView: View {
                 .frame(minHeight: 32)
             #endif
 
-            #if os(iOS)
-                if llm.running {
-                    stopButton
-                } else {
-                    generateButton
-                }
-            #endif
+            if llm.running {
+                stopButton
+            } else {
+                generateButton
+            }
         }
         .background(
             RoundedRectangle(cornerRadius: 24)
@@ -91,6 +89,64 @@ struct ChatView: View {
         #if os(macOS)
         .buttonStyle(.plain)
         #endif
+    }
+
+    var generateButton: some View {
+        Button {
+            generate()
+        } label: {
+            Image(systemName: "arrow.up.circle.fill")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+            #if os(iOS)
+                .frame(width: 24, height: 24)
+            #else
+                .frame(width: 16, height: 16)
+            #endif
+        }
+        .disabled(prompt.isEmpty)
+        #if os(iOS)
+            .padding(.trailing, 12)
+            .padding(.bottom, 12)
+        #else
+            .padding(.trailing, 8)
+            .padding(.bottom, 8)
+            .buttonStyle(.plain)
+        #endif
+    }
+
+    var stopButton: some View {
+        Button {
+            llm.stop()
+        } label: {
+            Image(systemName: "stop.circle.fill")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+            #if os(iOS)
+                .frame(width: 24, height: 24)
+            #else
+                .frame(width: 16, height: 16)
+            #endif
+        }
+        .disabled(llm.cancelled)
+        #if os(iOS)
+            .padding(.trailing, 12)
+            .padding(.bottom, 12)
+        #else
+            .padding(.trailing, 8)
+            .padding(.bottom, 8)
+            .buttonStyle(.plain)
+        #endif
+    }
+
+    var chatTitle: String {
+        if let currentThread = currentThread {
+            if let firstMessage = currentThread.sortedMessages.first {
+                return firstMessage.content
+            }
+        }
+
+        return "chat"
     }
 
     var body: some View {
@@ -222,44 +278,6 @@ struct ChatView: View {
                     #endif
                 }
         }
-    }
-
-    var generateButton: some View {
-        Button {
-            generate()
-        } label: {
-            Image(systemName: "arrow.up.circle.fill")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 24, height: 24)
-        }
-        .disabled(prompt.isEmpty)
-        .padding(.trailing, 12)
-        .padding(.bottom, 12)
-    }
-
-    var stopButton: some View {
-        Button {
-            llm.stop()
-        } label: {
-            Image(systemName: "stop.circle.fill")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 24, height: 24)
-        }
-        .disabled(llm.cancelled)
-        .padding(.trailing, 12)
-        .padding(.bottom, 12)
-    }
-
-    var chatTitle: String {
-        if let currentThread = currentThread {
-            if let firstMessage = currentThread.sortedMessages.first {
-                return firstMessage.content
-            }
-        }
-
-        return "chat"
     }
 
     private func generate() {
