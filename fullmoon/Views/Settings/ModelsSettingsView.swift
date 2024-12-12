@@ -24,6 +24,7 @@ struct ModelsSettingsView: View {
                     } label: {
                         Label {
                             Text(appManager.modelDisplayName(modelName))
+                                .lineLimit(1)
                                 .tint(.primary)
                         } icon: {
                             Image(systemName: appManager.currentModelName == modelName && !appManager.isConnectedToPeer ? "checkmark.circle.fill" : "circle")

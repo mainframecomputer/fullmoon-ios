@@ -30,6 +30,7 @@ struct AdvancedModelsSettingsView: View {
                         } label: {
                             Label {
                                 Text(getFriendlyName(from: endpoint))
+                                    .lineLimit(1)
                                     .tint(.primary)
                             } icon: {
                                 Image(systemName: appManager.isConnectedToPeer && appManager.connectedPeerName == getFriendlyName(from: endpoint) ? "checkmark.circle.fill" : "circle")
@@ -47,6 +48,7 @@ struct AdvancedModelsSettingsView: View {
                     ForEach(appManager.connectedClients, id: \.self) { client in
                         Label {
                             Text(client)
+                                .lineLimit(1)
                                 .tint(.primary)
                         } icon: {
                             Image(systemName: "network")

@@ -275,6 +275,7 @@ class BonjourClient: ObservableObject {
 class BonjourServiceBrowser: ObservableObject {
     @Published var discoveredServices: [NWEndpoint] = []
     private var browser: NWBrowser?
+    private var activeServices: Set<NWEndpoint> = []
     
     init() {
         startBrowsing()
@@ -283,6 +284,10 @@ class BonjourServiceBrowser: ObservableObject {
     private func startBrowsing() {
         let parameters = NWParameters()
         parameters.includePeerToPeer = true
+        
+        // Clear existing services when starting/restarting browser
+        activeServices.removeAll()
+        discoveredServices.removeAll()
         
         browser = NWBrowser(for: .bonjour(type: SERVICE_TYPE, domain: nil), using: parameters)
         
@@ -293,14 +298,29 @@ class BonjourServiceBrowser: ObservableObject {
             case .failed(let error):
                 print("Browser failed: \(error)")
                 self?.restartBrowsing()
+            case .cancelled:
+                // Clear services when browser is cancelled
+                DispatchQueue.main.async {
+                    self?.activeServices.removeAll()
+                    self?.discoveredServices.removeAll()
+                }
             default:
                 break
             }
         }
         
-        browser?.browseResultsChangedHandler = { [weak self] results, _ in
+        browser?.browseResultsChangedHandler = { [weak self] results, changes in
             DispatchQueue.main.async {
-                self?.discoveredServices = results.map(\.endpoint)
+                // Reset active services to match current results
+                self?.activeServices.removeAll()
+                
+                // Only add currently available services
+                for result in results where result.interfaces.isEmpty == false {
+                    self?.activeServices.insert(result.endpoint)
+                }
+                
+                // Update discoveredServices with only active services
+                self?.discoveredServices = Array(self?.activeServices ?? [])
             }
         }
         
