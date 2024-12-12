@@ -14,6 +14,7 @@ import SwiftUI
 @MainActor
 class LLMEvaluator {
     var running = false
+    var cancelled = false
     var output = ""
     var modelInfo = ""
     var stat = ""
@@ -72,11 +73,16 @@ class LLMEvaluator {
             return modelContainer
         }
     }
-
+    
+    func stop() {
+        cancelled = true
+    }
+    
     func generate(modelName: String, thread: Thread, systemPrompt: String) async -> String {
         guard !running else { return "" }
 
         running = true
+        cancelled = false
         self.output = ""
 
         do {
@@ -98,6 +104,12 @@ class LLMEvaluator {
                     promptTokens: promptTokens, parameters: generateParameters, model: model,
                     tokenizer: tokenizer, extraEOSTokens: extraEOSTokens
                 ) { tokens in
+                    
+                    var cancelled = false
+                    Task { @MainActor in
+                        cancelled = self.cancelled
+                    }
+                    
                     // update the output -- this will make the view show the text as it generates
                     if tokens.count % displayEveryNTokens == 0 {
                         let text = tokenizer.decode(tokens: tokens)
@@ -106,7 +118,7 @@ class LLMEvaluator {
                         }
                     }
 
-                    if tokens.count >= maxTokens {
+                    if tokens.count >= maxTokens || cancelled {
                         return .stop
                     } else {
                         return .more

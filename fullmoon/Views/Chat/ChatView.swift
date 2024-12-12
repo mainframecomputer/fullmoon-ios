@@ -19,15 +19,15 @@ struct ChatView: View {
     @FocusState.Binding var isPromptFocused: Bool
     @Binding var showChats: Bool
     @Binding var showSettings: Bool
-    
+
     let platformBackgroundColor: Color = {
         #if os(iOS)
-        return Color(UIColor.secondarySystemBackground)
+            return Color(UIColor.secondarySystemBackground)
         #elseif os(macOS)
-        return Color(NSColor.secondarySystemFill)
+            return Color(NSColor.secondarySystemFill)
         #endif
     }()
-    
+
     var chatInput: some View {
         HStack(alignment: .bottom, spacing: 0) {
             TextField("message", text: $prompt, axis: .vertical)
@@ -47,27 +47,19 @@ struct ChatView: View {
             #elseif os(macOS)
                 .frame(minHeight: 32)
             #endif
-            
-            #if os(iOS)
-            Button {
-                generate()
-            } label: {
-                Image(systemName: "arrow.up.circle.fill")
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 24, height: 24)
+
+            if llm.running {
+                stopButton
+            } else {
+                generateButton
             }
-            .disabled(llm.running || prompt.isEmpty)
-            .padding(.trailing, 12)
-            .padding(.bottom, 12)
-            #endif
         }
         .background(
             RoundedRectangle(cornerRadius: 24)
                 .fill(platformBackgroundColor)
         )
     }
-    
+
     var modelPickerButton: some View {
         Button {
             appManager.playHaptic()
@@ -98,7 +90,65 @@ struct ChatView: View {
         .buttonStyle(.plain)
         #endif
     }
-    
+
+    var generateButton: some View {
+        Button {
+            generate()
+        } label: {
+            Image(systemName: "arrow.up.circle.fill")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+            #if os(iOS)
+                .frame(width: 24, height: 24)
+            #else
+                .frame(width: 16, height: 16)
+            #endif
+        }
+        .disabled(prompt.isEmpty)
+        #if os(iOS)
+            .padding(.trailing, 12)
+            .padding(.bottom, 12)
+        #else
+            .padding(.trailing, 8)
+            .padding(.bottom, 8)
+            .buttonStyle(.plain)
+        #endif
+    }
+
+    var stopButton: some View {
+        Button {
+            llm.stop()
+        } label: {
+            Image(systemName: "stop.circle.fill")
+                .resizable()
+                .aspectRatio(contentMode: .fit)
+            #if os(iOS)
+                .frame(width: 24, height: 24)
+            #else
+                .frame(width: 16, height: 16)
+            #endif
+        }
+        .disabled(llm.cancelled)
+        #if os(iOS)
+            .padding(.trailing, 12)
+            .padding(.bottom, 12)
+        #else
+            .padding(.trailing, 8)
+            .padding(.bottom, 8)
+            .buttonStyle(.plain)
+        #endif
+    }
+
+    var chatTitle: String {
+        if let currentThread = currentThread {
+            if let firstMessage = currentThread.sortedMessages.first {
+                return firstMessage.content
+            }
+        }
+
+        return "chat"
+    }
+
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
@@ -111,7 +161,7 @@ struct ChatView: View {
                                         if message.role == .user {
                                             Spacer()
                                         }
-                                        
+
                                         Markdown(message.content)
                                             .textSelection(.enabled)
                                             .if(message.role == .user) { view in
@@ -122,26 +172,26 @@ struct ChatView: View {
                                                     .mask(RoundedRectangle(cornerRadius: 24))
                                             }
                                             .padding(message.role == .user ? .leading : .trailing, 48)
-                                        
+
                                         if message.role == .assistant {
                                             Spacer()
                                         }
                                     }
                                     .padding()
                                 }
-                                
+
                                 if llm.running && !llm.output.isEmpty {
                                     HStack {
                                         Markdown(llm.output + " 🌕")
                                             .textSelection(.enabled)
                                             .padding(.trailing, 48)
-                                        
+
                                         Spacer()
                                     }
                                     .padding()
                                 }
                             }
-                            
+
                             Rectangle()
                                 .fill(.clear)
                                 .frame(height: 1)
@@ -163,7 +213,7 @@ struct ChatView: View {
                         .foregroundStyle(.quaternary)
                     Spacer()
                 }
-                
+
                 HStack(alignment: .bottom) {
                     modelPickerButton
                     chatInput
@@ -197,47 +247,37 @@ struct ChatView: View {
                 }
                 .toolbar {
                     #if os(iOS)
-                    if appManager.userInterfaceIdiom == .phone {
-                        ToolbarItem(placement: .topBarLeading) {
-                            Button(action: {
-                                appManager.playHaptic()
-                                showChats.toggle()
-                            }) {
-                                Image(systemName: "list.bullet")
+                        if appManager.userInterfaceIdiom == .phone {
+                            ToolbarItem(placement: .topBarLeading) {
+                                Button(action: {
+                                    appManager.playHaptic()
+                                    showChats.toggle()
+                                }) {
+                                    Image(systemName: "list.bullet")
+                                }
                             }
                         }
-                    }
-                
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button(action: {
-                            appManager.playHaptic()
-                            showSettings.toggle()
-                        }) {
-                            Image(systemName: "gear")
+
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Button(action: {
+                                appManager.playHaptic()
+                                showSettings.toggle()
+                            }) {
+                                Image(systemName: "gear")
+                            }
                         }
-                    }
                     #elseif os(macOS)
-                    ToolbarItem(placement: .primaryAction) {
-                        Button(action: {
-                            appManager.playHaptic()
-                            showSettings.toggle()
-                        }) {
-                            Label("settings", systemImage: "gear")
+                        ToolbarItem(placement: .primaryAction) {
+                            Button(action: {
+                                appManager.playHaptic()
+                                showSettings.toggle()
+                            }) {
+                                Label("settings", systemImage: "gear")
+                            }
                         }
-                    }
                     #endif
                 }
         }
-    }
-    
-    var chatTitle: String {
-        if let currentThread = currentThread {
-            if let firstMessage = currentThread.sortedMessages.first {
-                return firstMessage.content
-            }
-        }
-        
-        return "chat"
     }
 
     private func generate() {
@@ -248,7 +288,7 @@ struct ChatView: View {
                 modelContext.insert(newThread)
                 try? modelContext.save()
             }
-            
+
             if let currentThread = currentThread {
                 Task {
                     let message = prompt
@@ -264,7 +304,7 @@ struct ChatView: View {
             }
         }
     }
-    
+
     private func sendMessage(_ message: Message) {
         appManager.playHaptic()
         modelContext.insert(message)
