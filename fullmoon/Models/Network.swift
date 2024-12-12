@@ -40,11 +40,12 @@ class BonjourServiceAdvertiser: NSObject, ObservableObject {
     
     override init() {
         super.init()
-        startAdvertising()
         startConnectionMonitoring()
     }
     
-    private func startAdvertising() {
+    func startAdvertising() {
+        stopAdvertising()
+        
         do {
             listener = try NWListener(using: .tcp)
             listener?.service = NWListener.Service(name: deviceName, type: SERVICE_TYPE)
@@ -69,6 +70,13 @@ class BonjourServiceAdvertiser: NSObject, ObservableObject {
         } catch {
             print("Failed to start server: \(error)")
         }
+    }
+    
+    func stopAdvertising() {
+        listener?.cancel()
+        listener = nil
+        activeConnections.values.forEach { $0.connection.cancel() }
+        activeConnections.removeAll()
     }
     
     private func restartAdvertising() {

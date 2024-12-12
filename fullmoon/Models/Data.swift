@@ -50,6 +50,19 @@ class AppManager: ObservableObject {
     @Published var connectedPeerName: String?
     @Published var connectedClients: [String] = []
     
+    var filteredDiscoveredPeers: [NWEndpoint] {
+        discoveredPeers.filter { peer in
+            if case .service(let name, _, _, _) = peer {
+                #if os(macOS)
+                return name != (Host.current().localizedName ?? "Mac")
+                #else
+                return name != UIDevice.current.name
+                #endif
+            }
+            return true
+        }
+    }
+    
     init() {
         loadInstalledModelsFromUserDefaults()
         setupNetworking()
@@ -58,6 +71,7 @@ class AppManager: ObservableObject {
     // Add new method to handle networking setup
     private func setupNetworking() {
         // First clean up existing connections
+        bonjourAdvertiser?.stopAdvertising()
         bonjourAdvertiser?.appManager = nil
         bonjourAdvertiser = nil
         bonjourBrowser = nil
@@ -66,6 +80,7 @@ class AppManager: ObservableObject {
         if shouldConnectToLocalNetwork {
             bonjourAdvertiser = BonjourServiceAdvertiser()
             bonjourAdvertiser?.appManager = self
+            bonjourAdvertiser?.startAdvertising()
             bonjourBrowser = BonjourServiceBrowser()
             bonjourClient = BonjourClient()
             

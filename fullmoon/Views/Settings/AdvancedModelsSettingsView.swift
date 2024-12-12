@@ -23,7 +23,7 @@ struct AdvancedModelsSettingsView: View {
                 }
                 
                 if appManager.shouldConnectToLocalNetwork {
-                    ForEach(appManager.discoveredPeers, id: \.self) { endpoint in
+                    ForEach(appManager.filteredDiscoveredPeers, id: \.self) { endpoint in
                         Button {
                             appManager.connectToPeer(endpoint)
                             appManager.playHaptic()
