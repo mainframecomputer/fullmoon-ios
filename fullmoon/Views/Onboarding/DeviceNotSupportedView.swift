@@ -11,9 +11,7 @@ struct DeviceNotSupportedView: View {
     var body: some View {
         VStack(spacing: 12) {
             Image(systemName: "iphone.slash")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 64, height: 64)
+                .font(.system(size: 64))
                 .foregroundStyle(.primary, .tertiary)
             
             VStack(spacing: 4) {

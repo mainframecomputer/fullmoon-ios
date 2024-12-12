@@ -26,44 +26,6 @@ class AppManager: ObservableObject {
         return .unknown
         #endif
     }
-    
-//    var isDeviceSupported: Bool {
-//        func getDeviceCode() -> String? {
-//            var systemInfo = utsname()
-//            uname(&systemInfo)
-//            let modelCode = withUnsafePointer(to: &systemInfo.machine) {
-//                $0.withMemoryRebound(to: CChar.self, capacity: 1) {
-//                    ptr in String.init(validatingUTF8: ptr)
-//                }
-//            }
-//            return modelCode
-//        }
-//        
-//        func extractNumber(beforeComma input: String) -> Int? {
-//            let components = input.split(separator: ",")
-//            if let firstPart = components.first {
-//                let numberString = firstPart.filter { $0.isNumber }
-//                return Int(numberString)
-//            }
-//            return nil
-//        }
-//        
-//        switch userInterfaceIdiom {
-//        case .mac:
-//            return true // TODO: Check if M1 or intel
-//        case .phone:
-//            guard let deviceCode = getDeviceCode(), let num = extractNumber(beforeComma: deviceCode) else {
-//                return false
-//            }
-//            return num >= 13 // iPhone 12 Mini or higher
-//        case .pad:
-//            guard let deviceCode = getDeviceCode(), let num = extractNumber(beforeComma: deviceCode) else {
-//                return false
-//            }
-//        case .unknown:
-//            return false
-//        }
-//    }
 
     enum LayoutType {
         case mac, phone, pad, unknown
