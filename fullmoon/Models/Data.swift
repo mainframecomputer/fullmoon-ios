@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import Network
 
 class AppManager: ObservableObject {
     @AppStorage("systemPrompt") var systemPrompt = "you are a helpful assistant"
@@ -16,6 +17,7 @@ class AppManager: ObservableObject {
     @AppStorage("appFontWidth") var appFontWidth: AppFontWidth = .standard
     @AppStorage("currentModelName") var currentModelName: String?
     @AppStorage("shouldPlayHaptics") var shouldPlayHaptics = true
+    @AppStorage("shouldConnectToLocalNetwork") var shouldConnectToLocalNetwork = false
     
     var userInterfaceIdiom: LayoutType {
         #if os(macOS)
@@ -39,10 +41,54 @@ class AppManager: ObservableObject {
         }
     }
     
+    // Add new properties for network functionality
+    private var bonjourAdvertiser: BonjourServiceAdvertiser?
+    private var bonjourBrowser: BonjourServiceBrowser?
+    private var bonjourClient: BonjourClient?
+    @Published var discoveredPeers: [NWEndpoint] = []
+    @Published var isConnectedToPeer: Bool = false
+    @Published var connectedPeerName: String?
+    @Published var connectedClients: [String] = []
+    
     init() {
         loadInstalledModelsFromUserDefaults()
+        setupNetworking()
     }
+    
+    // Add new method to handle networking setup
+    private func setupNetworking() {
+        // First clean up existing connections
+        bonjourAdvertiser?.appManager = nil
+        bonjourAdvertiser = nil
+        bonjourBrowser = nil
+        bonjourClient = nil
         
+        if shouldConnectToLocalNetwork {
+            bonjourAdvertiser = BonjourServiceAdvertiser()
+            bonjourAdvertiser?.appManager = self
+            bonjourBrowser = BonjourServiceBrowser()
+            bonjourClient = BonjourClient()
+            
+            // Subscribe to discovered services
+            bonjourBrowser?.$discoveredServices
+                .assign(to: &$discoveredPeers)
+        }
+        
+        // Reset state if networking is disabled
+        if !shouldConnectToLocalNetwork {
+            discoveredPeers = []
+            isConnectedToPeer = false
+            connectedPeerName = nil
+            connectedClients.removeAll()
+        }
+    }
+    
+    // Add observer for shouldConnectToLocalNetwork changes
+    func toggleLocalNetworking() {
+        shouldConnectToLocalNetwork.toggle()
+        setupNetworking()
+    }
+    
     // Function to save the array to UserDefaults as JSON
     private func saveInstalledModelsToUserDefaults() {
         if let jsonData = try? JSONEncoder().encode(installedModels) {
@@ -114,6 +160,39 @@ class AppManager: ObservableObject {
         default:
             return "moonphase.new.moon" // New Moon (fallback)
         }
+    }
+    
+    // Add method to connect to peer
+    func connectToPeer(_ endpoint: NWEndpoint) {
+        bonjourClient?.connectToService(endpoint: endpoint) { [weak self] success, name in
+            DispatchQueue.main.async {
+                self?.isConnectedToPeer = success
+                self?.connectedPeerName = name
+//                if success {
+//                    // Reset current model when connecting to a peer
+//                    self?.currentModelName = nil
+//                }
+            }
+        }
+    }
+    
+    // Add disconnect method to AppManager
+    func disconnectFromPeer() {
+        bonjourClient?.disconnect()
+        isConnectedToPeer = false
+        connectedPeerName = nil
+    }
+    
+    // Add this new method
+    func addConnectedClient(_ clientName: String) {
+        if !connectedClients.contains(clientName) {
+            connectedClients.append(clientName)
+        }
+    }
+    
+    // Add this new method
+    func removeConnectedClient(_ clientName: String) {
+        connectedClients.removeAll { $0 == clientName }
     }
 }
 

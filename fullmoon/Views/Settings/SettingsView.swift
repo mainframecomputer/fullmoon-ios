@@ -27,7 +27,7 @@ struct SettingsView: View {
                     
                     NavigationLink(destination: ModelsSettingsView()) {
                         Label("models", systemImage: "arrow.down.circle")
-                            .badge(appManager.modelDisplayName(appManager.currentModelName ?? ""))
+                            .badge(appManager.isConnectedToPeer ? (appManager.connectedPeerName ?? "device") : appManager.modelDisplayName(appManager.currentModelName ?? ""))
                     }
                 }
                 

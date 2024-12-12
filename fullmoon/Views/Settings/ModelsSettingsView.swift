@@ -26,23 +26,30 @@ struct ModelsSettingsView: View {
                             Text(appManager.modelDisplayName(modelName))
                                 .tint(.primary)
                         } icon: {
-                            Image(systemName: appManager.currentModelName == modelName ? "checkmark.circle.fill" : "circle")
+                            Image(systemName: appManager.currentModelName == modelName && !appManager.isConnectedToPeer ? "checkmark.circle.fill" : "circle")
                         }
                     }
                     #if os(macOS)
                     .buttonStyle(.plain)
                     #endif
                 }
+                
+                Button {
+                    showOnboardingInstallModelView.toggle()
+                } label: {
+                    Label("install a model", systemImage: "arrow.down.circle.dotted")
+                }
+                #if os(macOS)
+                .buttonStyle(.plain)
+                #endif
             }
             
-            Button {
-                showOnboardingInstallModelView.toggle()
-            } label: {
-                Label("install a model", systemImage: "arrow.down.circle.dotted")
+            Section {
+                NavigationLink(destination: AdvancedModelsSettingsView()) {
+                    Text("advanced")
+                        .badge(appManager.isConnectedToPeer ? (appManager.connectedPeerName ?? "device") : nil)
+                }
             }
-            #if os(macOS)
-            .buttonStyle(.plain)
-            #endif
         }
         .navigationTitle("models")
         #if os(iOS)
@@ -78,6 +85,8 @@ struct ModelsSettingsView: View {
         if let model = ModelConfiguration.availableModels.first(where: {
             $0.name == modelName
         }) {
+            appManager.disconnectFromPeer()
+            
             appManager.currentModelName = modelName
             appManager.playHaptic()
             await llm.switchModel(model)
