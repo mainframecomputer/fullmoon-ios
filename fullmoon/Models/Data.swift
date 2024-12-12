@@ -42,9 +42,9 @@ class AppManager: ObservableObject {
     }
     
     // Add new properties for network functionality
-    private var bonjourAdvertiser: BonjourServiceAdvertiser?
-    private var bonjourBrowser: BonjourServiceBrowser?
-    private var bonjourClient: BonjourClient?
+    var bonjourAdvertiser: BonjourServiceAdvertiser?
+    var bonjourBrowser: BonjourServiceBrowser?
+    var bonjourClient: BonjourClient?
     @Published var discoveredPeers: [NWEndpoint] = []
     @Published var isConnectedToPeer: Bool = false
     @Published var connectedPeerName: String?

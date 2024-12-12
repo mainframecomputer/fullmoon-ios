@@ -18,6 +18,11 @@ class LLMEvaluator {
     var modelInfo = ""
     var stat = ""
     var progress = 0.0
+    var appManager: AppManager
+
+    init(appManager: AppManager = AppManager()) {
+        self.appManager = appManager
+    }
 
     var modelConfiguration = ModelConfiguration.defaultModel
     
@@ -73,18 +78,21 @@ class LLMEvaluator {
         }
     }
 
-    func generate(modelName: String, thread: Thread, systemPrompt: String) async -> String {
+    func generate(thread: Thread, systemPrompt: String) async -> String {
         guard !running else { return "" }
 
         running = true
         self.output = ""
 
         do {
+            let modelName = appManager.currentModelName ?? modelConfiguration.name
             let modelContainer = try await load(modelName: modelName)
             let extraEOSTokens = modelConfiguration.extraEOSTokens
 
             // augment the prompt as needed
             let promptHistory = modelConfiguration.getPromptHistory(thread: thread, systemPrompt: systemPrompt)
+
+            // todo here we need to route the prompt to the server if we are connected to a remote device using the prompthistory as the data to receive an output
 
             let promptTokens = try await modelContainer.perform { _, tokenizer in
                 try tokenizer.applyChatTemplate(messages: promptHistory)

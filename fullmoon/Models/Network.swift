@@ -194,7 +194,7 @@ class BonjourServiceAdvertiser: NSObject, ObservableObject {
 }
 
 class BonjourClient: ObservableObject {
-    private var connection: NWConnection?
+    var connection: NWConnection?
     private var heartbeatTimer: Timer?
     private var serviceName: String?
     

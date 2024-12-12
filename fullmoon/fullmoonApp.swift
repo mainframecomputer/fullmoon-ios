@@ -14,7 +14,13 @@ struct fullmoonApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     #endif
     @StateObject var appManager = AppManager()
-    @State var llm = LLMEvaluator()
+    @State var llm: LLMEvaluator
+    
+    init() {
+        let appManager = AppManager()
+        self._appManager = StateObject(wrappedValue: appManager)
+        _llm = State(initialValue: LLMEvaluator(appManager: appManager))
+    }
     
     var body: some Scene {
         WindowGroup {

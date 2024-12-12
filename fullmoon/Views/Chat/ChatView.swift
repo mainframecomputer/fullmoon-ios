@@ -256,10 +256,8 @@ struct ChatView: View {
                     appManager.playHaptic()
                     sendMessage(Message(role: .user, content: message, thread: currentThread))
                     isPromptFocused = true
-                    if let modelName = appManager.currentModelName {
-                        let output = await llm.generate(modelName: modelName, thread: currentThread, systemPrompt: appManager.systemPrompt)
-                        sendMessage(Message(role: .assistant, content: output, thread: currentThread))
-                    }
+                    let output = await llm.generate(thread: currentThread, systemPrompt: appManager.systemPrompt)
+                    sendMessage(Message(role: .assistant, content: output, thread: currentThread))
                 }
             }
         }
