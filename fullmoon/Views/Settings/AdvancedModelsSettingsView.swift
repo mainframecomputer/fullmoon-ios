@@ -13,7 +13,7 @@ struct AdvancedModelsSettingsView: View {
     
     var body: some View {
         List {
-            Section(header: Text("local network"), footer: Text("select a model from a device on your local network")) {
+            Section(header: Text("local network"), footer: Text("select a model from a device running fullmoon on your local network")) {
                 Toggle(isOn: $appManager.shouldConnectToLocalNetwork) {
                     Text("connect")
                 }
@@ -23,6 +23,11 @@ struct AdvancedModelsSettingsView: View {
                 }
                 
                 if appManager.shouldConnectToLocalNetwork {
+                    if appManager.filteredDiscoveredPeers.isEmpty {
+                        Text("searching...")
+                            .foregroundStyle(.secondary)
+                    }
+                    
                     ForEach(appManager.filteredDiscoveredPeers, id: \.self) { endpoint in
                         Button {
                             appManager.connectToPeer(endpoint)
