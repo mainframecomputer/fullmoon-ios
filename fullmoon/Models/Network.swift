@@ -8,6 +8,8 @@
 import SwiftUI
 import Foundation
 import Network
+import MLX
+import MLXLLM
 
 let SERVICE_TYPE = "_fullmoon._tcp"
 
@@ -16,6 +18,29 @@ func getFriendlyName(from endpoint: NWEndpoint) -> String {
         return name
     }
     return endpoint.debugDescription
+}
+
+// Add message type enum before BonjourServiceAdvertiser class
+enum MessageType: String, Codable {
+    case clientName = "CLIENT_NAME"
+    case heartbeat = "HEARTBEAT"
+    case clientDisconnect = "CLIENT_DISCONNECT"
+    case prompt = "PROMPT"
+    case response = "RESPONSE"
+}
+
+typealias ChatMessage = [String: String]
+
+struct PromptMessage: Codable {
+    let type: String
+    let promptHistory: [[String: String]]
+    let modelName: String
+}
+
+struct ResponseMessage: Codable {
+    let type: String
+    let text: String
+    let isComplete: Bool
 }
 
 class BonjourServiceAdvertiser: NSObject, ObservableObject {
@@ -166,8 +191,8 @@ class BonjourServiceAdvertiser: NSObject, ObservableObject {
         // Update last heartbeat
         activeConnections[connectionId]?.lastHeartbeat = Date()
         
-        if message.hasPrefix("CLIENT_NAME:") {
-            let clientName = String(message.dropFirst("CLIENT_NAME:".count))
+        if message.hasPrefix("\(MessageType.clientName.rawValue):") {
+            let clientName = String(message.dropFirst("\(MessageType.clientName.rawValue):".count))
             
             // Prevent self-connection
             if clientName == deviceName {
@@ -179,10 +204,84 @@ class BonjourServiceAdvertiser: NSObject, ObservableObject {
                 self?.activeConnections[connectionId]?.name = clientName
                 self?.appManager?.addConnectedClient(clientName)
             }
-        } else if message == "HEARTBEAT" {
+        } else if message == MessageType.heartbeat.rawValue {
             // Handle heartbeat
-        } else if message == "CLIENT_DISCONNECT" {
+        } else if message == MessageType.clientDisconnect.rawValue {
             removeConnection(connectionId)
+        } else {
+            // Try to decode as a prompt message
+            if let data = message.data(using: .utf8),
+               let promptMessage = try? JSONDecoder().decode(PromptMessage.self, from: data) {
+                handlePromptMessage(promptMessage, connectionId: connectionId)
+            }
+        }
+    }
+    
+    private func handlePromptMessage(_ promptMessage: PromptMessage, connectionId: String) {
+        guard let connection = activeConnections[connectionId]?.connection else { return }
+        
+        Task {
+            do {
+                let evaluator = await LLMEvaluator(appManager: appManager!)
+                
+                // Load the requested model
+                let modelContainer = try await evaluator.load(modelName: promptMessage.modelName)
+                
+                // Get prompt tokens
+                let promptTokens = try await modelContainer.perform { _, tokenizer in
+                    try tokenizer.applyChatTemplate(messages: promptMessage.promptHistory)
+                }
+                
+                // Capture generate parameters and max tokens before async context
+                let generateParams = await evaluator.generateParameters
+                let maxTokens = await evaluator.maxTokens
+                let displayEveryNTokens = await evaluator.displayEveryNTokens
+                let extraEOSTokens = await evaluator.modelConfiguration.extraEOSTokens
+                
+                // Generate with streaming
+                await modelContainer.perform { model, tokenizer in
+                    MLXLLM.generate(
+                        promptTokens: promptTokens,
+                        parameters: generateParams,
+                        model: model,
+                        tokenizer: tokenizer,
+                        extraEOSTokens: extraEOSTokens
+                    ) { tokens in
+                        if tokens.count % displayEveryNTokens == 0 {
+                            let text = tokenizer.decode(tokens: tokens)
+                            
+                            // Send streaming response
+                            let response = ResponseMessage(
+                                type: MessageType.response.rawValue,
+                                text: text,
+                                isComplete: false
+                            )
+                            
+                            if let responseData = try? JSONEncoder().encode(response),
+                               let responseString = String(data: responseData, encoding: .utf8) {
+                                connection.send(content: responseString.data(using: .utf8)!, completion: .contentProcessed { _ in })
+                            }
+                        }
+                        
+                        return tokens.count >= maxTokens ? .stop : .more
+                    }
+                }
+                
+                // Send completion message
+                let finalResponse = ResponseMessage(
+                    type: MessageType.response.rawValue,
+                    text: "",
+                    isComplete: true
+                )
+                
+                if let responseData = try? JSONEncoder().encode(finalResponse),
+                   let responseString = String(data: responseData, encoding: .utf8) {
+                    connection.send(content: responseString.data(using: .utf8)!, completion: .contentProcessed { _ in })
+                }
+                
+            } catch {
+                print("Error handling prompt: \(error)")
+            }
         }
     }
     

@@ -9,6 +9,7 @@ import MLX
 import MLXLLM
 import MLXRandom
 import SwiftUI
+import Network
 
 @Observable
 @MainActor
@@ -86,14 +87,42 @@ class LLMEvaluator {
 
         do {
             let modelName = appManager.currentModelName ?? modelConfiguration.name
+            
+            // Check if we're connected to a remote peer
+            if appManager.isConnectedToPeer, let connection = (appManager.bonjourClient?.connection) {
+                // Get prompt history
+                let promptHistory = modelConfiguration.getPromptHistory(thread: thread, systemPrompt: systemPrompt)
+                
+                // Create prompt message
+                let promptMessage = PromptMessage(
+                    type: MessageType.prompt.rawValue,
+                    promptHistory: promptHistory,
+                    modelName: modelName
+                )
+                
+                // Convert to JSON and send
+                let encoder = JSONEncoder()
+                if let promptData = try? encoder.encode(promptMessage) {
+                    connection.send(content: promptData, completion: .contentProcessed { error in
+                        if let error = error {
+                            Task { @MainActor in
+                                self.output = "Failed to send prompt to remote peer: \(error)"
+                            }
+                        }
+                    })
+                    
+                    // Set up receiving the streamed response
+                    setupReceiving(connection)
+                    
+                    return self.output
+                }
+            }
+
+            // Local generation if not connected to peer
             let modelContainer = try await load(modelName: modelName)
             let extraEOSTokens = modelConfiguration.extraEOSTokens
-
-            // augment the prompt as needed
             let promptHistory = modelConfiguration.getPromptHistory(thread: thread, systemPrompt: systemPrompt)
-
-            // todo here we need to route the prompt to the server if we are connected to a remote device using the prompthistory as the data to receive an output
-
+            
             let promptTokens = try await modelContainer.perform { _, tokenizer in
                 try tokenizer.applyChatTemplate(messages: promptHistory)
             }
@@ -141,6 +170,34 @@ class LLMEvaluator {
             return model
         } else {
             return nil
+        }
+    }
+
+    private func setupReceiving(_ connection: NWConnection) {
+        connection.receive(minimumIncompleteLength: 1, maximumLength: 65536) { [weak self] data, _, _, error in
+            if let error = error {
+                Task { @MainActor in
+                    self?.output = "Failed to receive response: \(error)"
+                }
+                return
+            }
+            
+            if let data = data,
+               let responseMessage = try? JSONDecoder().decode(ResponseMessage.self, from: data) {
+                Task { @MainActor in
+                    if !responseMessage.text.isEmpty {
+                        self?.output = responseMessage.text
+                    }
+                    
+                    // If response is complete, mark as not running
+                    if responseMessage.isComplete {
+                        self?.running = false
+                    } else {
+                        // Continue receiving if not complete
+                        self?.setupReceiving(connection)
+                    }
+                }
+            }
         }
     }
 }
