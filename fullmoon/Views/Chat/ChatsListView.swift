@@ -45,6 +45,12 @@ struct ChatsListView: View {
                             setCurrentThread(thread)
                         }
                         #if os(macOS)
+                        .swipeActions {
+                            Button("Delete") {
+                                deleteThread(thread)
+                            }
+                            .tint(.red)
+                        }
                         .contextMenu {
                             Button {
                                 deleteThread(thread)
