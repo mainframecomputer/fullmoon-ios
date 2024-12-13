@@ -33,7 +33,11 @@ struct ChatView: View {
             TextField("message", text: $prompt, axis: .vertical)
                 .focused($isPromptFocused)
                 .textFieldStyle(.plain)
-                .padding(.horizontal)
+            #if os(iOS)
+                .padding(.horizontal, 16)
+            #elseif os(macOS)
+                .padding(.horizontal, 12)
+            #endif
                 .if(appManager.userInterfaceIdiom == .pad || appManager.userInterfaceIdiom == .mac) { view in
                     view
                         .onSubmit {
@@ -54,10 +58,17 @@ struct ChatView: View {
                 generateButton
             }
         }
+        #if os(iOS)
         .background(
             RoundedRectangle(cornerRadius: 24)
                 .fill(platformBackgroundColor)
         )
+        #elseif os(macOS)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(platformBackgroundColor)
+        )
+        #endif
     }
 
     var modelPickerButton: some View {
@@ -156,10 +167,19 @@ struct ChatView: View {
                 .textSelection(.enabled)
                 .if(message.role == .user) { view in
                     view
-                        .padding(.horizontal, 16)
-                        .padding(.vertical, 12)
-                        .background(platformBackgroundColor)
+                    #if os(iOS)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+                    #else
+                    .padding(.horizontal, 16 * 2 / 3)
+                    .padding(.vertical, 8)
+                    #endif
+                    .background(platformBackgroundColor)
+                    #if os(iOS)
                         .mask(RoundedRectangle(cornerRadius: 24))
+                    #elseif os(macOS)
+                        .mask(RoundedRectangle(cornerRadius: 16))
+                    #endif
                 }
                 .padding(message.role == .user ? .leading : .trailing, 48)
             if message.role == .assistant { Spacer() }
