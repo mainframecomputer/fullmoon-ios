@@ -20,8 +20,10 @@ struct ChatsSettingsView: View {
                 TextEditor(text: $appManager.systemPrompt)
             }
             
-            Section {
-                Toggle("haptics", isOn: $appManager.shouldPlayHaptics)
+            if appManager.userInterfaceIdiom == .phone {
+                Section {
+                    Toggle("haptics", isOn: $appManager.shouldPlayHaptics)
+                }
             }
             
             Section {
