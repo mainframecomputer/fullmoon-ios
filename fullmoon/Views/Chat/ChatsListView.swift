@@ -22,6 +22,9 @@ struct ChatsListView: View {
         NavigationStack {
             ZStack {
                 List(selection: $selection) {
+                    #if os(macOS)
+                    Section {} // adds some space below the search bar on mac
+                    #endif
                     ForEach(filteredThreads) { thread in
                         VStack(alignment: .leading) {
                             Group {
