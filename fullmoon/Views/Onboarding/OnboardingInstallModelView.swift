@@ -161,5 +161,8 @@ struct OnboardingInstallModelView: View {
 }
 
 #Preview {
+    @Previewable @State var appManager = AppManager()
+    
     OnboardingInstallModelView(showOnboarding: .constant(true))
+        .environmentObject(appManager)
 }
