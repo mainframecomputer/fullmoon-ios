@@ -22,9 +22,9 @@ struct ChatView: View {
 
     let platformBackgroundColor: Color = {
         #if os(iOS)
-            return Color(UIColor.secondarySystemBackground)
+        return Color(UIColor.secondarySystemBackground)
         #elseif os(macOS)
-            return Color(NSColor.secondarySystemFill)
+        return Color(NSColor.secondarySystemFill)
         #endif
     }()
 
@@ -149,6 +149,33 @@ struct ChatView: View {
         return "chat"
     }
 
+    func messageView(_ message: Message) -> some View {
+        HStack {
+            if message.role == .user { Spacer() }
+            Markdown(message.content)
+                .textSelection(.enabled)
+                .if(message.role == .user) { view in
+                    view
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 12)
+                        .background(platformBackgroundColor)
+                        .mask(RoundedRectangle(cornerRadius: 24))
+                }
+                .padding(message.role == .user ? .leading : .trailing, 48)
+            if message.role == .assistant { Spacer() }
+        }
+    }
+
+    func outputView(_ content: String) -> some View {
+        HStack {
+            Markdown(content + " 🌕")
+                .textSelection(.enabled)
+                .padding(.trailing, 48)
+
+            Spacer()
+        }
+    }
+
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
@@ -157,38 +184,13 @@ struct ChatView: View {
                         ScrollView(.vertical) {
                             VStack(alignment: .leading, spacing: 0) {
                                 ForEach(currentThread.sortedMessages) { message in
-                                    HStack {
-                                        if message.role == .user {
-                                            Spacer()
-                                        }
-
-                                        Markdown(message.content)
-                                            .textSelection(.enabled)
-                                            .if(message.role == .user) { view in
-                                                view
-                                                    .padding(.horizontal, 16)
-                                                    .padding(.vertical, 12)
-                                                    .background(platformBackgroundColor)
-                                                    .mask(RoundedRectangle(cornerRadius: 24))
-                                            }
-                                            .padding(message.role == .user ? .leading : .trailing, 48)
-
-                                        if message.role == .assistant {
-                                            Spacer()
-                                        }
-                                    }
-                                    .padding()
+                                    messageView(message)
+                                        .padding()
                                 }
 
                                 if llm.running && !llm.output.isEmpty {
-                                    HStack {
-                                        Markdown(llm.output + " 🌕")
-                                            .textSelection(.enabled)
-                                            .padding(.trailing, 48)
-
-                                        Spacer()
-                                    }
-                                    .padding()
+                                    outputView(llm.output)
+                                        .padding()
                                 }
                             }
 
@@ -247,34 +249,34 @@ struct ChatView: View {
                 }
                 .toolbar {
                     #if os(iOS)
-                        if appManager.userInterfaceIdiom == .phone {
-                            ToolbarItem(placement: .topBarLeading) {
-                                Button(action: {
-                                    appManager.playHaptic()
-                                    showChats.toggle()
-                                }) {
-                                    Image(systemName: "list.bullet")
-                                }
+                    if appManager.userInterfaceIdiom == .phone {
+                        ToolbarItem(placement: .topBarLeading) {
+                            Button(action: {
+                                appManager.playHaptic()
+                                showChats.toggle()
+                            }) {
+                                Image(systemName: "list.bullet")
                             }
                         }
+                    }
 
-                        ToolbarItem(placement: .topBarTrailing) {
-                            Button(action: {
-                                appManager.playHaptic()
-                                showSettings.toggle()
-                            }) {
-                                Image(systemName: "gear")
-                            }
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button(action: {
+                            appManager.playHaptic()
+                            showSettings.toggle()
+                        }) {
+                            Image(systemName: "gear")
                         }
+                    }
                     #elseif os(macOS)
-                        ToolbarItem(placement: .primaryAction) {
-                            Button(action: {
-                                appManager.playHaptic()
-                                showSettings.toggle()
-                            }) {
-                                Label("settings", systemImage: "gear")
-                            }
+                    ToolbarItem(placement: .primaryAction) {
+                        Button(action: {
+                            appManager.playHaptic()
+                            showSettings.toggle()
+                        }) {
+                            Label("settings", systemImage: "gear")
                         }
+                    }
                     #endif
                 }
         }
