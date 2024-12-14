@@ -27,6 +27,10 @@ struct ChatView: View {
         return Color(NSColor.secondarySystemFill)
         #endif
     }()
+    
+    var isPromptEmpty: Bool {
+        prompt.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
 
     var chatInput: some View {
         HStack(alignment: .bottom, spacing: 0) {
@@ -115,7 +119,7 @@ struct ChatView: View {
                 .frame(width: 16, height: 16)
             #endif
         }
-        .disabled(prompt.isEmpty)
+        .disabled(isPromptEmpty)
         #if os(iOS)
             .padding(.trailing, 12)
             .padding(.bottom, 12)
@@ -301,9 +305,9 @@ struct ChatView: View {
                 }
         }
     }
-
+    
     private func generate() {
-        if !prompt.isEmpty {
+        if !isPromptEmpty {
             if currentThread == nil {
                 let newThread = Thread()
                 currentThread = newThread
