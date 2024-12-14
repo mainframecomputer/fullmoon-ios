@@ -8,7 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		860F26A42CBC31D6004E8D40 /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = 860F26A32CBC31D6004E8D40 /* MarkdownUI */; };
-		869B97602D0DD3EC0078DF5A /* MLXLLM in Frameworks */ = {isa = PBXBuildFile; productRef = 869B975F2D0DD3EC0078DF5A /* MLXLLM */; };
+		869B97622D0DD46B0078DF5A /* MLXLMCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 869B97612D0DD46B0078DF5A /* MLXLMCommon */; };
+		869B97642D0DD4D80078DF5A /* MLXLLM in Frameworks */ = {isa = PBXBuildFile; productRef = 869B97632D0DD4D80078DF5A /* MLXLLM */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,7 +42,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				869B97602D0DD3EC0078DF5A /* MLXLLM in Frameworks */,
+				869B97642D0DD4D80078DF5A /* MLXLLM in Frameworks */,
+				869B97622D0DD46B0078DF5A /* MLXLMCommon in Frameworks */,
 				860F26A42CBC31D6004E8D40 /* MarkdownUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -94,7 +96,8 @@
 			name = fullmoon;
 			packageProductDependencies = (
 				860F26A32CBC31D6004E8D40 /* MarkdownUI */,
-				869B975F2D0DD3EC0078DF5A /* MLXLLM */,
+				869B97612D0DD46B0078DF5A /* MLXLMCommon */,
+				869B97632D0DD4D80078DF5A /* MLXLLM */,
 			);
 			productName = fullmoon;
 			productReference = 860E9CCE2CB055B000C5BB52 /* fullmoon.app */;
@@ -413,7 +416,12 @@
 			package = 860F26A22CBC31D6004E8D40 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */;
 			productName = MarkdownUI;
 		};
-		869B975F2D0DD3EC0078DF5A /* MLXLLM */ = {
+		869B97612D0DD46B0078DF5A /* MLXLMCommon */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 860E9CE22CB0564600C5BB52 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
+			productName = MLXLMCommon;
+		};
+		869B97632D0DD4D80078DF5A /* MLXLLM */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 860E9CE22CB0564600C5BB52 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
 			productName = MLXLLM;
