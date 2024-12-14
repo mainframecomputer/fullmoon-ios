@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import MLXLLM
+import MLXLMCommon
 
 struct ModelsSettingsView: View {
     @EnvironmentObject var appManager: AppManager

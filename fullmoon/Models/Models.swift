@@ -5,11 +5,11 @@
 //  Created by Jordan Singer on 10/4/24.
 //
 
-import MLXLLM
+import MLXLMCommon
 import Foundation
 
 extension ModelConfiguration: @retroactive Equatable {
-    public static func == (lhs: MLXLLM.ModelConfiguration, rhs: MLXLLM.ModelConfiguration) -> Bool {
+    public static func == (lhs: MLXLMCommon.ModelConfiguration, rhs: MLXLMCommon.ModelConfiguration) -> Bool {
         return lhs.name == rhs.name
     }
     

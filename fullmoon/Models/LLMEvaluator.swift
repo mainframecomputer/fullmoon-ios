@@ -7,6 +7,7 @@
 
 import MLX
 import MLXLLM
+import MLXLMCommon
 import MLXRandom
 import SwiftUI
 
@@ -55,7 +56,7 @@ class LLMEvaluator {
             // limit the buffer cache
             MLX.GPU.set(cacheLimit: 20 * 1024 * 1024)
 
-            let modelContainer = try await MLXLLM.loadModelContainer(configuration: model!)
+            let modelContainer = try await LLMModelFactory.shared.loadContainer(configuration: model!)
             {
                 [modelConfiguration] progress in
                 Task { @MainActor in
@@ -87,22 +88,17 @@ class LLMEvaluator {
 
         do {
             let modelContainer = try await load(modelName: modelName)
-            let extraEOSTokens = modelConfiguration.extraEOSTokens
 
             // augment the prompt as needed
             let promptHistory = modelConfiguration.getPromptHistory(thread: thread, systemPrompt: systemPrompt)
 
-            let promptTokens = try await modelContainer.perform { _, tokenizer in
-                try tokenizer.applyChatTemplate(messages: promptHistory)
-            }
-
             // each time you generate you will get something new
             MLXRandom.seed(UInt64(Date.timeIntervalSinceReferenceDate * 1000))
 
-            let result = await modelContainer.perform { model, tokenizer in
-                MLXLLM.generate(
-                    promptTokens: promptTokens, parameters: generateParameters, model: model,
-                    tokenizer: tokenizer, extraEOSTokens: extraEOSTokens
+            let result = try await modelContainer.perform { context in
+                let input = try await context.processor.prepare(input: .init(messages: promptHistory))
+                return try MLXLMCommon.generate(
+                    input: input, parameters: generateParameters, context: context
                 ) { tokens in
                     
                     var cancelled = false
@@ -112,7 +108,7 @@ class LLMEvaluator {
                     
                     // update the output -- this will make the view show the text as it generates
                     if tokens.count % displayEveryNTokens == 0 {
-                        let text = tokenizer.decode(tokens: tokens)
+                        let text = context.tokenizer.decode(tokens: tokens)
                         Task { @MainActor in
                             self.output = text
                         }

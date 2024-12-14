@@ -5,7 +5,7 @@
 //  Created by Jordan Singer on 10/4/24.
 //
 
-import MLXLLM
+import MLXLMCommon
 import SwiftUI
 
 struct OnboardingInstallModelView: View {

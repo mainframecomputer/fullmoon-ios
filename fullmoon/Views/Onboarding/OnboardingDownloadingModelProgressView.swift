@@ -6,7 +6,7 @@
 //
 
 import SwiftUI
-import MLXLLM
+import MLXLMCommon
 
 struct OnboardingDownloadingModelProgressView: View {
     @Binding var showOnboarding: Bool
