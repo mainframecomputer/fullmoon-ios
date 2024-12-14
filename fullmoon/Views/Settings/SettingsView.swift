@@ -40,8 +40,13 @@ struct SettingsView: View {
                 Section {
                     HStack {
                         Spacer()
-                        Image(systemName: appManager.getMoonPhaseIcon())
-                            .foregroundStyle(.quaternary)
+                        VStack(spacing: 4) {
+                            Image(systemName: appManager.getMoonPhaseIcon())
+                                .foregroundStyle(.quaternary)
+                            Text("v\(Bundle.main.releaseVersionNumber ?? "0").\(Bundle.main.buildVersionNumber ?? "0")")
+                                .font(.footnote)
+                                .foregroundStyle(.tertiary)
+                        }
                         Spacer()
                     }
                     .padding(.vertical)
@@ -73,6 +78,15 @@ struct SettingsView: View {
         #if os(macOS)
         .frame(width: 360, height: 360)
         #endif
+    }
+}
+
+extension Bundle {
+    var releaseVersionNumber: String? {
+        return infoDictionary?["CFBundleShortVersionString"] as? String
+    }
+    var buildVersionNumber: String? {
+        return infoDictionary?["CFBundleVersion"] as? String
     }
 }
 
