@@ -48,7 +48,11 @@ struct RequestLLMIntent: AppIntent {
                 throw $prompt.requestValue("\(output)") // re-prompt infinitely until user cancels
             }
             
-            return .result(value: output, dialog: "continue chatting in the app")
+            if continuous {
+                return .result(value: output, dialog: "continue chatting in the app")
+            }
+            
+            return .result(value: output, dialog: "\(output)")
         }
         else {
             let error = "no model is currently selected. open the app and select a model first."
