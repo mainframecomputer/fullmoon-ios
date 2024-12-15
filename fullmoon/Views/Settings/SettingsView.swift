@@ -29,6 +29,12 @@ struct SettingsView: View {
                         Label("models", systemImage: "arrow.down.circle")
                             .badge(appManager.modelDisplayName(appManager.currentModelName ?? ""))
                     }
+                    
+                    #if os(macOS)
+                    NavigationLink(destination: ServerView()) {
+                        Label("server", systemImage: "server.rack")
+                    }
+                    #endif
                 }
                 
                 Section {
