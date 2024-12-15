@@ -7,10 +7,10 @@ struct RequestLLMIntent: AppIntent {
     static var title: LocalizedStringResource = "new chat"
     static var description: LocalizedStringResource = "start a new chat"
     
-    @Parameter(title: "Continuous chat", default: true)
+    @Parameter(title: "continuous chat", default: true)
     var continuous: Bool
     
-    @Parameter(title: "message", requestValueDialog: IntentDialog("new chat"))
+    @Parameter(title: "message", requestValueDialog: IntentDialog("chat"))
     var prompt: String
 
     static var parameterSummary: some ParameterSummary {
@@ -31,7 +31,7 @@ struct RequestLLMIntent: AppIntent {
             if let output = thread.messages.last?.content {
                 return .result(value: output, dialog: "continue chatting in the app") // if prompt is empty and this is not the first message, return the result
             } else {
-                throw $prompt.requestValue("new chat") // re-prompt
+                throw $prompt.requestValue("chat") // re-prompt
             }
         }
 
