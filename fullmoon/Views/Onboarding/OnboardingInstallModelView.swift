@@ -15,12 +15,9 @@ struct OnboardingInstallModelView: View {
     @State var selectedModel = ModelConfiguration.defaultModel
     let suggestedModel = ModelConfiguration.defaultModel
 
-    func sizeBadge(_ model: ModelConfiguration?) -> String {
-        let size = model?.modelSize
-        if let size {
-            return "\(size) GB"
-        }
-        return "nil"
+    func sizeBadge(_ model: ModelConfiguration?) -> String? {
+        guard let size = model?.modelSize else { return nil }
+        return "\(size) GB"
     }
 
     var modelsList: some View {
@@ -96,7 +93,7 @@ struct OnboardingInstallModelView: View {
                         }
                         .badge(sizeBadge(model))
                         #if os(macOS)
-                            .buttonStyle(.plain)
+                        .buttonStyle(.plain)
                         #endif
                     }
                 }
