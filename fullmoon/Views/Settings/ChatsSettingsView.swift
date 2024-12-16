@@ -23,6 +23,7 @@ struct ChatsSettingsView: View {
             if appManager.userInterfaceIdiom == .phone {
                 Section {
                     Toggle("haptics", isOn: $appManager.shouldPlayHaptics)
+                        .tint(.green)
                 }
             }
             
