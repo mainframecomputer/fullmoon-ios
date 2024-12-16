@@ -49,7 +49,7 @@ class LLMEvaluator {
     /// load and return the model -- can be called multiple times, subsequent calls will
     /// just return the loaded model
     func load(modelName: String) async throws -> ModelContainer {
-        let model = getModelByName(modelName)
+        let model = ModelConfiguration.getModelByName(modelName)
         
         switch loadState {
         case .idle:
@@ -134,13 +134,5 @@ class LLMEvaluator {
 
         running = false
         return output
-    }
-    
-    func getModelByName(_ name: String) -> ModelConfiguration? {
-        if let model = ModelConfiguration.availableModels.first(where: { $0.name == name }) {
-            return model
-        } else {
-            return nil
-        }
     }
 }
