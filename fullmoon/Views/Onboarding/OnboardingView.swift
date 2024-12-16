@@ -30,9 +30,16 @@ struct OnboardingView: View {
                 }
                 
                 Spacer()
-                                
+                
                 VStack(alignment: .leading, spacing: 24) {
-                    Label {
+                    HStack{
+                        Image(systemName: "message")
+                            .resizable()
+                            .aspectRatio(contentMode: .fit)
+                            .frame(width: 24, height: 24)
+                            .foregroundStyle(.secondary)
+                            .padding(.trailing, 8)
+                        
                         VStack(alignment: .leading) {
                             Text("fast")
                                 .font(.headline)
@@ -40,16 +47,16 @@ struct OnboardingView: View {
                                 .font(.callout)
                                 .foregroundStyle(.secondary)
                         }
-                    } icon: {
-                        Image(systemName: "message")
+                    }
+                    
+                    HStack {
+                        Image(systemName: "checkmark.shield")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 24, height: 24)
                             .foregroundStyle(.secondary)
                             .padding(.trailing, 8)
-                    }
-                    
-                    Label {
+                        
                         VStack(alignment: .leading) {
                             Text("private")
                                 .font(.headline)
@@ -57,16 +64,16 @@ struct OnboardingView: View {
                                 .font(.callout)
                                 .foregroundStyle(.secondary)
                         }
-                    } icon: {
-                        Image(systemName: "checkmark.shield")
+                    }
+                    
+                    HStack {
+                        Image(systemName: "chevron.left.forwardslash.chevron.right")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 24, height: 24)
                             .foregroundStyle(.secondary)
                             .padding(.trailing, 8)
-                    }
-                    
-                    Label {
+                        
                         VStack(alignment: .leading) {
                             Text("open source")
                                 .font(.headline)
@@ -74,13 +81,6 @@ struct OnboardingView: View {
                                 .font(.callout)
                                 .foregroundStyle(.secondary)
                         }
-                    } icon: {
-                        Image(systemName: "chevron.left.forwardslash.chevron.right")
-                            .resizable()
-                            .aspectRatio(contentMode: .fit)
-                            .frame(width: 24, height: 24)
-                            .foregroundStyle(.secondary)
-                            .padding(.trailing, 8)
                     }
                 }
                 .frame(maxWidth: .infinity, alignment: .leading)
