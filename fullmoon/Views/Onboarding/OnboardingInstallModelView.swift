@@ -16,7 +16,11 @@ struct OnboardingInstallModelView: View {
     let suggestedModel = ModelConfiguration.defaultModel
 
     func sizeBadge(_ model: ModelConfiguration?) -> String {
-        "\(model?.modelSize ?? 0) GB"
+        let size = model?.modelSize
+        if let size {
+            return "\(size) GB"
+        }
+        return "nil"
     }
 
     var modelsList: some View {

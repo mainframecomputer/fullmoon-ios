@@ -59,11 +59,11 @@ extension ModelConfiguration: @retroactive Equatable {
     }
     
     /// Returns the model's approximate size, in GB.
-    public var modelSize: Decimal {
+    public var modelSize: Decimal? {
         switch self {
         case .llama_3_2_1B_4bit: return 0.7
         case .llama_3_2_3b_4bit: return 1.8
-        default: return 0
+        default: return nil
         }
     }
 }
