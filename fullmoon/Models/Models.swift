@@ -30,6 +30,14 @@ extension ModelConfiguration: @retroactive Equatable {
         llama_3_2_1B_4bit
     }
     
+    public static func getModelByName(_ name: String) -> ModelConfiguration? {
+        if let model = availableModels.first(where: { $0.name == name }) {
+            return model
+        } else {
+            return nil
+        }
+    }
+    
     func getPromptHistory(thread: Thread, systemPrompt: String) -> [[String: String]] {
         var history: [[String: String]] = []
         
@@ -48,5 +56,14 @@ extension ModelConfiguration: @retroactive Equatable {
         }
         
         return history
+    }
+    
+    /// Returns the model's approximate size, in GB.
+    public var modelSize: Decimal {
+        switch self {
+        case .llama_3_2_1B_4bit: return 0.7
+        case .llama_3_2_3b_4bit: return 1.8
+        default: return 0
+        }
     }
 }

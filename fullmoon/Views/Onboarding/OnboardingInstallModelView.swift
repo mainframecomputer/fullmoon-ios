@@ -15,6 +15,10 @@ struct OnboardingInstallModelView: View {
     @State var selectedModel = ModelConfiguration.defaultModel
     let suggestedModel = ModelConfiguration.defaultModel
 
+    func sizeBadge(_ model: ModelConfiguration?) -> String {
+        "\(model?.modelSize ?? 0) GB"
+    }
+
     var modelsList: some View {
         List {
             Section {
@@ -42,6 +46,7 @@ struct OnboardingInstallModelView: View {
             if appManager.installedModels.count > 0 {
                 Section(header: Text("Installed")) {
                     ForEach(appManager.installedModels, id: \.self) { modelName in
+                        let model = ModelConfiguration.getModelByName(modelName)
                         Button {} label: {
                             Label {
                                 Text(appManager.modelDisplayName(modelName))
@@ -49,11 +54,12 @@ struct OnboardingInstallModelView: View {
                                 Image(systemName: "checkmark")
                             }
                         }
+                        .badge(sizeBadge(model))
                         #if os(macOS)
-                        .buttonStyle(.plain)
+                            .buttonStyle(.plain)
                         #endif
-                        .foregroundStyle(.secondary)
-                        .disabled(true)
+                            .foregroundStyle(.secondary)
+                            .disabled(true)
                     }
                 }
             } else {
@@ -66,8 +72,9 @@ struct OnboardingInstallModelView: View {
                             Image(systemName: selectedModel.name == suggestedModel.name ? "checkmark.circle.fill" : "circle")
                         }
                     }
+                    .badge(sizeBadge(suggestedModel))
                     #if os(macOS)
-                    .buttonStyle(.plain)
+                        .buttonStyle(.plain)
                     #endif
                 }
             }
@@ -83,24 +90,25 @@ struct OnboardingInstallModelView: View {
                                 Image(systemName: selectedModel.name == model.name ? "checkmark.circle.fill" : "circle")
                             }
                         }
+                        .badge(sizeBadge(model))
                         #if os(macOS)
-                        .buttonStyle(.plain)
+                            .buttonStyle(.plain)
                         #endif
                     }
                 }
             }
 
             #if os(macOS)
-                Section {
-                    NavigationLink(destination: OnboardingDownloadingModelProgressView(showOnboarding: $showOnboarding, selectedModel: $selectedModel)) {
-                        Button {} label: {
-                            Text("install")
-                        }
-                        .buttonStyle(.borderedProminent)
-                        .allowsHitTesting(false)
+            Section {
+                NavigationLink(destination: OnboardingDownloadingModelProgressView(showOnboarding: $showOnboarding, selectedModel: $selectedModel)) {
+                    Button {} label: {
+                        Text("install")
                     }
-                    .disabled(filteredModels.isEmpty)
+                    .buttonStyle(.borderedProminent)
+                    .allowsHitTesting(false)
                 }
+                .disabled(filteredModels.isEmpty)
+            }
             #endif
         }
     }
@@ -153,16 +161,16 @@ struct OnboardingInstallModelView: View {
 
     func checkMetal3Support() {
         #if os(iOS)
-            if let device = MTLCreateSystemDefaultDevice() {
-                deviceSupportsMetal3 = device.supportsFamily(.metal3)
-            }
+        if let device = MTLCreateSystemDefaultDevice() {
+            deviceSupportsMetal3 = device.supportsFamily(.metal3)
+        }
         #endif
     }
 }
 
 #Preview {
     @Previewable @State var appManager = AppManager()
-    
+
     OnboardingInstallModelView(showOnboarding: .constant(true))
         .environmentObject(appManager)
 }
