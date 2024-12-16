@@ -33,7 +33,7 @@ struct SettingsView: View {
                 
                 Section {
                     NavigationLink(destination: CreditsView()) {
-                        Text("credits")
+                        Label("credits", systemImage: "shippingbox")
                     }
                 }
                 
