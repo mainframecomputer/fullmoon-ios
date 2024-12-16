@@ -280,4 +280,6 @@ struct ChatView: View {
 #Preview {
     @FocusState var isPromptFocused: Bool
     ChatView(currentThread: .constant(nil), isPromptFocused: $isPromptFocused, showChats: .constant(false), showSettings: .constant(false))
+        .environmentObject(AppManager())
+        .environment(LLMEvaluator())
 }
