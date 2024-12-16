@@ -62,4 +62,5 @@ struct AppearanceSettingsView: View {
 
 #Preview {
     AppearanceSettingsView()
+        .environmentObject(AppManager())
 }

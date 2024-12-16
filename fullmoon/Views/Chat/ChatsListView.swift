@@ -167,4 +167,5 @@ struct ChatsListView: View {
 #Preview {
     @FocusState var isPromptFocused: Bool
     ChatsListView(currentThread: .constant(nil), isPromptFocused: $isPromptFocused)
+        .environmentObject(AppManager())
 }
