@@ -92,7 +92,8 @@ struct ConversationView: View {
             }
             .onChange(of: scrollID) { old, new in
                 // interrupt auto scroll to bottom if user scrolls away
-                if llm.running && old == "bottom" {
+                print("scrolled")
+                if llm.running {
                     scrollInterrupted = true
                 }
             }
