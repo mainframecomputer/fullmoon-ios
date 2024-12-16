@@ -20,6 +20,10 @@ struct ChatView: View {
     @Binding var showChats: Bool
     @Binding var showSettings: Bool
 
+    var isPromptEmpty: Bool {
+        prompt.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+    }
+
     let platformBackgroundColor: Color = {
         #if os(iOS)
         return Color(UIColor.secondarySystemBackground)
@@ -27,10 +31,6 @@ struct ChatView: View {
         return Color(NSColor.secondarySystemFill)
         #endif
     }()
-    
-    var isPromptEmpty: Bool {
-        prompt.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
-    }
 
     var chatInput: some View {
         HStack(alignment: .bottom, spacing: 0) {
@@ -164,72 +164,11 @@ struct ChatView: View {
         return "chat"
     }
 
-    func messageView(_ message: Message) -> some View {
-        HStack {
-            if message.role == .user { Spacer() }
-            Markdown(message.content)
-                .textSelection(.enabled)
-                .if(message.role == .user) { view in
-                    view
-                    #if os(iOS)
-                    .padding(.horizontal, 16)
-                    .padding(.vertical, 12)
-                    #else
-                    .padding(.horizontal, 16 * 2 / 3)
-                    .padding(.vertical, 8)
-                    #endif
-                    .background(platformBackgroundColor)
-                    #if os(iOS)
-                        .mask(RoundedRectangle(cornerRadius: 24))
-                    #elseif os(macOS)
-                        .mask(RoundedRectangle(cornerRadius: 16))
-                    #endif
-                }
-                .padding(message.role == .user ? .leading : .trailing, 48)
-            if message.role == .assistant { Spacer() }
-        }
-    }
-
-    func outputView(_ content: String) -> some View {
-        HStack {
-            Markdown(content + " 🌕")
-                .textSelection(.enabled)
-                .padding(.trailing, 48)
-
-            Spacer()
-        }
-    }
-
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
                 if let currentThread = currentThread {
-                    ScrollViewReader { scrollView in
-                        ScrollView(.vertical) {
-                            VStack(alignment: .leading, spacing: 0) {
-                                ForEach(currentThread.sortedMessages) { message in
-                                    messageView(message)
-                                        .padding()
-                                }
-
-                                if llm.running && !llm.output.isEmpty {
-                                    outputView(llm.output)
-                                        .padding()
-                                }
-                            }
-
-                            Rectangle()
-                                .fill(.clear)
-                                .frame(height: 1)
-                                .id(bottomID)
-                        }
-                        .onChange(of: llm.output) { _, _ in
-                            scrollView.scrollTo(bottomID)
-                            appManager.playHaptic()
-                        }
-                    }
-                    .defaultScrollAnchor(.bottom)
-                    .scrollDismissesKeyboard(.interactively)
+                    ConversationView(thread: currentThread)
                 } else {
                     Spacer()
                     Image(systemName: appManager.getMoonPhaseIcon())
@@ -305,7 +244,7 @@ struct ChatView: View {
                 }
         }
     }
-    
+
     private func generate() {
         if !isPromptEmpty {
             if currentThread == nil {
