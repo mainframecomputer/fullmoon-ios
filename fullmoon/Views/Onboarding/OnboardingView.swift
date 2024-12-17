@@ -16,8 +16,10 @@ struct OnboardingView: View {
                 Spacer()
                 
                 VStack(spacing: 12) {
-                    Text("🌕")
-                        .font(.system(size: 64))
+                    Image(.moon)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 64, height: 64)
                     
                     VStack(spacing: 4) {
                         Text("fullmoon")
