@@ -16,6 +16,7 @@ class AppManager: ObservableObject {
     @AppStorage("appFontWidth") var appFontWidth: AppFontWidth = .standard
     @AppStorage("currentModelName") var currentModelName: String?
     @AppStorage("shouldPlayHaptics") var shouldPlayHaptics = true
+    @AppStorage("numberOfVisits") var numberOfVisits = 0
     
     var userInterfaceIdiom: LayoutType {
         #if os(macOS)
@@ -42,7 +43,12 @@ class AppManager: ObservableObject {
     init() {
         loadInstalledModelsFromUserDefaults()
     }
-        
+    
+    func incrementNumberOfVisits() {
+        numberOfVisits += 1
+        print("app visits: \(numberOfVisits)")
+    }
+    
     // Function to save the array to UserDefaults as JSON
     private func saveInstalledModelsToUserDefaults() {
         if let jsonData = try? JSONEncoder().encode(installedModels) {

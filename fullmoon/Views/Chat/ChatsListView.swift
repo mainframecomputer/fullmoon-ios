@@ -7,6 +7,7 @@
 
 import SwiftData
 import SwiftUI
+import StoreKit
 
 struct ChatsListView: View {
     @EnvironmentObject var appManager: AppManager
@@ -17,6 +18,8 @@ struct ChatsListView: View {
     @Query(sort: \Thread.timestamp, order: .reverse) var threads: [Thread]
     @State var search = ""
     @State var selection: UUID?
+    
+    @Environment(\.requestReview) private var requestReview
     
     var body: some View {
         NavigationStack {
@@ -95,14 +98,26 @@ struct ChatsListView: View {
                     }
                 
                     ToolbarItem(placement: .topBarTrailing) {
-                        Button(action: { setCurrentThread(nil) }) {
+                        Button(action: {
+                            // create new thread
+                            setCurrentThread(nil)
+                            
+                            // ask for review if appropriate
+                            requestReviewIfAppropriate()
+                        }) {
                             Image(systemName: "plus")
                         }
                         .keyboardShortcut("N", modifiers: [.command])
                     }
                     #elseif os(macOS)
                     ToolbarItem(placement: .primaryAction) {
-                        Button(action: { setCurrentThread(nil) }) {
+                        Button(action: {
+                            // create new thread
+                            setCurrentThread(nil)
+                            
+                            // ask for review if appropriate
+                            requestReviewIfAppropriate()
+                        }) {
                             Label("new", systemImage: "plus")
                         }
                         .keyboardShortcut("N", modifiers: [.command])
@@ -119,6 +134,12 @@ struct ChatsListView: View {
             search.isEmpty || thread.messages.contains { message in
                 message.content.localizedCaseInsensitiveContains(search)
             }
+        }
+    }
+    
+    func requestReviewIfAppropriate() {
+        if appManager.numberOfVisits >= 5 {
+            requestReview() // can only be prompted if the user hasn't given a review in the last year, so it will prompt again when apple deems appropriate
         }
     }
     
