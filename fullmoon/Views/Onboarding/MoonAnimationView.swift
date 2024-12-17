@@ -7,7 +7,10 @@
 
 import AVKit
 import SwiftUI
+
+#if os(macOS)
 import AppKit
+#endif
 
 #if os(iOS)
 struct PlayerView: UIViewRepresentable {
