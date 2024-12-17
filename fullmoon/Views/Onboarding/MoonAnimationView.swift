@@ -7,7 +7,9 @@
 
 import AVKit
 import SwiftUI
+import AppKit
 
+#if os(iOS)
 struct PlayerView: UIViewRepresentable {
     var videoName: String
 
@@ -61,6 +63,65 @@ class LoopingPlayerUIView: UIView {
         playerLayer.frame = bounds
     }
 }
+#endif
+
+#if os(macOS)
+struct PlayerView: NSViewRepresentable {
+    var videoName: String
+    
+    init(videoName: String) {
+        self.videoName = videoName
+    }
+    
+    func updateNSView(_ nsView: NSView, context: Context) {
+        // No dynamic updates needed for this player
+    }
+    
+    func makeNSView(context: Context) -> NSView {
+        return LoopingPlayerNSView(videoName: videoName)
+    }
+}
+
+class LoopingPlayerNSView: NSView {
+    private var playerLayer = AVPlayerLayer()
+    private var playerLooper: AVPlayerLooper?
+    private var player = AVQueuePlayer()
+    
+    init(videoName: String) {
+        // Ensure the video file exists
+        guard let path = Bundle.main.path(forResource: videoName, ofType: "mp4") else {
+            fatalError("Video file \(videoName).mp4 not found in bundle.")
+        }
+        let url = URL(fileURLWithPath: path)
+        let asset = AVAsset(url: url)
+        let item = AVPlayerItem(asset: asset)
+        
+        super.init(frame: .zero)
+        
+        // Configure the player layer
+        playerLayer.player = player
+        playerLayer.videoGravity = .resizeAspectFill
+        self.wantsLayer = true
+        self.layer?.addSublayer(playerLayer)
+        
+        // Setup looping
+        playerLooper = AVPlayerLooper(player: player, templateItem: item)
+        
+        // Start playback
+        player.play()
+    }
+    
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func layout() {
+        super.layout()
+        playerLayer.frame = self.bounds
+    }
+}
+#endif
 
 struct MoonAnimationView: View {
     var isDone: Bool
@@ -78,6 +139,7 @@ struct MoonAnimationView: View {
                     .resizable()
                     .aspectRatio(contentMode: .fit)
                 // video loop
+                
                 PlayerView(videoName: "moon-phases")
                     .aspectRatio(contentMode: .fit)
                     .mask {
