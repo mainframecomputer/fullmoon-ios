@@ -15,32 +15,12 @@ struct OnboardingDownloadingModelProgressView: View {
     @Environment(LLMEvaluator.self) var llm
     @State var installed = false
     
-    let moonPhases = [
-        "moonphase.new.moon",
-        "moonphase.waning.crescent",
-        "moonphase.last.quarter",
-        "moonphase.waning.gibbous",
-        "moonphase.full.moon",
-        "moonphase.waxing.gibbous",
-        "moonphase.first.quarter",
-        "moonphase.waxing.crescent",
-    ]
-    @State var currentPhaseIndex = 0
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
-
     var body: some View {
         VStack {
             Spacer()
             
             VStack(spacing: 16) {
-                Image(systemName: isInstalled() ? "checkmark.circle.fill" : moonPhases[currentPhaseIndex])
-                    .resizable()
-                    .aspectRatio(contentMode: .fit)
-                    .frame(width: 64, height: 64)
-                    .foregroundStyle(isInstalled() ? .green : .secondary)
-                    .onReceive(timer) { time in
-                        currentPhaseIndex = (currentPhaseIndex + 1) % moonPhases.count
-                    }
+                MoonAnimationView(isDone: isInstalled())
                 
                 VStack(spacing: 4) {
                     Text(isInstalled() ? "installed" : "installing")
@@ -87,7 +67,7 @@ struct OnboardingDownloadingModelProgressView: View {
             await loadLLM()
         }
         .sensoryFeedback(.success, trigger: isInstalled())
-        .onChange(of: llm.progress) { _ in
+        .onChange(of: llm.progress) {
             addInstalledModel()
         }
         .interactiveDismissDisabled(!isInstalled())
@@ -124,4 +104,6 @@ struct OnboardingDownloadingModelProgressView: View {
 
 #Preview {
     OnboardingDownloadingModelProgressView(showOnboarding: .constant(true), selectedModel: .constant(ModelConfiguration.defaultModel))
+        .environmentObject(AppManager())
+        .environment(LLMEvaluator())
 }
