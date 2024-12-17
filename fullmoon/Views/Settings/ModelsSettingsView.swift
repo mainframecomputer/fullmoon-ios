@@ -87,4 +87,6 @@ struct ModelsSettingsView: View {
 
 #Preview {
     ModelsSettingsView()
+        .environmentObject(AppManager())
+        .environment(LLMEvaluator())
 }
