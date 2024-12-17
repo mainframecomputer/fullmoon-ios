@@ -34,13 +34,20 @@ class LoopingPlayerUIView: UIView {
 
         super.init(frame: .zero)
 
-        // Setup the player
         playerLayer.player = player
         playerLayer.videoGravity = .resizeAspectFill
         layer.addSublayer(playerLayer)
 
-        // Create a new player looper with the queue player and template item
         playerLooper = AVPlayerLooper(player: player, templateItem: item)
+        
+        // Prevent other audio from stopping
+        do {
+            try AVAudioSession.sharedInstance().setCategory(.ambient, mode: .default, options: [])
+            try AVAudioSession.sharedInstance().setActive(true)
+        } catch {
+            print("Failed to set audio session category: \(error)")
+        }
+        
         player.play()
     }
 
