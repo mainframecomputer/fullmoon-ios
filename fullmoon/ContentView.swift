@@ -87,6 +87,9 @@ struct ContentView: View {
         .fontDesign(appManager.appFontDesign.getFontDesign())
         .environment(\.dynamicTypeSize, appManager.appFontSize.getFontSize())
         .fontWidth(appManager.appFontWidth.getFontWidth())
+        .onAppear {
+            appManager.incrementNumberOfVisits()
+        }
     }
     
     func dismissOnboarding() {
