@@ -25,7 +25,7 @@ struct ChatView: View {
     }
 
     let platformBackgroundColor: Color = {
-        #if os(iOS)
+        #if os(iOS) || os(visionOS)
         return Color(UIColor.secondarySystemBackground)
         #elseif os(visionOS)
         return Color(UIColor.separator)
