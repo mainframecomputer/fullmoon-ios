@@ -66,7 +66,9 @@ struct OnboardingDownloadingModelProgressView: View {
         .task {
             await loadLLM()
         }
+        #if os(iOS)
         .sensoryFeedback(.success, trigger: isInstalled())
+        #endif
         .onChange(of: llm.progress) {
             addInstalledModel()
         }

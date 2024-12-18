@@ -38,7 +38,7 @@ struct MessageView: View {
     }
 
     let platformBackgroundColor: Color = {
-        #if os(iOS)
+        #if os(iOS) || os(visionOS)
         return Color(UIColor.secondarySystemBackground)
         #elseif os(macOS)
         return Color(NSColor.secondarySystemFill)
@@ -98,7 +98,9 @@ struct ConversationView: View {
             }
         }
         .defaultScrollAnchor(.bottom)
+        #if os(iOS)
         .scrollDismissesKeyboard(.interactively)
+        #endif
     }
 }
 
