@@ -9,7 +9,7 @@ import SwiftUI
 
 struct CreditsView: View {
     var body: some View {
-        List {
+        Form {
             Section {
                 Link("MLX Swift", destination: URL(string: "https://github.com/ml-explore/mlx-swift")!)
                     .badge(Text(Image(systemName: "arrow.up.right")))
@@ -17,6 +17,7 @@ struct CreditsView: View {
                     .badge(Text(Image(systemName: "arrow.up.right")))
             }
         }
+        .formStyle(.grouped)
         .navigationTitle("credits")
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)

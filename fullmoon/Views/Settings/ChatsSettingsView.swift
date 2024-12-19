@@ -15,9 +15,10 @@ struct ChatsSettingsView: View {
     @Binding var currentThread: Thread?
     
     var body: some View {
-        List {
+        Form {
             Section(header: Text("system prompt")) {
                 TextEditor(text: $appManager.systemPrompt)
+                    .textEditorStyle(.plain)
             }
             
             if appManager.userInterfaceIdiom == .phone {
@@ -42,8 +43,10 @@ struct ChatsSettingsView: View {
                         deleteChats()
                     }
                 }
+                .buttonStyle(.borderless)
             }
         }
+        .formStyle(.grouped)
         .navigationTitle("chats")
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
