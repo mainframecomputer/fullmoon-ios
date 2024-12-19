@@ -20,7 +20,7 @@ struct ContentView: View {
 
     var body: some View {
         Group {
-            if appManager.userInterfaceIdiom == .pad || appManager.userInterfaceIdiom == .mac {
+            if appManager.userInterfaceIdiom == .pad || appManager.userInterfaceIdiom == .mac || appManager.userInterfaceIdiom == .vision {
                 // iPad
                 NavigationSplitView {
                     ChatsListView(currentThread: $currentThread, isPromptFocused: $isPromptFocused)
@@ -83,7 +83,9 @@ struct ContentView: View {
                 .interactiveDismissDisabled(appManager.installedModels.count == 0)
             
         }
+        #if !os(visionOS)
         .tint(appManager.appTintColor.getColor())
+        #endif
         .fontDesign(appManager.appFontDesign.getFontDesign())
         .environment(\.dynamicTypeSize, appManager.appFontSize.getFontSize())
         .fontWidth(appManager.appFontWidth.getFontWidth())

@@ -45,7 +45,7 @@ struct OnboardingInstallModelView: View {
             .listRowBackground(Color.clear)
 
             if appManager.installedModels.count > 0 {
-                Section(header: Text("Installed")) {
+                Section(header: Text("installed")) {
                     ForEach(appManager.installedModels, id: \.self) { modelName in
                         let model = ModelConfiguration.getModelByName(modelName)
                         Button {} label: {
@@ -64,7 +64,7 @@ struct OnboardingInstallModelView: View {
                     }
                 }
             } else {
-                Section(header: Text("Suggested")) {
+                Section(header: Text("suggested")) {
                     Button { selectedModel = suggestedModel } label: {
                         Label {
                             Text(appManager.modelDisplayName(suggestedModel.name))
@@ -81,7 +81,7 @@ struct OnboardingInstallModelView: View {
             }
 
             if filteredModels.count > 0 {
-                Section(header: Text("Other")) {
+                Section(header: Text("other")) {
                     ForEach(filteredModels, id: \.name) { model in
                         Button { selectedModel = model } label: {
                             Label {
@@ -118,7 +118,7 @@ struct OnboardingInstallModelView: View {
         ZStack {
             if deviceSupportsMetal3 {
                 modelsList
-                #if os(iOS)
+                #if os(iOS) || os(visionOS)
                 .toolbar {
                     ToolbarItem(placement: .topBarTrailing) {
                         NavigationLink(destination: OnboardingDownloadingModelProgressView(showOnboarding: $showOnboarding, selectedModel: $selectedModel)) {

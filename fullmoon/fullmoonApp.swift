@@ -23,13 +23,18 @@ struct fullmoonApp: App {
                 .environmentObject(appManager)
                 .environment(llm)
                 .environment(DeviceStat())
-                #if os(macOS)
+                #if os(macOS) || os(visionOS)
                 .frame(minWidth: 640, maxWidth: .infinity, minHeight: 420, maxHeight: .infinity)
+                #if os(macOS)
                 .onAppear {
                     NSWindow.allowsAutomaticWindowTabbing = false
                 }
                 #endif
+                #endif
         }
+        #if os(visionOS)
+        .windowResizability(.contentSize)
+        #endif
         #if os(macOS)
         .commands {
             CommandGroup(replacing: CommandGroupPlacement.newItem) {
