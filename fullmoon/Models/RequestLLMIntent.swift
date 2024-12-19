@@ -62,3 +62,19 @@ struct RequestLLMIntent: AppIntent {
 
     static var openAppWhenRun: Bool = false
 }
+
+struct NewChatShortcut: AppShortcutsProvider {
+    static var appShortcuts: [AppShortcut] {
+        AppShortcut(
+            intent: RequestLLMIntent(),
+            phrases: [
+                "Start a new chat",
+                "Start a \(.applicationName) chat",
+                "Chat with \(.applicationName)",
+                "Ask \(.applicationName) a question"
+            ],
+            shortTitle: "new chat",
+            systemImageName: "bubble"
+        )
+    }
+}
