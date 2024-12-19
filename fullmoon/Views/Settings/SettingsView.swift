@@ -15,7 +15,7 @@ struct SettingsView: View {
     
     var body: some View {
         NavigationStack {
-            List {
+            Form {
                 Section {
                     NavigationLink(destination: AppearanceSettingsView()) {
                         Label("appearance", systemImage: "paintpalette")
@@ -37,7 +37,7 @@ struct SettingsView: View {
                     }
                 }
                 
-                Section {
+                Section {} footer: {
                     HStack {
                         Spacer()
                         VStack(spacing: 4) {
@@ -51,8 +51,8 @@ struct SettingsView: View {
                     }
                     .padding(.vertical)
                 }
-                .listRowBackground(Color.clear)
             }
+            .formStyle(.grouped)
             .navigationTitle("settings")
             #if os(iOS)
             .navigationBarTitleDisplayMode(.inline)
@@ -77,9 +77,6 @@ struct SettingsView: View {
         .tint(appManager.appTintColor.getColor())
         #endif
         .environment(\.dynamicTypeSize, appManager.appFontSize.getFontSize())
-        #if os(macOS)
-        .frame(width: 360, height: 360)
-        #endif
     }
 }
 

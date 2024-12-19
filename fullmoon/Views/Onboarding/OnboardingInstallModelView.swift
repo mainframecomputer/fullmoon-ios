@@ -21,7 +21,7 @@ struct OnboardingInstallModelView: View {
     }
 
     var modelsList: some View {
-        List {
+        Form {
             Section {
                 VStack(spacing: 12) {
                     Image(systemName: "arrow.down.circle.dotted")
@@ -57,7 +57,7 @@ struct OnboardingInstallModelView: View {
                         }
                         .badge(sizeBadge(model))
                         #if os(macOS)
-                            .buttonStyle(.plain)
+                            .buttonStyle(.borderless)
                         #endif
                             .foregroundStyle(.secondary)
                             .disabled(true)
@@ -75,7 +75,7 @@ struct OnboardingInstallModelView: View {
                     }
                     .badge(sizeBadge(suggestedModel))
                     #if os(macOS)
-                        .buttonStyle(.plain)
+                        .buttonStyle(.borderless)
                     #endif
                 }
             }
@@ -93,25 +93,24 @@ struct OnboardingInstallModelView: View {
                         }
                         .badge(sizeBadge(model))
                         #if os(macOS)
-                        .buttonStyle(.plain)
+                            .buttonStyle(.borderless)
                         #endif
                     }
                 }
             }
 
             #if os(macOS)
-            Section {
+            Section {} footer: {
                 NavigationLink(destination: OnboardingDownloadingModelProgressView(showOnboarding: $showOnboarding, selectedModel: $selectedModel)) {
-                    Button {} label: {
-                        Text("install")
-                    }
-                    .buttonStyle(.borderedProminent)
-                    .allowsHitTesting(false)
+                    Text("install")
+                        .buttonStyle(.borderedProminent)
                 }
                 .disabled(filteredModels.isEmpty)
             }
+            .padding()
             #endif
         }
+        .formStyle(.grouped)
     }
 
     var body: some View {

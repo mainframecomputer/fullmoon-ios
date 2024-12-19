@@ -14,7 +14,7 @@ struct ModelsSettingsView: View {
     @State var showOnboardingInstallModelView = false
     
     var body: some View {
-        List {
+        Form {
             Section(header: Text("installed")) {
                 ForEach(appManager.installedModels, id: \.self) { modelName in
                     Button {
@@ -30,7 +30,7 @@ struct ModelsSettingsView: View {
                         }
                     }
                     #if os(macOS)
-                    .buttonStyle(.plain)
+                    .buttonStyle(.borderless)
                     #endif
                 }
             }
@@ -41,9 +41,10 @@ struct ModelsSettingsView: View {
                 Label("install a model", systemImage: "arrow.down.circle.dotted")
             }
             #if os(macOS)
-            .buttonStyle(.plain)
+            .buttonStyle(.borderless)
             #endif
         }
+        .formStyle(.grouped)
         .navigationTitle("models")
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
@@ -68,9 +69,6 @@ struct ModelsSettingsView: View {
                         #endif
                     }
             }
-            #if os(macOS)
-            .frame(width: 360, height: 360)
-            #endif
         }
     }
     

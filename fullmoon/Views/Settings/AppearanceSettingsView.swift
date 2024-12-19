@@ -11,7 +11,7 @@ struct AppearanceSettingsView: View {
     @EnvironmentObject var appManager: AppManager
     
     var body: some View {
-        List {
+        Form {
             #if !os(visionOS)
             Section {
                 Picker(selection: $appManager.appTintColor) {
@@ -55,6 +55,7 @@ struct AppearanceSettingsView: View {
                 }
             }
         }
+        .formStyle(.grouped)
         .navigationTitle("appearance")
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)

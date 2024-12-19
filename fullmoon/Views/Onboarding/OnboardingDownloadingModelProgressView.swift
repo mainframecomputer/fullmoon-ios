@@ -13,17 +13,21 @@ struct OnboardingDownloadingModelProgressView: View {
     @EnvironmentObject var appManager: AppManager
     @Binding var selectedModel: ModelConfiguration
     @Environment(LLMEvaluator.self) var llm
-    @State var installed = false
+    @State var didSwitchModel = false
+    
+    var installed: Bool {
+        llm.progress == 1 && didSwitchModel
+    }
     
     var body: some View {
         VStack {
             Spacer()
             
             VStack(spacing: 16) {
-                MoonAnimationView(isDone: isInstalled())
+                MoonAnimationView(isDone: installed)
                 
                 VStack(spacing: 4) {
-                    Text(isInstalled() ? "installed" : "installing")
+                    Text(installed ? "installed" : "installing")
                         .font(.title)
                         .fontWeight(.semibold)
                     Text(appManager.modelDisplayName(selectedModel.name))
@@ -38,7 +42,7 @@ struct OnboardingDownloadingModelProgressView: View {
             
             Spacer()
             
-            if isInstalled() {
+            if installed {
                 Button(action: { showOnboarding = false }) {
                     Text("done")
                         #if os(iOS) || os(visionOS)
@@ -63,18 +67,18 @@ struct OnboardingDownloadingModelProgressView: View {
         }
         .padding()
         .navigationTitle("sit back and relax")
-        .toolbar(isInstalled() ? .hidden : .visible)
+        .toolbar(installed ? .hidden : .visible)
         .navigationBarBackButtonHidden()
         .task {
             await loadLLM()
         }
         #if os(iOS)
-        .sensoryFeedback(.success, trigger: isInstalled())
+        .sensoryFeedback(.success, trigger: installed)
         #endif
-        .onChange(of: llm.progress) {
+        .onChange(of: installed) {
             addInstalledModel()
         }
-        .interactiveDismissDisabled(!isInstalled())
+        .interactiveDismissDisabled(!installed)
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
@@ -88,18 +92,12 @@ struct OnboardingDownloadingModelProgressView: View {
     
     func loadLLM() async {
         await llm.switchModel(selectedModel)
-    }
-    
-    func isInstalled() -> Bool {
-        if llm.progress == 1 {
-            installed = true
-        }
-        
-        return installed && llm.progress == 1
+        didSwitchModel = true
     }
     
     func addInstalledModel() {
-        if isInstalled() {
+        if installed {
+            print("added installed model")
             appManager.currentModelName = selectedModel.name
             appManager.addInstalledModel(selectedModel.name)
         }
