@@ -38,8 +38,8 @@ struct ChatView: View {
         HStack(alignment: .bottom, spacing: 0) {
             TextField("message", text: $prompt, axis: .vertical)
                 .focused($isPromptFocused)
-            #if os(iOS) || os(visionOS)
                 .textFieldStyle(.plain)
+            #if os(iOS) || os(visionOS)
                 .padding(.horizontal, 16)
             #elseif os(macOS)
                 .padding(.horizontal, 12)
