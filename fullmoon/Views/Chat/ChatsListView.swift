@@ -71,7 +71,7 @@ struct ChatsListView: View {
                 }
                 #if os(iOS)
                 .listStyle(.insetGrouped)
-                #elseif os(macOS)
+                #elseif os(macOS) || os(visionOS)
                 .listStyle(.sidebar)
                 #endif
                 if filteredThreads.count == 0 {
@@ -81,14 +81,14 @@ struct ChatsListView: View {
                 }
             }
             .navigationTitle("chats")
-            #if os(iOS)
+            #if os(iOS) || os(visionOS)
                 .navigationBarTitleDisplayMode(.inline)
                 .searchable(text: $search, prompt: "search")
             #elseif os(macOS)
                 .searchable(text: $search, placement: .sidebar, prompt: "search")
             #endif
                 .toolbar {
-                    #if os(iOS)
+                    #if os(iOS) || os(visionOS)
                     if appManager.userInterfaceIdiom == .phone {
                         ToolbarItem(placement: .topBarLeading) {
                             Button(action: { dismiss() }) {
@@ -108,6 +108,9 @@ struct ChatsListView: View {
                             Image(systemName: "plus")
                         }
                         .keyboardShortcut("N", modifiers: [.command])
+                        #if os(visionOS)
+                        .buttonStyle(.bordered)
+                        #endif
                     }
                     #elseif os(macOS)
                     ToolbarItem(placement: .primaryAction) {
@@ -125,7 +128,9 @@ struct ChatsListView: View {
                     #endif
                 }
         }
+        #if !os(visionOS)
         .tint(appManager.appTintColor.getColor())
+        #endif
         .environment(\.dynamicTypeSize, appManager.appFontSize.getFontSize())
     }
     

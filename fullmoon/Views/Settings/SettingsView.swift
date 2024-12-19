@@ -58,7 +58,7 @@ struct SettingsView: View {
             .navigationBarTitleDisplayMode(.inline)
             #endif
             .toolbar {
-                #if os(iOS)
+                #if os(iOS) || os(visionOS)
                 ToolbarItem(placement: .topBarLeading) {
                     Button(action: { dismiss() }) {
                         Image(systemName: "xmark")
@@ -73,7 +73,9 @@ struct SettingsView: View {
                 #endif
             }
         }
+        #if !os(visionOS)
         .tint(appManager.appTintColor.getColor())
+        #endif
         .environment(\.dynamicTypeSize, appManager.appFontSize.getFontSize())
         #if os(macOS)
         .frame(width: 360, height: 360)

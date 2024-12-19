@@ -18,7 +18,7 @@ struct MessageView: View {
                 .textSelection(.enabled)
                 .if(message.role == .user) { view in
                     view
-                    #if os(iOS)
+                    #if os(iOS) || os(visionOS)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
                     #else
@@ -26,7 +26,7 @@ struct MessageView: View {
                     .padding(.vertical, 8)
                     #endif
                     .background(platformBackgroundColor)
-                    #if os(iOS)
+                    #if os(iOS) || os(visionOS)
                         .mask(RoundedRectangle(cornerRadius: 24))
                     #elseif os(macOS)
                         .mask(RoundedRectangle(cornerRadius: 16))
@@ -38,8 +38,10 @@ struct MessageView: View {
     }
 
     let platformBackgroundColor: Color = {
-        #if os(iOS) || os(visionOS)
+        #if os(iOS)
         return Color(UIColor.secondarySystemBackground)
+        #elseif os(visionOS)
+        return Color(UIColor.separator)
         #elseif os(macOS)
         return Color(NSColor.secondarySystemFill)
         #endif

@@ -12,6 +12,7 @@ struct AppearanceSettingsView: View {
     
     var body: some View {
         List {
+            #if !os(visionOS)
             Section {
                 Picker(selection: $appManager.appTintColor) {
                     ForEach(AppTintColor.allCases.sorted(by: { $0.rawValue < $1.rawValue }), id: \.rawValue) { option in
@@ -22,6 +23,7 @@ struct AppearanceSettingsView: View {
                     Label("color", systemImage: "paintbrush.pointed")
                 }
             }
+            #endif
             
             Section(header: Text("font")) {
                 Picker(selection: $appManager.appFontDesign) {

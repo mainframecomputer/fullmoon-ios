@@ -41,10 +41,12 @@ struct OnboardingDownloadingModelProgressView: View {
             if isInstalled() {
                 Button(action: { showOnboarding = false }) {
                     Text("done")
-                        #if os(iOS)
+                        #if os(iOS) || os(visionOS)
                         .font(.headline)
                         .frame(maxWidth: .infinity)
                         .frame(height: 40)
+                        #endif
+                        #if os(iOS)
                         .foregroundStyle(.background)
                         #endif
                 }
