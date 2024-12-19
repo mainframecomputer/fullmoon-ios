@@ -53,7 +53,7 @@ struct ModelsSettingsView: View {
                 OnboardingInstallModelView(showOnboarding: $showOnboardingInstallModelView)
                     .environment(llm)
                     .toolbar {
-                        #if os(iOS)
+                        #if os(iOS) || os(visionOS)
                         ToolbarItem(placement: .topBarLeading) {
                             Button(action: { showOnboardingInstallModelView = false }) {
                                 Image(systemName: "xmark")

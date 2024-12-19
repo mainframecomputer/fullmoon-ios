@@ -92,10 +92,12 @@ struct OnboardingView: View {
                 
                 NavigationLink(destination: OnboardingInstallModelView(showOnboarding: $showOnboarding)) {
                     Text("get started")
-                        #if os(iOS)
+                        #if os(iOS) || os(visionOS)
                         .font(.headline)
                         .frame(maxWidth: .infinity)
                         .frame(height: 40)
+                        #endif
+                        #if os(iOS)
                         .foregroundStyle(.background)
                         #endif
                 }

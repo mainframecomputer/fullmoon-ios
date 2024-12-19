@@ -19,7 +19,9 @@ class AppManager: ObservableObject {
     @AppStorage("numberOfVisits") var numberOfVisits = 0
     
     var userInterfaceIdiom: LayoutType {
-        #if os(macOS)
+        #if os(visionOS)
+        return .vision
+        #elseif os(macOS)
         return .mac
         #elseif os(iOS)
         return UIDevice.current.userInterfaceIdiom == .pad ? .pad : .phone
@@ -29,7 +31,7 @@ class AppManager: ObservableObject {
     }
 
     enum LayoutType {
-        case mac, phone, pad, unknown
+        case mac, phone, pad, vision, unknown
     }
         
     private let installedModelsKey = "installedModels"

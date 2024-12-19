@@ -27,6 +27,8 @@ struct ChatView: View {
     let platformBackgroundColor: Color = {
         #if os(iOS)
         return Color(UIColor.secondarySystemBackground)
+        #elseif os(visionOS)
+        return Color(UIColor.separator)
         #elseif os(macOS)
         return Color(NSColor.secondarySystemFill)
         #endif
@@ -37,12 +39,12 @@ struct ChatView: View {
             TextField("message", text: $prompt, axis: .vertical)
                 .focused($isPromptFocused)
                 .textFieldStyle(.plain)
-            #if os(iOS)
+            #if os(iOS) || os(visionOS)
                 .padding(.horizontal, 16)
             #elseif os(macOS)
                 .padding(.horizontal, 12)
             #endif
-                .if(appManager.userInterfaceIdiom == .pad || appManager.userInterfaceIdiom == .mac) { view in
+                .if(appManager.userInterfaceIdiom == .pad || appManager.userInterfaceIdiom == .mac || appManager.userInterfaceIdiom == .vision) { view in
                     view
                         .onSubmit {
                             generate()
@@ -50,7 +52,7 @@ struct ChatView: View {
                         .submitLabel(.send)
                 }
                 .padding(.vertical, 8)
-            #if os(iOS)
+            #if os(iOS) || os(visionOS)
                 .frame(minHeight: 48)
             #elseif os(macOS)
                 .frame(minHeight: 32)
@@ -62,7 +64,7 @@ struct ChatView: View {
                 generateButton
             }
         }
-        #if os(iOS)
+        #if os(iOS) || os(visionOS)
         .background(
             RoundedRectangle(cornerRadius: 24)
                 .fill(platformBackgroundColor)
@@ -84,14 +86,14 @@ struct ChatView: View {
                 Image(systemName: "chevron.up")
                     .resizable()
                     .aspectRatio(contentMode: .fit)
-                #if os(iOS)
+                #if os(iOS) || os(visionOS)
                     .frame(width: 16)
                 #elseif os(macOS)
                     .frame(width: 12)
                 #endif
                     .tint(.primary)
             }
-            #if os(iOS)
+            #if os(iOS) || os(visionOS)
             .frame(width: 48, height: 48)
             #elseif os(macOS)
             .frame(width: 32, height: 32)
@@ -101,7 +103,7 @@ struct ChatView: View {
                     .fill(platformBackgroundColor)
             )
         }
-        #if os(macOS)
+        #if os(macOS) || os(visionOS)
         .buttonStyle(.plain)
         #endif
     }
@@ -113,19 +115,21 @@ struct ChatView: View {
             Image(systemName: "arrow.up.circle.fill")
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-            #if os(iOS)
+            #if os(iOS) || os(visionOS)
                 .frame(width: 24, height: 24)
             #else
                 .frame(width: 16, height: 16)
             #endif
         }
         .disabled(isPromptEmpty)
-        #if os(iOS)
+        #if os(iOS) || os(visionOS)
             .padding(.trailing, 12)
             .padding(.bottom, 12)
         #else
             .padding(.trailing, 8)
             .padding(.bottom, 8)
+        #endif
+        #if os(macOS) || os(visionOS)
             .buttonStyle(.plain)
         #endif
     }
@@ -137,19 +141,21 @@ struct ChatView: View {
             Image(systemName: "stop.circle.fill")
                 .resizable()
                 .aspectRatio(contentMode: .fit)
-            #if os(iOS)
+            #if os(iOS) || os(visionOS)
                 .frame(width: 24, height: 24)
             #else
                 .frame(width: 16, height: 16)
             #endif
         }
         .disabled(llm.cancelled)
-        #if os(iOS)
+        #if os(iOS) || os(visionOS)
             .padding(.trailing, 12)
             .padding(.bottom, 12)
         #else
             .padding(.trailing, 8)
             .padding(.bottom, 8)
+        #endif
+        #if os(macOS) || os(visionOS)
             .buttonStyle(.plain)
         #endif
     }
@@ -186,13 +192,22 @@ struct ChatView: View {
                 .padding()
             }
             .navigationTitle(chatTitle)
-            #if os(iOS)
+            #if os(iOS) || os(visionOS)
                 .navigationBarTitleDisplayMode(.inline)
             #endif
                 .sheet(isPresented: $showModelPicker) {
                     NavigationStack {
                         ModelsSettingsView()
                             .environment(llm)
+                            #if os(visionOS)
+                            .toolbar {
+                                ToolbarItem(placement: .topBarLeading) {
+                                    Button(action: { showModelPicker.toggle() }) {
+                                        Image(systemName: "xmark")
+                                    }
+                                }
+                            }
+                            #endif
                     }
                     #if os(iOS)
                     .presentationDragIndicator(.visible)
@@ -211,7 +226,7 @@ struct ChatView: View {
                     #endif
                 }
                 .toolbar {
-                    #if os(iOS)
+                    #if os(iOS) || os(visionOS)
                     if appManager.userInterfaceIdiom == .phone {
                         ToolbarItem(placement: .topBarLeading) {
                             Button(action: {

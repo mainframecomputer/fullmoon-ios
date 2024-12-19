@@ -12,7 +12,7 @@ import SwiftUI
 import AppKit
 #endif
 
-#if os(iOS)
+#if os(iOS) || os(visionOS)
 struct PlayerView: UIViewRepresentable {
     var videoName: String
 
