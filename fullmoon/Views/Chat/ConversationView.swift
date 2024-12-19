@@ -38,7 +38,7 @@ struct MessageView: View {
     }
 
     let platformBackgroundColor: Color = {
-        #if os(iOS) || os(visionOS)
+        #if os(iOS)
         return Color(UIColor.secondarySystemBackground)
         #elseif os(visionOS)
         return Color(UIColor.separator)
