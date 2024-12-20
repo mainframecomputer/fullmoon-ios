@@ -52,6 +52,7 @@ struct ConversationView: View {
     @Environment(LLMEvaluator.self) var llm
     @EnvironmentObject var appManager: AppManager
     let thread: Thread
+    let generatingThreadID: UUID?
 
     @State private var scrollID: String?
     @State private var scrollInterrupted = false
@@ -66,7 +67,7 @@ struct ConversationView: View {
                             .id(message.id.uuidString)
                     }
 
-                    if llm.running && !llm.output.isEmpty {
+                    if llm.running && !llm.output.isEmpty && thread.id == generatingThreadID {
                         MessageView(message: Message(role: .assistant, content: llm.output + " 🌕"))
                             .padding()
                             .id("output")
@@ -107,7 +108,7 @@ struct ConversationView: View {
 }
 
 #Preview {
-    ConversationView(thread: Thread())
+    ConversationView(thread: Thread(), generatingThreadID: nil)
         .environment(LLMEvaluator())
         .environmentObject(AppManager())
 }
