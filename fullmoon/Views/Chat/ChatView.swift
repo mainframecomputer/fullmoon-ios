@@ -224,7 +224,6 @@ struct ChatView: View {
                             }
                         }
                     }
-                    .frame(width: 360, height: 360)
                     #endif
                 }
                 .toolbar {
