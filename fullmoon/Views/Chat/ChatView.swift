@@ -20,14 +20,14 @@ struct ChatView: View {
     @Binding var showChats: Bool
     @Binding var showSettings: Bool
     
-    @State private var generatingThread: Thread?
+    @State private var generatingThreadID: UUID?
 
     var isPromptEmpty: Bool {
         prompt.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
     let platformBackgroundColor: Color = {
-        #if os(iOS) || os(visionOS)
+        #if os(iOS)
         return Color(UIColor.secondarySystemBackground)
         #elseif os(visionOS)
         return Color(UIColor.separator)
@@ -176,7 +176,7 @@ struct ChatView: View {
         NavigationStack {
             VStack(spacing: 0) {
                 if let currentThread = currentThread {
-                    ConversationView(thread: currentThread, generatingThread: generatingThread)
+                    ConversationView(thread: currentThread, generatingThreadID: generatingThreadID)
                 } else {
                     Spacer()
                     Image(systemName: appManager.getMoonPhaseIcon())
@@ -272,7 +272,7 @@ struct ChatView: View {
             }
 
             if let currentThread = currentThread {
-                generatingThread = currentThread
+                generatingThreadID = currentThread.id
                 Task {
                     let message = prompt
                     prompt = ""
@@ -282,7 +282,7 @@ struct ChatView: View {
                     if let modelName = appManager.currentModelName {
                         let output = await llm.generate(modelName: modelName, thread: currentThread, systemPrompt: appManager.systemPrompt)
                         sendMessage(Message(role: .assistant, content: output, thread: currentThread))
-                        generatingThread = nil
+                        generatingThreadID = nil
                     }
                 }
             }
