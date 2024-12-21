@@ -66,4 +66,5 @@ struct ChatsSettingsView: View {
 
 #Preview {
     ChatsSettingsView(currentThread: .constant(nil))
+        .environmentObject(AppManager())
 }

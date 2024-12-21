@@ -91,4 +91,6 @@ extension Bundle {
 
 #Preview {
     SettingsView(currentThread: .constant(nil))
+        .environmentObject(AppManager())
+        .environment(LLMEvaluator())
 }
