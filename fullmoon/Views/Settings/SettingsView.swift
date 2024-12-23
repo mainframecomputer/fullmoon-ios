@@ -46,11 +46,23 @@ struct SettingsView: View {
                             Text("v\(Bundle.main.releaseVersionNumber ?? "0").\(Bundle.main.buildVersionNumber ?? "0")")
                                 .font(.footnote)
                                 .foregroundStyle(.tertiary)
+                            Image(.madeByMainframe)
+                                .resizable()
+                                .aspectRatio(contentMode: .fit)
+                                .foregroundStyle(.tertiary)
+                            #if os(macOS)
+                                .frame(height: 16)
+                                .padding(.top, 11)
+                            #else
+                                .frame(height: 18)
+                                .padding(.top, 16)
+                            #endif
                         }
                         Spacer()
                     }
                     .padding(.vertical)
                 }
+                
             }
             .formStyle(.grouped)
             .navigationTitle("settings")
@@ -91,4 +103,6 @@ extension Bundle {
 
 #Preview {
     SettingsView(currentThread: .constant(nil))
+        .environmentObject(AppManager())
+        .environment(LLMEvaluator())
 }
