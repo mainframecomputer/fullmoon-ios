@@ -9,10 +9,10 @@ import SwiftUI
 
 struct AppearanceSettingsView: View {
     @EnvironmentObject var appManager: AppManager
-    
+
     var body: some View {
         Form {
-            #if !os(visionOS)
+            #if os(iOS)
             Section {
                 Picker(selection: $appManager.appTintColor) {
                     ForEach(AppTintColor.allCases.sorted(by: { $0.rawValue < $1.rawValue }), id: \.rawValue) { option in
@@ -24,7 +24,7 @@ struct AppearanceSettingsView: View {
                 }
             }
             #endif
-            
+
             Section(header: Text("font")) {
                 Picker(selection: $appManager.appFontDesign) {
                     ForEach(AppFontDesign.allCases.sorted(by: { $0.rawValue < $1.rawValue }), id: \.rawValue) { option in
@@ -34,7 +34,7 @@ struct AppearanceSettingsView: View {
                 } label: {
                     Label("design", systemImage: "textformat")
                 }
-                
+
                 Picker(selection: $appManager.appFontWidth) {
                     ForEach(AppFontWidth.allCases.sorted(by: { $0.rawValue < $1.rawValue }), id: \.rawValue) { option in
                         Text(String(describing: option).lowercased())
@@ -44,7 +44,8 @@ struct AppearanceSettingsView: View {
                     Label("width", systemImage: "arrow.left.and.line.vertical.and.arrow.right")
                 }
                 .disabled(appManager.appFontDesign != .standard)
-                
+
+                #if !os(macOS)
                 Picker(selection: $appManager.appFontSize) {
                     ForEach(AppFontSize.allCases.sorted(by: { $0.rawValue < $1.rawValue }), id: \.rawValue) { option in
                         Text(String(describing: option).lowercased())
@@ -53,12 +54,13 @@ struct AppearanceSettingsView: View {
                 } label: {
                     Label("size", systemImage: "arrow.up.left.and.arrow.down.right")
                 }
+                #endif
             }
         }
         .formStyle(.grouped)
         .navigationTitle("appearance")
         #if os(iOS)
-        .navigationBarTitleDisplayMode(.inline)
+            .navigationBarTitleDisplayMode(.inline)
         #endif
     }
 }
