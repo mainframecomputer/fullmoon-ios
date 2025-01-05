@@ -113,6 +113,7 @@ struct ChatsListView: View {
                     #elseif os(macOS)
                     ToolbarItem(placement: .primaryAction) {
                         Button(action: {
+                            selection = nil
                             // create new thread
                             setCurrentThread(nil)
 
@@ -175,14 +176,6 @@ struct ChatsListView: View {
 
     private func setCurrentThread(_ thread: Thread? = nil) {
         currentThread = thread
-//        if let thread {
-//            selection = thread.id
-//        } else {
-//            selection = nil
-//        }
-//        if thread == nil {
-//            selection = nil
-//        }
         isPromptFocused = true
         #if os(iOS)
         dismiss()
