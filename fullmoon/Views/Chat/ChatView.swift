@@ -45,19 +45,22 @@ struct ChatView: View {
                 .padding(.horizontal, 16)
             #elseif os(macOS)
                 .padding(.horizontal, 12)
-            #endif
-                .if(appManager.userInterfaceIdiom == .pad || appManager.userInterfaceIdiom == .mac || appManager.userInterfaceIdiom == .vision) { view in
-                    view
-                        .onSubmit {
-                            generate()
-                        }
-                        .submitLabel(.send)
+                .onSubmit {
+                    handleShiftReturn()
                 }
+                .submitLabel(.send)
+            #endif
                 .padding(.vertical, 8)
             #if os(iOS) || os(visionOS)
                 .frame(minHeight: 48)
             #elseif os(macOS)
                 .frame(minHeight: 32)
+            #endif
+            #if os(iOS)
+            .onSubmit {
+                isPromptFocused = true
+                generate()
+            }
             #endif
 
             if llm.running {
@@ -132,7 +135,7 @@ struct ChatView: View {
             .padding(.bottom, 8)
         #endif
         #if os(macOS) || os(visionOS)
-            .buttonStyle(.plain)
+        .buttonStyle(.plain)
         #endif
     }
 
@@ -158,7 +161,7 @@ struct ChatView: View {
             .padding(.bottom, 8)
         #endif
         #if os(macOS) || os(visionOS)
-            .buttonStyle(.plain)
+        .buttonStyle(.plain)
         #endif
     }
 
@@ -201,7 +204,7 @@ struct ChatView: View {
                     NavigationStack {
                         ModelsSettingsView()
                             .environment(llm)
-                            #if os(visionOS)
+                        #if os(visionOS)
                             .toolbar {
                                 ToolbarItem(placement: .topBarLeading) {
                                     Button(action: { showModelPicker.toggle() }) {
@@ -209,7 +212,7 @@ struct ChatView: View {
                                     }
                                 }
                             }
-                            #endif
+                        #endif
                     }
                     #if os(iOS)
                     .presentationDragIndicator(.visible)
@@ -293,6 +296,17 @@ struct ChatView: View {
         modelContext.insert(message)
         try? modelContext.save()
     }
+
+    #if os(macOS)
+    private func handleShiftReturn() {
+        if NSApp.currentEvent?.modifierFlags.contains(.shift) == true {
+            prompt.append("\n")
+            isPromptFocused = true
+        } else {
+            generate()
+        }
+    }
+    #endif
 }
 
 #Preview {
