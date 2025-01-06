@@ -5,9 +5,9 @@
 //  Created by Jordan Singer on 10/5/24.
 //
 
+import StoreKit
 import SwiftData
 import SwiftUI
-import StoreKit
 
 struct ChatsListView: View {
     @EnvironmentObject var appManager: AppManager
@@ -17,10 +17,10 @@ struct ChatsListView: View {
     @Environment(\.modelContext) var modelContext
     @Query(sort: \Thread.timestamp, order: .reverse) var threads: [Thread]
     @State var search = ""
-    @State var selection: UUID?
-    
+    @State var selection: Thread?
+
     @Environment(\.requestReview) private var requestReview
-    
+
     var body: some View {
         NavigationStack {
             ZStack {
@@ -28,9 +28,9 @@ struct ChatsListView: View {
                     #if os(macOS)
                     Section {} // adds some space below the search bar on mac
                     #endif
-                    ForEach(filteredThreads) { thread in
+                    ForEach(filteredThreads, id: \.id) { thread in
                         VStack(alignment: .leading) {
-                            Group {
+                            ZStack {
                                 if let firstMessage = thread.sortedMessages.first {
                                     Text(firstMessage.content)
                                         .lineLimit(1)
@@ -40,34 +40,32 @@ struct ChatsListView: View {
                             }
                             .foregroundStyle(.primary)
                             .font(.headline)
-                            
+
                             Text("\(thread.timestamp.formatted())")
                                 .foregroundStyle(.secondary)
                                 .font(.subheadline)
                         }
-                        .frame(maxWidth: .infinity, alignment: .leading)
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            setCurrentThread(thread)
-                        }
                         #if os(macOS)
-                        .swipeActions {
-                            Button("Delete") {
-                                deleteThread(thread)
+                            .swipeActions {
+                                Button("Delete") {
+                                    deleteThread(thread)
+                                }
+                                .tint(.red)
                             }
-                            .tint(.red)
-                        }
-                        .contextMenu {
-                            Button {
-                                deleteThread(thread)
-                            } label: {
-                                Text("delete")
+                            .contextMenu {
+                                Button {
+                                    deleteThread(thread)
+                                } label: {
+                                    Text("delete")
+                                }
                             }
-                        }
                         #endif
-                        .tag(thread.id)
+                            .tag(thread)
                     }
                     .onDelete(perform: deleteThreads)
+                }
+                .onChange(of: selection) {
+                    setCurrentThread(selection)
                 }
                 #if os(iOS)
                 .listStyle(.insetGrouped)
@@ -96,12 +94,13 @@ struct ChatsListView: View {
                             }
                         }
                     }
-                
+
                     ToolbarItem(placement: .topBarTrailing) {
                         Button(action: {
+                            selection = nil
                             // create new thread
                             setCurrentThread(nil)
-                            
+
                             // ask for review if appropriate
                             requestReviewIfAppropriate()
                         }) {
@@ -109,15 +108,16 @@ struct ChatsListView: View {
                         }
                         .keyboardShortcut("N", modifiers: [.command])
                         #if os(visionOS)
-                        .buttonStyle(.bordered)
+                            .buttonStyle(.bordered)
                         #endif
                     }
                     #elseif os(macOS)
                     ToolbarItem(placement: .primaryAction) {
                         Button(action: {
+                            selection = nil
                             // create new thread
                             setCurrentThread(nil)
-                            
+
                             // ask for review if appropriate
                             requestReviewIfAppropriate()
                         }) {
@@ -133,7 +133,7 @@ struct ChatsListView: View {
         #endif
         .environment(\.dynamicTypeSize, appManager.appFontSize.getFontSize())
     }
-    
+
     var filteredThreads: [Thread] {
         threads.filter { thread in
             search.isEmpty || thread.messages.contains { message in
@@ -141,23 +141,23 @@ struct ChatsListView: View {
             }
         }
     }
-    
+
     func requestReviewIfAppropriate() {
         if appManager.numberOfVisits >= 5 {
             requestReview() // can only be prompted if the user hasn't given a review in the last year, so it will prompt again when apple deems appropriate
         }
     }
-    
+
     private func deleteThreads(at offsets: IndexSet) {
         for offset in offsets {
             let thread = threads[offset]
-            
+
             if let currentThread = currentThread {
                 if currentThread.id == thread.id {
                     setCurrentThread(nil)
                 }
             }
-            
+
             // Adding a delay fixes a crash on iOS following a deletion
             let delay = appManager.userInterfaceIdiom == .phone ? 1.0 : 0.0
             DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
@@ -165,7 +165,7 @@ struct ChatsListView: View {
             }
         }
     }
-    
+
     private func deleteThread(_ thread: Thread) {
         if let currentThread = currentThread {
             if currentThread.id == thread.id {
@@ -174,14 +174,9 @@ struct ChatsListView: View {
         }
         modelContext.delete(thread)
     }
-    
+
     private func setCurrentThread(_ thread: Thread? = nil) {
         currentThread = thread
-        if let thread {
-            selection = thread.id
-        } else {
-            selection = nil
-        }
         isPromptFocused = true
         #if os(iOS)
         dismiss()
