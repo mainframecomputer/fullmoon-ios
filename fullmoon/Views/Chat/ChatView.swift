@@ -48,26 +48,16 @@ struct ChatView: View {
                 }
                 .submitLabel(.send)
             #endif
-            .padding(.vertical, 8)
+                .padding(.vertical, 8)
             #if os(iOS) || os(visionOS)
                 .frame(minHeight: 48)
             #elseif os(macOS)
                 .frame(minHeight: 32)
             #endif
             #if os(iOS)
-            .onKeyPress { press in
-                guard press.key == .return else {
-                    print("didn't press return")
-                    return .ignored
-                }
-                
-                if press.modifiers.contains(EventModifiers.shift) {
-                    print("pressed return and shift")
-                    prompt.append("\n")
-                    return .ignored
-                }
-                
-                return .ignored
+            .onSubmit {
+                isPromptFocused = true
+                generate()
             }
             #endif
 
