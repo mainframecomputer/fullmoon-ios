@@ -97,6 +97,7 @@ struct ChatsListView: View {
 
                     ToolbarItem(placement: .topBarTrailing) {
                         Button(action: {
+                            selection = nil
                             // create new thread
                             setCurrentThread(nil)
 
