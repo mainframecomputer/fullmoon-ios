@@ -35,13 +35,13 @@ struct fullmoonApp: App {
         #if os(visionOS)
         .windowResizability(.contentSize)
         #endif
-//        #if os(macOS)
-//        .commands {
-//            CommandGroup(replacing: CommandGroupPlacement.newItem) {
-//                
-//            }
-//        }
-//        #endif
+        #if os(macOS)
+        .commands {
+            CommandGroup(replacing: CommandGroupPlacement.newItem) {
+                
+            }
+        }
+        #endif
     }
 }
 
