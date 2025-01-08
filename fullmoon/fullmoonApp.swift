@@ -55,9 +55,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
     
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
-        // if there’s a recently closed window, bring that one back
-        if let lastClosedWindow = closedWindowsStack.popLast() {
-            lastClosedWindow.makeKeyAndOrderFront(self)
+        // if there’s a recently closed window, bring that back
+        if let lastClosed = closedWindowsStack.popLast() {
+            lastClosed.makeKeyAndOrderFront(self)
+        } else {
+            // otherwise, un-minimize any minimized windows
+            for window in sender.windows where window.isMiniaturized {
+                window.deminiaturize(nil)
+            }
         }
         return false
     }
