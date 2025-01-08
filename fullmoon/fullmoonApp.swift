@@ -35,36 +35,37 @@ struct fullmoonApp: App {
         #if os(visionOS)
         .windowResizability(.contentSize)
         #endif
-        #if os(macOS)
-        .commands {
-            CommandGroup(replacing: CommandGroupPlacement.newItem) {
-                
-            }
-        }
-        #endif
+//        #if os(macOS)
+//        .commands {
+//            CommandGroup(replacing: CommandGroupPlacement.newItem) {
+//                
+//            }
+//        }
+//        #endif
     }
 }
 
 #if os(macOS)
 class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
+    private var closedWindowsStack = [NSWindow]()
+    
     func applicationDidFinishLaunching(_ notification: Notification) {
-        let mainWindow = NSApp.windows[0]
-        mainWindow.delegate = self
-        
-        let closeMenuItem = NSApp.mainMenu?.item(withTitle: "File")?.submenu?.item(withTitle: "Close")
-        closeMenuItem?.target = self
-        closeMenuItem?.action = #selector(handleCMDW)
+        let mainWindow = NSApp.windows.first
+        mainWindow?.delegate = self
     }
     
-    @objc func handleCMDW() {
-        // Post a notification when CMD + W is pressed
-        // Optionally hide the app
-        NSApp.hide(nil)
-    }
-    
-    func windowShouldClose(_ sender: NSWindow) -> Bool {
-        NSApp.hide(nil)
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        // if there’s a recently closed window, bring that one back
+        if let lastClosedWindow = closedWindowsStack.popLast() {
+            lastClosedWindow.makeKeyAndOrderFront(self)
+        }
         return false
+    }
+    
+    func windowWillClose(_ notification: Notification) {
+        if let window = notification.object as? NSWindow {
+            closedWindowsStack.append(window)
+        }
     }
 }
 #endif
