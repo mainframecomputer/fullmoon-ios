@@ -143,8 +143,9 @@ struct ChatsListView: View {
     }
 
     func requestReviewIfAppropriate() {
-        if appManager.numberOfVisits >= 5 {
+        if appManager.numberOfVisits - appManager.numberOfVisitsOfLastRequest >= 5 {
             requestReview() // can only be prompted if the user hasn't given a review in the last year, so it will prompt again when apple deems appropriate
+            appManager.numberOfVisitsOfLastRequest = appManager.numberOfVisits
         }
     }
 
