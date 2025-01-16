@@ -49,7 +49,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "개인적이고 로컬에서 실행되는 대형 언어 모델과 채팅하기"
+            "value" : "개인용으로 로컬에서 실행되는 대형 언어 모델과 채팅하기"
           }
         }
       }
@@ -302,7 +302,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "새 채팅: ${prompt}"
+            "value" : "\"${prompt}로 새 채팅 시작\""
           }
         }
       }
@@ -372,7 +372,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "디바이스에서 로컬로 실행됨"
+            "value" : "기기에서 로컬로 실행됨"
           }
         }
       }
