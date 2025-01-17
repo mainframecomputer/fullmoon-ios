@@ -4,9 +4,6 @@ import SwiftUI
 
 @available(iOS 16.0, macOS 13.0, *)
 struct RequestLLMIntent: AppIntent {
-    let MAX_CHARACTERS = 300
-    let SYSTEM_PROMPT = "you are a helpful assistant. you never reply with more than 2 sentences even if asked to."
-    
     static var title: LocalizedStringResource = "new chat"
     static var description: LocalizedStringResource = "start a new chat"
     
@@ -21,6 +18,22 @@ struct RequestLLMIntent: AppIntent {
             // shortcuts additional parameters
             \.$continuous
         }
+    }
+    
+    var maxCharacters: Int? {
+        if continuous {
+            return 300
+        }
+        
+        return nil
+    }
+    
+    var systemPrompt: String {
+        if continuous {
+            return "\n you never reply with more than FOUR sentences even if asked to."
+        }
+        
+        return ""
     }
     
     let thread = Thread() // create a new thread for this intent
@@ -43,10 +56,12 @@ struct RequestLLMIntent: AppIntent {
             
             let message = Message(role: .user, content: prompt, thread: thread)
             thread.messages.append(message)
-            var output = await llm.generate(modelName: modelName, thread: thread, systemPrompt: SYSTEM_PROMPT)
+            var output = await llm.generate(modelName: modelName, thread: thread, systemPrompt: appManager.systemPrompt + systemPrompt)
             
-            if output.count > MAX_CHARACTERS {
-                output = String(output.prefix(MAX_CHARACTERS)).trimmingCharacters(in: .whitespaces) + "..."
+            let maxCharacters = maxCharacters ?? .max
+            
+            if output.count > maxCharacters {
+                output = String(output.prefix(maxCharacters)).trimmingCharacters(in: .whitespaces) + "..."
             }
             
             let responseMessage = Message(role: .assistant, content: output, thread: thread)
