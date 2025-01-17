@@ -7,7 +7,7 @@ struct RequestLLMIntent: AppIntent {
     static var title: LocalizedStringResource = "new chat"
     static var description: LocalizedStringResource = "start a new chat"
     
-    @Parameter(title: "continuous chat", default: true)
+    @Parameter(title: "Continuous Chat", default: true)
     var continuous: Bool
     
     @Parameter(title: "message", requestValueDialog: IntentDialog("chat"))
