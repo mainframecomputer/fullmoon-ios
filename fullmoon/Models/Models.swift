@@ -21,9 +21,18 @@ extension ModelConfiguration: @retroactive Equatable {
         id: "mlx-community/Llama-3.2-3B-Instruct-4bit"
     )
     
+    public static let qwen_2_5_3b_4bit = ModelConfiguration(
+        id: "mlx-community/Qwen2.5-3B-Instruct-4bit"
+    )
+    
+    public static let qwen_2_5_7b_4bit = ModelConfiguration(
+        id: "mlx-community/Qwen2.5-7B-Instruct-4bit"
+    )
+    
     public static var availableModels: [ModelConfiguration] = [
         llama_3_2_1B_4bit,
-        llama_3_2_3b_4bit
+        llama_3_2_3b_4bit,
+        qwen_2_5_3b_4bit,
     ]
     
     public static var defaultModel: ModelConfiguration {
@@ -63,6 +72,8 @@ extension ModelConfiguration: @retroactive Equatable {
         switch self {
         case .llama_3_2_1B_4bit: return 0.7
         case .llama_3_2_3b_4bit: return 1.8
+        case .qwen_2_5_3b_4bit: return 1.8
+        case .qwen_2_5_7b_4bit: return 4.3
         default: return nil
         }
     }
