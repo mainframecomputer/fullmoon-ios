@@ -21,9 +21,14 @@ extension ModelConfiguration: @retroactive Equatable {
         id: "mlx-community/Llama-3.2-3B-Instruct-4bit"
     )
     
+    public static let deepseek_r1_distill_qwen_1_5b = ModelConfiguration(
+        id: "mlx-community/deepseek-r1-distill-qwen-1.5b"
+    )
+    
     public static var availableModels: [ModelConfiguration] = [
         llama_3_2_1B_4bit,
         llama_3_2_3b_4bit
+        deepseek_r1_distill_qwen_1_5b
     ]
     
     public static var defaultModel: ModelConfiguration {
@@ -63,6 +68,7 @@ extension ModelConfiguration: @retroactive Equatable {
         switch self {
         case .llama_3_2_1B_4bit: return 0.7
         case .llama_3_2_3b_4bit: return 1.8
+        case .deepseek_r1_distill_qwen_1_5b: return 1.0
         default: return nil
         }
     }
