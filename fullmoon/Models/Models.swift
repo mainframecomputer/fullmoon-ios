@@ -8,6 +8,19 @@
 import MLXLMCommon
 import Foundation
 
+public extension ModelConfiguration {
+    enum ModelType {
+        case regular, reasoning
+    }
+    
+    var modelType: ModelType {
+        switch self {
+        case .deepseek_r1_distill_qwen_1_5b_4bit: .reasoning
+        default: .regular
+        }
+    }
+}
+
 extension ModelConfiguration: @retroactive Equatable {
     public static func == (lhs: MLXLMCommon.ModelConfiguration, rhs: MLXLMCommon.ModelConfiguration) -> Bool {
         return lhs.name == rhs.name
@@ -51,13 +64,13 @@ extension ModelConfiguration: @retroactive Equatable {
             "role": "system",
             "content": systemPrompt
         ])
-
+        
         // messages
         for (index, message) in thread.sortedMessages.enumerated() {
             let role = message.role.rawValue
             history.append([
                 "role": role,
-                "content": message.content + (role == "user" ? "<think>" : "")
+                "content": message.content + (role == "user" && self.modelType == .reasoning ? "<think>" : "")
             ])
         }
         

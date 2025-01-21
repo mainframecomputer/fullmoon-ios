@@ -12,7 +12,7 @@ struct SettingsView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(LLMEvaluator.self) var llm
     @Binding var currentThread: Thread?
-    
+
     var body: some View {
         NavigationStack {
             Form {
@@ -20,23 +20,28 @@ struct SettingsView: View {
                     NavigationLink(destination: AppearanceSettingsView()) {
                         Label("appearance", systemImage: "paintpalette")
                     }
-                    
+
                     NavigationLink(destination: ChatsSettingsView(currentThread: $currentThread)) {
                         Label("chats", systemImage: "message")
                     }
-                    
+
                     NavigationLink(destination: ModelsSettingsView()) {
-                        Label("models", systemImage: "arrow.down.circle")
-                            .badge(appManager.modelDisplayName(appManager.currentModelName ?? ""))
+                        Label {
+                            Text("models")
+                                .fixedSize()
+                        } icon: {
+                            Image(systemName: "arrow.down.circle")
+                        }
+                        .badge(appManager.modelDisplayName(appManager.currentModelName ?? ""))
                     }
                 }
-                
+
                 Section {
                     NavigationLink(destination: CreditsView()) {
                         Text("credits")
                     }
                 }
-                
+
                 Section {} footer: {
                     HStack {
                         Spacer()
@@ -62,28 +67,27 @@ struct SettingsView: View {
                     }
                     .padding(.vertical)
                 }
-                
             }
             .formStyle(.grouped)
             .navigationTitle("settings")
             #if os(iOS)
-            .navigationBarTitleDisplayMode(.inline)
+                .navigationBarTitleDisplayMode(.inline)
             #endif
-            .toolbar {
-                #if os(iOS) || os(visionOS)
-                ToolbarItem(placement: .topBarLeading) {
-                    Button(action: { dismiss() }) {
-                        Image(systemName: "xmark")
+                .toolbar {
+                    #if os(iOS) || os(visionOS)
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button(action: { dismiss() }) {
+                            Image(systemName: "xmark")
+                        }
                     }
-                }
-                #elseif os(macOS)
-                ToolbarItem(placement: .destructiveAction) {
-                    Button(action: { dismiss() }) {
-                        Text("close")
+                    #elseif os(macOS)
+                    ToolbarItem(placement: .destructiveAction) {
+                        Button(action: { dismiss() }) {
+                            Text("close")
+                        }
                     }
+                    #endif
                 }
-                #endif
-            }
         }
         #if !os(visionOS)
         .tint(appManager.appTintColor.getColor())
@@ -96,6 +100,7 @@ extension Bundle {
     var releaseVersionNumber: String? {
         return infoDictionary?["CFBundleShortVersionString"] as? String
     }
+
     var buildVersionNumber: String? {
         return infoDictionary?["CFBundleVersion"] as? String
     }
