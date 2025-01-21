@@ -39,10 +39,12 @@ struct MessageView: View {
                         HStack(spacing: 10) {
                             Capsule()
                                 .frame(width: 3)
-                                .opacity(0.08)
                                 .padding(.vertical, 1)
+                                .foregroundStyle(.fill)
                             Markdown(thinking)
-                                .opacity(0.25)
+                                .markdownTextStyle {
+                                    ForegroundColor(.secondary)
+                                }
                         }
                     }
 
