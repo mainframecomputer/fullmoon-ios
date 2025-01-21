@@ -78,6 +78,7 @@ struct MessageView: View {
             Text("\(isThinking ? "thinking..." : "thought for") \(time)")
                 .italic()
         }
+        .buttonStyle(.borderless)
         .foregroundStyle(.secondary)
     }
 
