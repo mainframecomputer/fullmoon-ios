@@ -20,6 +20,17 @@ class LLMEvaluator {
     var modelInfo = ""
     var stat = ""
     var progress = 0.0
+    var thinkingTime: TimeInterval?
+    
+    var elapsedTime: TimeInterval? {
+        if let startTime {
+            return Date().timeIntervalSince(startTime)
+        }
+        
+        return nil
+    }
+    
+    private var startTime: Date?
 
     var modelConfiguration = ModelConfiguration.defaultModel
     
@@ -85,6 +96,7 @@ class LLMEvaluator {
         running = true
         cancelled = false
         self.output = ""
+        self.startTime = Date()
 
         do {
             let modelContainer = try await load(modelName: modelName)

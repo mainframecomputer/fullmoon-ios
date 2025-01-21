@@ -8,8 +8,28 @@
 import MarkdownUI
 import SwiftUI
 
+extension TimeInterval {
+    var formatted: String {
+        let totalSeconds = Int(self)
+        let minutes = totalSeconds / 60
+        let seconds = totalSeconds % 60
+        
+        if minutes > 0 {
+            return seconds > 0 ? "\(minutes)m \(seconds)s" : "\(minutes)m"
+        } else {
+            return "\(seconds)s"
+        }
+    }
+}
+
 struct MessageView: View {
+    @Environment(LLMEvaluator.self) var llm
+    @State private var collapsed = true
     let message: Message
+    
+    var isThinking: Bool {
+        !message.content.contains("</think>")
+    }
 
     func processThinkingContent(_ content: String) -> (String?, String?) {
         guard let startRange = content.range(of: "<think>") else {
@@ -27,6 +47,23 @@ struct MessageView: View {
 
         return (thinking, afterThink.isEmpty ? nil : afterThink)
     }
+    
+    var time: String {
+        if llm.running, let elapsedTime = llm.elapsedTime {
+            if isThinking {
+                return "(\(elapsedTime.formatted))"
+            }
+            if let thinkingTime = llm.thinkingTime {
+                return thinkingTime.formatted
+            }
+        }
+        
+        if let generatingTime = message.generatingTime {
+            return "\(generatingTime.formatted)"
+        }
+        
+        return ""
+    }
 
     var body: some View {
         HStack {
@@ -41,10 +78,24 @@ struct MessageView: View {
                                 .frame(width: 3)
                                 .padding(.vertical, 1)
                                 .foregroundStyle(.fill)
-                            Markdown(thinking)
-                                .markdownTextStyle {
-                                    ForegroundColor(.secondary)
+                            if collapsed {
+                                ZStack {
+                                    if isThinking {
+                                        Text("thinking... \(time)")
+                                    } else {
+                                        Text("thought for \(time)")
+                                    }
                                 }
+                                .foregroundStyle(.secondary)
+                            } else {
+                                Markdown(thinking)
+                                    .markdownTextStyle {
+                                        ForegroundColor(.secondary)
+                                    }
+                            }
+                        }
+                        .onTapGesture {
+                                collapsed.toggle()
                         }
                     }
 
@@ -70,6 +121,16 @@ struct MessageView: View {
             }
 
             if message.role == .assistant { Spacer() }
+        }
+        .onAppear {
+            if llm.running {
+                collapsed = false
+            }
+        }
+        .onChange(of: llm.elapsedTime) {
+            if isThinking {
+                llm.thinkingTime = llm.elapsedTime
+            }
         }
     }
 
