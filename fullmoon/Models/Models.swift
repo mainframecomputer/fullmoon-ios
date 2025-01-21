@@ -53,10 +53,11 @@ extension ModelConfiguration: @retroactive Equatable {
         ])
 
         // messages
-        for message in thread.sortedMessages {
+        for (index, message) in thread.sortedMessages.enumerated() {
+            let role = message.role.rawValue
             history.append([
-                "role": message.role.rawValue,
-                "content": message.content
+                "role": role,
+                "content": message.content + (index == 0 && role == "user" ? "<think>" : "")
             ])
         }
         

@@ -106,25 +106,26 @@ class LLMEvaluator {
             // augment the prompt as needed
             let promptHistory = modelConfiguration.getPromptHistory(thread: thread, systemPrompt: systemPrompt)
             
-            let augmentedHistory = promptHistory.map { entry -> [String: String] in
-                var newEntry = entry
-                if let role = entry["role"], let content = entry["content"] {
-                    if role == "user" {
-                        // Add <｜User｜> at the start and <｜Assistant｜> at the end
-                        newEntry["content"] = "<｜User｜>" + content + "<｜Assistant｜>"
-                    } else if role == "assistant" {
-                        // Add <｜Assistant｜> at the start of the assistant's message
-                        newEntry["content"] = content
-                    }
-                }
-                return newEntry
-            }
+//            let augmentedHistory = promptHistory.map { entry -> [String: String] in
+//                var newEntry = entry
+//                if let role = entry["role"], let content = entry["content"] {
+//                    if role == "user" {
+//                        // Add <｜User｜> at the start and <｜Assistant｜> at the end
+//                        newEntry["content"] = "<｜User｜>" + content + "<｜Assistant｜>"
+//                    } else if role == "assistant" {
+//                        // Add <｜Assistant｜> at the start of the assistant's message
+//                        newEntry["content"] = content
+//                    }
+//                }
+//                return newEntry
+//            }
+            
 
             // each time you generate you will get something new
             MLXRandom.seed(UInt64(Date.timeIntervalSinceReferenceDate * 1000))
 
             let result = try await modelContainer.perform { context in
-                let input = try await context.processor.prepare(input: .init(messages: augmentedHistory))
+                let input = try await context.processor.prepare(input: .init(messages: promptHistory))
                 return try MLXLMCommon.generate(
                     input: input, parameters: generateParameters, context: context
                 ) { tokens in
