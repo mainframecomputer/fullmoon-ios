@@ -57,7 +57,7 @@ extension ModelConfiguration: @retroactive Equatable {
             let role = message.role.rawValue
             history.append([
                 "role": role,
-                "content": message.content + (index == 0 && role == "user" ? "<think>" : "")
+                "content": message.content + (role == "user" ? "<think>" : "")
             ])
         }
         
