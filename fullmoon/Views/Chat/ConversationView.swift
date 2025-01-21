@@ -99,6 +99,7 @@ struct MessageView: View {
                                         .padding(.vertical, 1)
                                         .foregroundStyle(.fill)
                                     Markdown(thinking)
+                                        .textSelection(.enabled)
                                         .markdownTextStyle {
                                             ForegroundColor(.secondary)
                                         }
@@ -106,6 +107,7 @@ struct MessageView: View {
                                 .padding(.leading, 4)
                             }
                         }
+                        .contentShape(.rect)
                         .onTapGesture {
                             collapsed.toggle()
                             if isThinking {
@@ -116,6 +118,7 @@ struct MessageView: View {
 
                     if let afterThink {
                         Markdown(afterThink)
+                            .textSelection(.enabled)
                     }
                 }
                 .padding(.trailing, 48)
@@ -125,14 +128,17 @@ struct MessageView: View {
                 #if os(iOS) || os(visionOS)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
+                #else
+                    .padding(.horizontal, 16 * 2 / 3)
+                    .padding(.vertical, 8)
+                #endif
                     .background(platformBackgroundColor)
-                #endif
                 #if os(iOS) || os(visionOS)
-                .mask(RoundedRectangle(cornerRadius: 24))
+                    .mask(RoundedRectangle(cornerRadius: 24))
                 #elseif os(macOS)
-                .mask(RoundedRectangle(cornerRadius: 16))
+                    .mask(RoundedRectangle(cornerRadius: 16))
                 #endif
-                .padding(.leading, 48)
+                    .padding(.leading, 48)
             }
 
             if message.role == .assistant { Spacer() }
