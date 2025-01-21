@@ -21,6 +21,8 @@ class LLMEvaluator {
     var stat = ""
     var progress = 0.0
     var thinkingTime: TimeInterval?
+    var collapsed: Bool = false
+    var isThinking: Bool = false
     
     var elapsedTime: TimeInterval? {
         if let startTime {

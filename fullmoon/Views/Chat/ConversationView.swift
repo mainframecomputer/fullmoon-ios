@@ -13,7 +13,7 @@ extension TimeInterval {
         let totalSeconds = Int(self)
         let minutes = totalSeconds / 60
         let seconds = totalSeconds % 60
-        
+
         if minutes > 0 {
             return seconds > 0 ? "\(minutes)m \(seconds)s" : "\(minutes)m"
         } else {
@@ -26,7 +26,7 @@ struct MessageView: View {
     @Environment(LLMEvaluator.self) var llm
     @State private var collapsed = true
     let message: Message
-    
+
     var isThinking: Bool {
         !message.content.contains("</think>")
     }
@@ -47,7 +47,7 @@ struct MessageView: View {
 
         return (thinking, afterThink.isEmpty ? nil : afterThink)
     }
-    
+
     var time: String {
         if llm.running, let elapsedTime = llm.elapsedTime {
             if isThinking {
@@ -57,12 +57,28 @@ struct MessageView: View {
                 return thinkingTime.formatted
             }
         }
-        
+
         if let generatingTime = message.generatingTime {
             return "\(generatingTime.formatted)"
         }
-        
+
         return ""
+    }
+
+    var thinkingLabel: some View {
+        HStack {
+            Button {
+                collapsed.toggle()
+            } label: {
+                Image(systemName: collapsed ? "chevron.right" : "chevron.down")
+                    .font(.system(size: 12))
+                    .fontWeight(.medium)
+            }
+
+            Text("\(isThinking ? "thinking..." : "thought for") \(time)")
+                .italic()
+        }
+        .foregroundStyle(.secondary)
     }
 
     var body: some View {
@@ -73,29 +89,27 @@ struct MessageView: View {
                 let (thinking, afterThink) = processThinkingContent(message.content)
                 VStack(alignment: .leading, spacing: 16) {
                     if let thinking {
-                        HStack(spacing: 10) {
-                            Capsule()
-                                .frame(width: 3)
-                                .padding(.vertical, 1)
-                                .foregroundStyle(.fill)
-                            if collapsed {
-                                ZStack {
-                                    if isThinking {
-                                        Text("thinking... \(time)")
-                                    } else {
-                                        Text("thought for \(time)")
-                                    }
+                        VStack(alignment: .leading, spacing: 12) {
+                            thinkingLabel
+                            if !collapsed {
+                                HStack(spacing: 12) {
+                                    Capsule()
+                                        .frame(width: 3)
+                                        .padding(.vertical, 1)
+                                        .foregroundStyle(.fill)
+                                    Markdown(thinking)
+                                        .markdownTextStyle {
+                                            ForegroundColor(.secondary)
+                                        }
                                 }
-                                .foregroundStyle(.secondary)
-                            } else {
-                                Markdown(thinking)
-                                    .markdownTextStyle {
-                                        ForegroundColor(.secondary)
-                                    }
+                                .padding(.leading, 4)
                             }
                         }
                         .onTapGesture {
-                                collapsed.toggle()
+                            collapsed.toggle()
+                            if isThinking {
+                                llm.collapsed = collapsed
+                            }
                         }
                     }
 
@@ -130,6 +144,11 @@ struct MessageView: View {
         .onChange(of: llm.elapsedTime) {
             if isThinking {
                 llm.thinkingTime = llm.elapsedTime
+            }
+        }
+        .onChange(of: isThinking) {
+            if llm.running {
+                llm.isThinking = isThinking
             }
         }
     }
@@ -189,7 +208,10 @@ struct ConversationView: View {
                 if !scrollInterrupted {
                     scrollView.scrollTo("bottom")
                 }
-                appManager.playHaptic()
+
+                if !llm.isThinking {
+                    appManager.playHaptic()
+                }
             }
             .onChange(of: scrollID) { _, _ in
                 // interrupt auto scroll to bottom if user scrolls away
