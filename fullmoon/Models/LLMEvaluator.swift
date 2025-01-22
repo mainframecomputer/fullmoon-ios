@@ -11,6 +11,10 @@ import MLXLMCommon
 import MLXRandom
 import SwiftUI
 
+enum LLMEvaluatorError: Error {
+    case modelNotFound(String)
+}
+
 @Observable
 @MainActor
 class LLMEvaluator {
@@ -62,14 +66,16 @@ class LLMEvaluator {
     /// load and return the model -- can be called multiple times, subsequent calls will
     /// just return the loaded model
     func load(modelName: String) async throws -> ModelContainer {
-        let model = ModelConfiguration.getModelByName(modelName)
+        guard let model = ModelConfiguration.getModelByName(modelName) else {
+            throw LLMEvaluatorError.modelNotFound(modelName)
+        }
 
         switch loadState {
         case .idle:
             // limit the buffer cache
             MLX.GPU.set(cacheLimit: 20 * 1024 * 1024)
 
-            let modelContainer = try await LLMModelFactory.shared.loadContainer(configuration: model!) {
+            let modelContainer = try await LLMModelFactory.shared.loadContainer(configuration: model) {
                 [modelConfiguration] progress in
                 Task { @MainActor in
                     self.modelInfo =
