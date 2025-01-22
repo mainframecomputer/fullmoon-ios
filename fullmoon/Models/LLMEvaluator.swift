@@ -151,6 +151,7 @@ class LLMEvaluator {
         }
 
         running = false
+        print(output)
         return output
     }
 }
