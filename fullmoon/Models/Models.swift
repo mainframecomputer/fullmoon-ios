@@ -8,6 +8,19 @@
 import MLXLMCommon
 import Foundation
 
+public extension ModelConfiguration {
+    enum ModelType {
+        case regular, reasoning
+    }
+    
+    var modelType: ModelType {
+        switch self {
+        case .deepseek_r1_distill_qwen_1_5b_4bit: .reasoning
+        default: .regular
+        }
+    }
+}
+
 extension ModelConfiguration: @retroactive Equatable {
     public static func == (lhs: MLXLMCommon.ModelConfiguration, rhs: MLXLMCommon.ModelConfiguration) -> Bool {
         return lhs.name == rhs.name
@@ -21,9 +34,14 @@ extension ModelConfiguration: @retroactive Equatable {
         id: "mlx-community/Llama-3.2-3B-Instruct-4bit"
     )
     
+    public static let deepseek_r1_distill_qwen_1_5b_4bit = ModelConfiguration(
+        id: "mlx-community/DeepSeek-R1-Distill-Qwen-1.5B-4bit"
+    )
+    
     public static var availableModels: [ModelConfiguration] = [
         llama_3_2_1B_4bit,
-        llama_3_2_3b_4bit
+        llama_3_2_3b_4bit,
+        deepseek_r1_distill_qwen_1_5b_4bit
     ]
     
     public static var defaultModel: ModelConfiguration {
@@ -46,12 +64,13 @@ extension ModelConfiguration: @retroactive Equatable {
             "role": "system",
             "content": systemPrompt
         ])
-
+        
         // messages
         for message in thread.sortedMessages {
+            let role = message.role.rawValue
             history.append([
-                "role": message.role.rawValue,
-                "content": message.content
+                "role": role,
+                "content": message.content + (role == "user" && self.modelType == .reasoning ? "<think>" : "")
             ])
         }
         
@@ -63,6 +82,7 @@ extension ModelConfiguration: @retroactive Equatable {
         switch self {
         case .llama_3_2_1B_4bit: return 0.7
         case .llama_3_2_3b_4bit: return 1.8
+        case .deepseek_r1_distill_qwen_1_5b_4bit: return 1.0
         default: return nil
         }
     }

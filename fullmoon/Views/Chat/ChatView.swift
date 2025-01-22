@@ -20,6 +20,8 @@ struct ChatView: View {
     @Binding var showChats: Bool
     @Binding var showSettings: Bool
     
+    @State var thinkingTime: TimeInterval?
+    
     @State private var generatingThreadID: UUID?
 
     var isPromptEmpty: Bool {
@@ -283,7 +285,7 @@ struct ChatView: View {
                     isPromptFocused = true
                     if let modelName = appManager.currentModelName {
                         let output = await llm.generate(modelName: modelName, thread: currentThread, systemPrompt: appManager.systemPrompt)
-                        sendMessage(Message(role: .assistant, content: output, thread: currentThread))
+                        sendMessage(Message(role: .assistant, content: output, thread: currentThread, generatingTime: llm.thinkingTime))
                         generatingThreadID = nil
                     }
                 }

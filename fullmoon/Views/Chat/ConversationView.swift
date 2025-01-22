@@ -8,32 +8,155 @@
 import MarkdownUI
 import SwiftUI
 
+extension TimeInterval {
+    var formatted: String {
+        let totalSeconds = Int(self)
+        let minutes = totalSeconds / 60
+        let seconds = totalSeconds % 60
+
+        if minutes > 0 {
+            return seconds > 0 ? "\(minutes)m \(seconds)s" : "\(minutes)m"
+        } else {
+            return "\(seconds)s"
+        }
+    }
+}
+
 struct MessageView: View {
+    @Environment(LLMEvaluator.self) var llm
+    @State private var collapsed = true
     let message: Message
+
+    var isThinking: Bool {
+        !message.content.contains("</think>")
+    }
+
+    func processThinkingContent(_ content: String) -> (String?, String?) {
+        guard let startRange = content.range(of: "<think>") else {
+            // No <think> tag, return entire content as the second part
+            return (nil, content.trimmingCharacters(in: .whitespacesAndNewlines))
+        }
+        guard let endRange = content.range(of: "</think>") else {
+            // No </think> tag, return content after <think> without the tag
+            let thinking = String(content[startRange.upperBound...]).trimmingCharacters(in: .whitespacesAndNewlines)
+            return (thinking, nil)
+        }
+
+        let thinking = String(content[startRange.upperBound ..< endRange.lowerBound]).trimmingCharacters(in: .whitespacesAndNewlines)
+        let afterThink = String(content[endRange.upperBound...]).trimmingCharacters(in: .whitespacesAndNewlines)
+
+        return (thinking, afterThink.isEmpty ? nil : afterThink)
+    }
+
+    var time: String {
+        if llm.running, let elapsedTime = llm.elapsedTime {
+            if isThinking {
+                return "(\(elapsedTime.formatted))"
+            }
+            if let thinkingTime = llm.thinkingTime {
+                return thinkingTime.formatted
+            }
+        }
+
+        if let generatingTime = message.generatingTime {
+            return "\(generatingTime.formatted)"
+        }
+
+        return ""
+    }
+
+    var thinkingLabel: some View {
+        HStack {
+            Button {
+                collapsed.toggle()
+            } label: {
+                Image(systemName: collapsed ? "chevron.right" : "chevron.down")
+                    .font(.system(size: 12))
+                    .fontWeight(.medium)
+            }
+
+            Text("\(isThinking ? "thinking..." : "thought for") \(time)")
+                .italic()
+        }
+        .buttonStyle(.borderless)
+        .foregroundStyle(.secondary)
+    }
 
     var body: some View {
         HStack {
             if message.role == .user { Spacer() }
-            Markdown(message.content)
-                .textSelection(.enabled)
-                .if(message.role == .user) { view in
-                    view
-                    #if os(iOS) || os(visionOS)
+
+            if message.role == .assistant {
+                let (thinking, afterThink) = processThinkingContent(message.content)
+                VStack(alignment: .leading, spacing: 16) {
+                    if let thinking {
+                        VStack(alignment: .leading, spacing: 12) {
+                            thinkingLabel
+                            if !collapsed {
+                                HStack(spacing: 12) {
+                                    Capsule()
+                                        .frame(width: 3)
+                                        .padding(.vertical, 1)
+                                        .foregroundStyle(.fill)
+                                    Markdown(thinking)
+                                        .textSelection(.enabled)
+                                        .markdownTextStyle {
+                                            ForegroundColor(.secondary)
+                                        }
+                                }
+                                .padding(.leading, 4)
+                            }
+                        }
+                        .contentShape(.rect)
+                        .onTapGesture {
+                            collapsed.toggle()
+                            if isThinking {
+                                llm.collapsed = collapsed
+                            }
+                        }
+                    }
+
+                    if let afterThink {
+                        Markdown(afterThink)
+                            .textSelection(.enabled)
+                    }
+                }
+                .padding(.trailing, 48)
+            } else {
+                Markdown(message.content)
+                    .textSelection(.enabled)
+                #if os(iOS) || os(visionOS)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
-                    #else
+                #else
                     .padding(.horizontal, 16 * 2 / 3)
                     .padding(.vertical, 8)
-                    #endif
+                #endif
                     .background(platformBackgroundColor)
-                    #if os(iOS) || os(visionOS)
-                        .mask(RoundedRectangle(cornerRadius: 24))
-                    #elseif os(macOS)
-                        .mask(RoundedRectangle(cornerRadius: 16))
-                    #endif
-                }
-                .padding(message.role == .user ? .leading : .trailing, 48)
+                #if os(iOS) || os(visionOS)
+                    .mask(RoundedRectangle(cornerRadius: 24))
+                #elseif os(macOS)
+                    .mask(RoundedRectangle(cornerRadius: 16))
+                #endif
+                    .padding(.leading, 48)
+            }
+
             if message.role == .assistant { Spacer() }
+        }
+        .onAppear {
+            if llm.running {
+                collapsed = false
+            }
+        }
+        .onChange(of: llm.elapsedTime) {
+            if isThinking {
+                llm.thinkingTime = llm.elapsedTime
+            }
+        }
+        .onChange(of: isThinking) {
+            if llm.running {
+                llm.isThinking = isThinking
+            }
         }
     }
 
@@ -68,13 +191,15 @@ struct ConversationView: View {
                     }
 
                     if llm.running && !llm.output.isEmpty && thread.id == generatingThreadID {
-                        MessageView(message: Message(role: .assistant, content: llm.output + " 🌕"))
-                            .padding()
-                            .id("output")
-                            .onAppear {
-                                print("output appeared")
-                                scrollInterrupted = false // reset interruption when a new output begins
-                            }
+                        VStack {
+                            MessageView(message: Message(role: .assistant, content: llm.output + " 🌕"))
+                        }
+                        .padding()
+                        .id("output")
+                        .onAppear {
+                            print("output appeared")
+                            scrollInterrupted = false // reset interruption when a new output begins
+                        }
                     }
 
                     Rectangle()
@@ -83,7 +208,6 @@ struct ConversationView: View {
                         .id("bottom")
                 }
                 .scrollTargetLayout()
-                
             }
             .scrollPosition(id: $scrollID, anchor: .bottom)
             .onChange(of: llm.output) { _, _ in
@@ -91,9 +215,12 @@ struct ConversationView: View {
                 if !scrollInterrupted {
                     scrollView.scrollTo("bottom")
                 }
-                appManager.playHaptic()
+
+                if !llm.isThinking {
+                    appManager.playHaptic()
+                }
             }
-            .onChange(of: scrollID) { old, new in
+            .onChange(of: scrollID) { _, _ in
                 // interrupt auto scroll to bottom if user scrolls away
                 if llm.running {
                     scrollInterrupted = true
@@ -102,7 +229,7 @@ struct ConversationView: View {
         }
         .defaultScrollAnchor(.bottom)
         #if os(iOS)
-        .scrollDismissesKeyboard(.interactively)
+            .scrollDismissesKeyboard(.interactively)
         #endif
     }
 }

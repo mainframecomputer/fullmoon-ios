@@ -138,15 +138,17 @@ class Message {
     var role: Role
     var content: String
     var timestamp: Date
+    var generatingTime: TimeInterval?
     
     @Relationship(inverse: \Thread.messages) var thread: Thread?
     
-    init(role: Role, content: String, thread: Thread? = nil) {
+    init(role: Role, content: String, thread: Thread? = nil, generatingTime: TimeInterval? = nil) {
         self.id = UUID()
         self.role = role
         self.content = content
         self.timestamp = Date()
         self.thread = thread
+        self.generatingTime = generatingTime
     }
 }
 
