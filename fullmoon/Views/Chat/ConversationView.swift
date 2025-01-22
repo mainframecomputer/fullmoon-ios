@@ -62,7 +62,7 @@ struct MessageView: View {
             return "\(generatingTime.formatted)"
         }
 
-        return ""
+        return "0s"
     }
 
     var thinkingLabel: some View {
@@ -93,18 +93,20 @@ struct MessageView: View {
                         VStack(alignment: .leading, spacing: 12) {
                             thinkingLabel
                             if !collapsed {
-                                HStack(spacing: 12) {
-                                    Capsule()
-                                        .frame(width: 3)
-                                        .padding(.vertical, 1)
-                                        .foregroundStyle(.fill)
-                                    Markdown(thinking)
-                                        .textSelection(.enabled)
-                                        .markdownTextStyle {
-                                            ForegroundColor(.secondary)
-                                        }
+                                if !thinking.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {
+                                    HStack(spacing: 12) {
+                                        Capsule()
+                                            .frame(width: 2)
+                                            .padding(.vertical, 1)
+                                            .foregroundStyle(.fill)
+                                        Markdown(thinking)
+                                            .textSelection(.enabled)
+                                            .markdownTextStyle {
+                                                ForegroundColor(.secondary)
+                                            }
+                                    }
+                                    .padding(.leading, 5)
                                 }
-                                .padding(.leading, 4)
                             }
                         }
                         .contentShape(.rect)
