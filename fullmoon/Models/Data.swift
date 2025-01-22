@@ -17,6 +17,7 @@ class AppManager: ObservableObject {
     @AppStorage("currentModelName") var currentModelName: String?
     @AppStorage("shouldPlayHaptics") var shouldPlayHaptics = true
     @AppStorage("numberOfVisits") var numberOfVisits = 0
+    @AppStorage("numberOfVisitsOfLastRequest") var numberOfVisitsOfLastRequest = 0
     
     var userInterfaceIdiom: LayoutType {
         #if os(visionOS)
@@ -152,7 +153,7 @@ class Message {
 }
 
 @Model
-class Thread {
+final class Thread: Sendable {
     @Attribute(.unique) var id: UUID
     var title: String?
     var timestamp: Date
