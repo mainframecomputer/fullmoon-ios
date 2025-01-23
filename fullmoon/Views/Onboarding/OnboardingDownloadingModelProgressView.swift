@@ -76,6 +76,7 @@ struct OnboardingDownloadingModelProgressView: View {
         .sensoryFeedback(.success, trigger: installed)
         #endif
         .onChange(of: installed) {
+            UIApplication.shared.isIdleTimerDisabled = false
             addInstalledModel()
         }
         .interactiveDismissDisabled(!installed)
