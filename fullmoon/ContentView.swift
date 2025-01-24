@@ -86,7 +86,7 @@ struct ContentView: View {
         #if !os(visionOS)
         .tint(appManager.appTintColor.getColor())
         #endif
-        .fontDesign(appManager.appFontDesign.getFontDesign())
+        .fontDesign(appManager.appFontFamily.getFontDesign())
         .environment(\.dynamicTypeSize, appManager.appFontSize.getFontSize())
         .fontWidth(appManager.appFontWidth.getFontWidth())
         .onAppear {

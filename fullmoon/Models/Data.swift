@@ -11,7 +11,7 @@ import SwiftData
 class AppManager: ObservableObject {
     @AppStorage("systemPrompt") var systemPrompt = "you are a helpful assistant"
     @AppStorage("appTintColor") var appTintColor: AppTintColor = .monochrome
-    @AppStorage("appFontDesign") var appFontDesign: AppFontDesign = .standard
+    @AppStorage("appFontFamily") var appFontFamily: AppFontFamily = .sansSerif
     @AppStorage("appFontSize") var appFontSize: AppFontSize = .medium
     @AppStorage("appFontWidth") var appFontWidth: AppFontWidth = .standard
     @AppStorage("currentModelName") var currentModelName: String?
@@ -205,12 +205,12 @@ enum AppTintColor: String, CaseIterable {
     }
 }
 
-enum AppFontDesign: String, CaseIterable {
-    case standard, monospaced, rounded, serif
+enum AppFontFamily: String, CaseIterable {
+    case sansSerif, monospaced, rounded, serif
     
     func getFontDesign() -> Font.Design {
         switch self {
-        case .standard:
+        case .sansSerif:
             .default
         case .monospaced:
             .monospaced
