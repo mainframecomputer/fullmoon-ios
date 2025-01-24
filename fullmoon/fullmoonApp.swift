@@ -44,6 +44,13 @@ struct fullmoonApp: App {
                     }
                 }
             }
+            
+            CommandGroup(after: .appSettings) {
+                Button("Settings…") {
+                    appManager.showSettings = true
+                }
+                .keyboardShortcut(",", modifiers: .command)
+            }
         }
         #endif
     }

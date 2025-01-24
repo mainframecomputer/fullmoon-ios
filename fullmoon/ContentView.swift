@@ -13,7 +13,6 @@ struct ContentView: View {
     @Environment(\.modelContext) var modelContext
     @Environment(LLMEvaluator.self) var llm
     @State var showOnboarding = false
-    @State var showSettings = false
     @State var showChats = false
     @State var currentThread: Thread?
     @FocusState var isPromptFocused: Bool
@@ -28,11 +27,11 @@ struct ContentView: View {
                     .navigationSplitViewColumnWidth(min: 240, ideal: 240, max: 320)
                     #endif
                 } detail: {
-                    ChatView(currentThread: $currentThread, isPromptFocused: $isPromptFocused, showChats: $showChats, showSettings: $showSettings)
+                    ChatView(currentThread: $currentThread, isPromptFocused: $isPromptFocused, showChats: $showChats)
                 }
             } else {
                 // iPhone
-                ChatView(currentThread: $currentThread, isPromptFocused: $isPromptFocused, showChats: $showChats, showSettings: $showSettings)
+                ChatView(currentThread: $currentThread, isPromptFocused: $isPromptFocused, showChats: $showChats)
             }
         }
         .environmentObject(appManager)
@@ -68,7 +67,10 @@ struct ContentView: View {
                     view.presentationDetents([.medium, .large])
                 }
         }
-        .sheet(isPresented: $showSettings) {
+        .sheet(isPresented: .init(
+            get: { appManager.showSettings },
+            set: { appManager.showSettings = $0 }
+        )) {
             SettingsView(currentThread: $currentThread)
                 .environmentObject(appManager)
                 .environment(llm)
