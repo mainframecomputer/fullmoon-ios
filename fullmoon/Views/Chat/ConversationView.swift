@@ -185,29 +185,36 @@ struct ConversationView: View {
     var body: some View {
         ScrollViewReader { scrollView in
             ScrollView(.vertical) {
-                VStack(alignment: .leading, spacing: 0) {
-                    ForEach(thread.sortedMessages) { message in
-                        MessageView(message: message)
+                HStack {
+                    Spacer(minLength: 0)
+                    VStack(alignment: .leading, spacing: 0) {
+                        ForEach(thread.sortedMessages) { message in
+                            MessageView(message: message)
+                                .padding()
+                                .id(message.id.uuidString)
+                        }
+
+                        if llm.running && !llm.output.isEmpty && thread.id == generatingThreadID {
+                            VStack {
+                                MessageView(message: Message(role: .assistant, content: llm.output + " 🌕"))
+                            }
                             .padding()
-                            .id(message.id.uuidString)
-                    }
-
-                    if llm.running && !llm.output.isEmpty && thread.id == generatingThreadID {
-                        VStack {
-                            MessageView(message: Message(role: .assistant, content: llm.output + " 🌕"))
+                            .id("output")
+                            .onAppear {
+                                print("output appeared")
+                                scrollInterrupted = false // reset interruption when a new output begins
+                            }
                         }
-                        .padding()
-                        .id("output")
-                        .onAppear {
-                            print("output appeared")
-                            scrollInterrupted = false // reset interruption when a new output begins
-                        }
-                    }
 
-                    Rectangle()
-                        .fill(.clear)
-                        .frame(height: 1)
-                        .id("bottom")
+                        Rectangle()
+                            .fill(.clear)
+                            .frame(height: 1)
+                            .id("bottom")
+                    }
+                    #if os(macOS)
+                    .frame(maxWidth: appManager.appContentWidth.getMaxWidth())
+                    #endif
+                    Spacer(minLength: 0)
                 }
                 .scrollTargetLayout()
             }
