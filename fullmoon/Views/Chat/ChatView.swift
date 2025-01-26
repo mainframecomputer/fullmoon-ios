@@ -167,16 +167,6 @@ struct ChatView: View {
         #endif
     }
 
-    var chatTitle: String {
-        if let currentThread = currentThread {
-            if let firstMessage = currentThread.sortedMessages.first {
-                return firstMessage.content
-            }
-        }
-
-        return "chat"
-    }
-
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
@@ -198,7 +188,12 @@ struct ChatView: View {
                 }
                 .padding()
             }
-            .navigationTitle(chatTitle)
+            .navigationTitle(
+                Binding(
+                    get: {currentThread?.title ?? "chat"},
+                    set: {currentThread?.title = $0}
+                )
+            )
             #if os(iOS) || os(visionOS)
                 .navigationBarTitleDisplayMode(.inline)
             #endif
@@ -267,6 +262,7 @@ struct ChatView: View {
     }
 
     private func generate() {
+        
         if !isPromptEmpty {
             if currentThread == nil {
                 let newThread = Thread()
@@ -282,6 +278,11 @@ struct ChatView: View {
                     prompt = ""
                     appManager.playHaptic()
                     sendMessage(Message(role: .user, content: message, thread: currentThread))
+                    
+                    if currentThread.title == nil {
+                        currentThread.title = await generateTitle(thread: currentThread)
+                    }
+                    
                     isPromptFocused = true
                     if let modelName = appManager.currentModelName {
                         let output = await llm.generate(modelName: modelName, thread: currentThread, systemPrompt: appManager.systemPrompt)
@@ -309,6 +310,10 @@ struct ChatView: View {
         }
     }
     #endif
+    
+    private func generateTitle(thread: Thread) async -> String {
+        return thread.sortedMessages.first?.content ?? ""
+    }
 }
 
 #Preview {

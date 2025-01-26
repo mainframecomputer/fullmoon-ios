@@ -29,38 +29,7 @@ struct ChatsListView: View {
                     Section {} // adds some space below the search bar on mac
                     #endif
                     ForEach(filteredThreads, id: \.id) { thread in
-                        VStack(alignment: .leading) {
-                            ZStack {
-                                if let firstMessage = thread.sortedMessages.first {
-                                    Text(firstMessage.content)
-                                        .lineLimit(1)
-                                } else {
-                                    Text("untitled")
-                                }
-                            }
-                            .foregroundStyle(.primary)
-                            .font(.headline)
-
-                            Text("\(thread.timestamp.formatted())")
-                                .foregroundStyle(.secondary)
-                                .font(.subheadline)
-                        }
-                        #if os(macOS)
-                            .swipeActions {
-                                Button("Delete") {
-                                    deleteThread(thread)
-                                }
-                                .tint(.red)
-                            }
-                            .contextMenu {
-                                Button {
-                                    deleteThread(thread)
-                                } label: {
-                                    Text("delete")
-                                }
-                            }
-                        #endif
-                            .tag(thread)
+                        ChatListRowView(thread: thread, deleteThread: deleteThread)
                     }
                     .onDelete(perform: deleteThreads)
                 }
