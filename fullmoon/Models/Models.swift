@@ -70,13 +70,14 @@ extension ModelConfiguration: @retroactive Equatable {
             let role = message.role.rawValue
             history.append([
                 "role": role,
-                "content": " " + removeThinkTags(message.content),
+                "content": " " + removeThinkTags(message.content), // Remove think tags and add a space before each message to fix the Jinja chat template issue.
             ])
         }
 
         return history
     }
 
+    // TODO: Remove this function once Jinja is updated
     func removeThinkTags(_ message: String) -> String {
         return message
             .replacingOccurrences(of: "<think>", with: "")
