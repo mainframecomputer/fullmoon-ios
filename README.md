@@ -6,6 +6,7 @@
 ## supported models
 - [x] [Llama 3.2 1B](https://huggingface.co/mlx-community/Llama-3.2-1B-Instruct-4bit)
 - [x] [Llama 3.2 3B](https://huggingface.co/mlx-community/Llama-3.2-3B-Instruct-4bit)
+- [x] [DeepSeek-R1-Distill-Qwen-1.5B-4bit](https://huggingface.co/mlx-community/DeepSeek-R1-Distill-Qwen-1.5B-4bit)
 
 ## credits
 fullmoon is made possible by [MLX Swift](https://github.com/ml-explore/mlx-swift) from Apple. [MLX](https://github.com/ml-explore/mlx) is an array framework for machine learning research on Apple silicon.
