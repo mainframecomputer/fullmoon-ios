@@ -18,7 +18,6 @@ struct ChatView: View {
     @State var prompt = ""
     @FocusState.Binding var isPromptFocused: Bool
     @Binding var showChats: Bool
-    @Binding var showSettings: Bool
     
     @State var thinkingTime: TimeInterval?
     
@@ -247,7 +246,7 @@ struct ChatView: View {
                     ToolbarItem(placement: .topBarTrailing) {
                         Button(action: {
                             appManager.playHaptic()
-                            showSettings.toggle()
+                            appManager.showSettings.toggle()
                         }) {
                             Image(systemName: "gear")
                         }
@@ -256,7 +255,7 @@ struct ChatView: View {
                     ToolbarItem(placement: .primaryAction) {
                         Button(action: {
                             appManager.playHaptic()
-                            showSettings.toggle()
+                            appManager.showSettings.toggle()
                         }) {
                             Label("settings", systemImage: "gear")
                         }
@@ -313,5 +312,5 @@ struct ChatView: View {
 
 #Preview {
     @FocusState var isPromptFocused: Bool
-    ChatView(currentThread: .constant(nil), isPromptFocused: $isPromptFocused, showChats: .constant(false), showSettings: .constant(false))
+    ChatView(currentThread: .constant(nil), isPromptFocused: $isPromptFocused, showChats: .constant(false))
 }

@@ -18,6 +18,7 @@ class AppManager: ObservableObject {
     @AppStorage("shouldPlayHaptics") var shouldPlayHaptics = true
     @AppStorage("numberOfVisits") var numberOfVisits = 0
     @AppStorage("numberOfVisitsOfLastRequest") var numberOfVisitsOfLastRequest = 0
+    @Published var showSettings = false
     
     var userInterfaceIdiom: LayoutType {
         #if os(visionOS)
