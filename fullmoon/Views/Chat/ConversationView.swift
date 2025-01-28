@@ -5,8 +5,9 @@
 //  Created by Xavier on 16/12/2024.
 //
 
-import MarkdownUI
 import SwiftUI
+import SwiftData
+import MarkdownUI
 
 extension TimeInterval {
     var formatted: String {
@@ -82,6 +83,26 @@ struct MessageView: View {
         .foregroundStyle(.secondary)
     }
 
+    private func parseCodeBlocks(_ text: String) -> AttributedString {
+        var config = AttributedString.MarkdownParsingOptions()
+        config.interpretedSyntax = .inlineOnlyPreservingWhitespace
+        return (try? AttributedString(markdown: text, options: config)) ?? AttributedString(text)
+    }
+
+    private func markdownTheme(foregroundColor: Color) -> Theme {
+        Theme()
+            .text {
+                ForegroundColor(foregroundColor)
+            }
+            .code { 
+                FontFamilyVariant(.monospaced)
+                FontSize(.em(0.85))
+            }
+            .codeBlock { content in
+                CodeBlockView(code: content.content, language: content.language)
+            }
+    }
+
     var body: some View {
         HStack {
             if message.role == .user { Spacer() }
@@ -101,9 +122,7 @@ struct MessageView: View {
                                             .foregroundStyle(.fill)
                                         Markdown(thinking)
                                             .textSelection(.enabled)
-                                            .markdownTextStyle {
-                                                ForegroundColor(.secondary)
-                                            }
+                                            .markdownTheme(markdownTheme(foregroundColor: .secondary))
                                     }
                                     .padding(.leading, 5)
                                 }
@@ -121,12 +140,16 @@ struct MessageView: View {
                     if let afterThink {
                         Markdown(afterThink)
                             .textSelection(.enabled)
+                            .markdownTheme(markdownTheme(foregroundColor: .primary))
                     }
                 }
                 .padding(.trailing, 48)
             } else {
-                Markdown(message.content)
-                    .textSelection(.enabled)
+                VStack(alignment: .leading, spacing: 8) {
+                    Markdown(message.content)
+                        .textSelection(.enabled)
+                        .markdownTheme(markdownTheme(foregroundColor: .primary))
+                }
                 #if os(iOS) || os(visionOS)
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
