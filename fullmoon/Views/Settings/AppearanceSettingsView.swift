@@ -26,24 +26,25 @@ struct AppearanceSettingsView: View {
             #endif
 
             Section(header: Text("font")) {
-                Picker(selection: $appManager.appFontDesign) {
-                    ForEach(AppFontDesign.allCases.sorted(by: { $0.rawValue < $1.rawValue }), id: \.rawValue) { option in
-                        Text(String(describing: option).lowercased())
+                Picker(selection: $appManager.appFontFamily) {
+                    ForEach(AppFontFamily.allCases.sorted(by: { $0.rawValue < $1.rawValue }), id: \.rawValue) { option in
+                        Text(option == .sansSerif ? "sans serif" : String(describing: option).lowercased())
                             .tag(option)
                     }
                 } label: {
-                    Label("design", systemImage: "textformat")
+                    Label("family", systemImage: "textformat")
                 }
 
-                Picker(selection: $appManager.appFontWidth) {
-                    ForEach(AppFontWidth.allCases.sorted(by: { $0.rawValue < $1.rawValue }), id: \.rawValue) { option in
-                        Text(String(describing: option).lowercased())
-                            .tag(option)
+                if appManager.appFontFamily == .sansSerif {
+                    Picker(selection: $appManager.appFontWidth) {
+                        ForEach(AppFontWidth.allCases.sorted(by: { $0.rawValue < $1.rawValue }), id: \.rawValue) { option in
+                            Text(String(describing: option).lowercased())
+                                .tag(option)
+                        }
+                    } label: {
+                        Label("width", systemImage: "arrow.left.and.line.vertical.and.arrow.right")
                     }
-                } label: {
-                    Label("width", systemImage: "arrow.left.and.line.vertical.and.arrow.right")
                 }
-                .disabled(appManager.appFontDesign != .standard)
 
                 #if !os(macOS)
                 Picker(selection: $appManager.appFontSize) {
