@@ -56,6 +56,19 @@ struct AppearanceSettingsView: View {
                 }
                 #endif
             }
+
+            #if os(macOS)
+            Section(header: Text("layout")) {
+                Picker(selection: $appManager.appContentWidth) {
+                    ForEach(AppContentWidth.allCases.sorted(by: { $0.rawValue < $1.rawValue }), id: \.rawValue) { option in
+                        Text(String(describing: option).lowercased())
+                            .tag(option)
+                    }
+                } label: {
+                    Label("content width", systemImage: "macwindow")
+                }
+            }
+            #endif
         }
         .formStyle(.grouped)
         .navigationTitle("appearance")

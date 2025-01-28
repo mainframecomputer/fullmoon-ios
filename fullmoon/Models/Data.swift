@@ -18,6 +18,7 @@ class AppManager: ObservableObject {
     @AppStorage("shouldPlayHaptics") var shouldPlayHaptics = true
     @AppStorage("numberOfVisits") var numberOfVisits = 0
     @AppStorage("numberOfVisitsOfLastRequest") var numberOfVisitsOfLastRequest = 0
+    @AppStorage("appContentWidth") var appContentWidth: AppContentWidth = .fill
     
     var userInterfaceIdiom: LayoutType {
         #if os(visionOS)
@@ -254,6 +255,19 @@ enum AppFontSize: String, CaseIterable {
             .large
         case .xlarge:
             .xLarge
+        }
+    }
+}
+
+enum AppContentWidth: String, CaseIterable {
+    case narrow, fill
+    
+    func getMaxWidth() -> CGFloat? {
+        switch self {
+        case .narrow:
+            return 640
+        case .fill:
+            return nil
         }
     }
 }
