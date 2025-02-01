@@ -76,19 +76,21 @@ extension ModelConfiguration: @retroactive Equatable {
             let role = message.role.rawValue
             history.append([
                 "role": role,
-                "content": formatForTokenizer(message.content), // Remove think tags and add a space before each message to fix the Jinja chat template issue.
+                "content": formatForTokenizer(message.content), // Remove reasoning part
             ])
         }
 
         return history
     }
 
-    // TODO: Remove this function when Jinja gets updated
     func formatForTokenizer(_ message: String) -> String {
         if self.modelType == .reasoning {
-            return " " + message
-                .replacingOccurrences(of: "<think>", with: "")
-                .replacingOccurrences(of: "</think>", with: "")
+            let pattern = "<think>.*?</think>"
+            if let regex = try? NSRegularExpression(pattern: pattern, options: .dotMatchesLineSeparators) {
+                let range = NSRange(message.startIndex..., in: message)
+                let formattedMessage = regex.stringByReplacingMatches(in: message, options: [], range: range, withTemplate: "")
+                return " " + formattedMessage
+            }
         }
         
         return message
