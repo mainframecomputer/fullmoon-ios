@@ -7,12 +7,42 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3A100DB32D5534FA00C4B946 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A100DB22D5534FA00C4B946 /* WidgetKit.framework */; };
+		3A100DB52D5534FA00C4B946 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3A100DB42D5534FA00C4B946 /* SwiftUI.framework */; };
+		3A100DC42D5534FC00C4B946 /* liveExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 3A100DB12D5534FA00C4B946 /* liveExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		860F26A42CBC31D6004E8D40 /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = 860F26A32CBC31D6004E8D40 /* MarkdownUI */; };
 		869B97622D0DD46B0078DF5A /* MLXLMCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 869B97612D0DD46B0078DF5A /* MLXLMCommon */; };
 		869B97642D0DD4D80078DF5A /* MLXLLM in Frameworks */ = {isa = PBXBuildFile; productRef = 869B97632D0DD4D80078DF5A /* MLXLLM */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		3A100DC22D5534FC00C4B946 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 860E9CC62CB055B000C5BB52 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3A100DB02D5534FA00C4B946;
+			remoteInfo = liveExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		3A100DC92D5534FC00C4B946 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				3A100DC42D5534FC00C4B946 /* liveExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		3A100DB12D5534FA00C4B946 /* liveExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = liveExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		3A100DB22D5534FA00C4B946 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		3A100DB42D5534FA00C4B946 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		860E9CCE2CB055B000C5BB52 /* fullmoon.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = fullmoon.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -24,13 +54,36 @@
 			);
 			target = 860E9CCD2CB055B000C5BB52 /* fullmoon */;
 		};
+		3A100DC82D5534FC00C4B946 /* Exceptions for "live" folder in "liveExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 3A100DB02D5534FA00C4B946 /* liveExtension */;
+		};
+		3A100DCD2D553CAF00C4B946 /* Exceptions for "fullmoon" folder in "liveExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Shared/ModelDownloadAttributes.swift,
+			);
+			target = 3A100DB02D5534FA00C4B946 /* liveExtension */;
+		};
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		3A100DB62D5534FA00C4B946 /* live */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				3A100DC82D5534FC00C4B946 /* Exceptions for "live" folder in "liveExtension" target */,
+			);
+			path = live;
+			sourceTree = "<group>";
+		};
 		860E9CD02CB055B000C5BB52 /* fullmoon */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			exceptions = (
 				258729302D0785A700BB7B6F /* Exceptions for "fullmoon" folder in "fullmoon" target */,
+				3A100DCD2D553CAF00C4B946 /* Exceptions for "fullmoon" folder in "liveExtension" target */,
 			);
 			path = fullmoon;
 			sourceTree = "<group>";
@@ -38,6 +91,15 @@
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		3A100DAE2D5534FA00C4B946 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				3A100DB52D5534FA00C4B946 /* SwiftUI.framework in Frameworks */,
+				3A100DB32D5534FA00C4B946 /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		860E9CCB2CB055B000C5BB52 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -55,6 +117,7 @@
 			isa = PBXGroup;
 			children = (
 				860E9CD02CB055B000C5BB52 /* fullmoon */,
+				3A100DB62D5534FA00C4B946 /* live */,
 				869B975E2D0DD3EC0078DF5A /* Frameworks */,
 				860E9CCF2CB055B000C5BB52 /* Products */,
 			);
@@ -64,6 +127,7 @@
 			isa = PBXGroup;
 			children = (
 				860E9CCE2CB055B000C5BB52 /* fullmoon.app */,
+				3A100DB12D5534FA00C4B946 /* liveExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -71,6 +135,8 @@
 		869B975E2D0DD3EC0078DF5A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				3A100DB22D5534FA00C4B946 /* WidgetKit.framework */,
+				3A100DB42D5534FA00C4B946 /* SwiftUI.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -78,6 +144,28 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		3A100DB02D5534FA00C4B946 /* liveExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3A100DC52D5534FC00C4B946 /* Build configuration list for PBXNativeTarget "liveExtension" */;
+			buildPhases = (
+				3A100DAD2D5534FA00C4B946 /* Sources */,
+				3A100DAE2D5534FA00C4B946 /* Frameworks */,
+				3A100DAF2D5534FA00C4B946 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				3A100DB62D5534FA00C4B946 /* live */,
+			);
+			name = liveExtension;
+			packageProductDependencies = (
+			);
+			productName = liveExtension;
+			productReference = 3A100DB12D5534FA00C4B946 /* liveExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 		860E9CCD2CB055B000C5BB52 /* fullmoon */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = 860E9CDF2CB055B100C5BB52 /* Build configuration list for PBXNativeTarget "fullmoon" */;
@@ -85,10 +173,12 @@
 				860E9CCA2CB055B000C5BB52 /* Sources */,
 				860E9CCB2CB055B000C5BB52 /* Frameworks */,
 				860E9CCC2CB055B000C5BB52 /* Resources */,
+				3A100DC92D5534FC00C4B946 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				3A100DC32D5534FC00C4B946 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				860E9CD02CB055B000C5BB52 /* fullmoon */,
@@ -113,6 +203,9 @@
 				LastSwiftUpdateCheck = 1600;
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
+					3A100DB02D5534FA00C4B946 = {
+						CreatedOnToolsVersion = 16.0;
+					};
 					860E9CCD2CB055B000C5BB52 = {
 						CreatedOnToolsVersion = 16.0;
 					};
@@ -137,11 +230,19 @@
 			projectRoot = "";
 			targets = (
 				860E9CCD2CB055B000C5BB52 /* fullmoon */,
+				3A100DB02D5534FA00C4B946 /* liveExtension */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		3A100DAF2D5534FA00C4B946 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		860E9CCC2CB055B000C5BB52 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -152,6 +253,13 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		3A100DAD2D5534FA00C4B946 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		860E9CCA2CB055B000C5BB52 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -161,7 +269,74 @@
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXTargetDependency section */
+		3A100DC32D5534FC00C4B946 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3A100DB02D5534FA00C4B946 /* liveExtension */;
+			targetProxy = 3A100DC22D5534FC00C4B946 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
 /* Begin XCBuildConfiguration section */
+		3A100DC62D5534FC00C4B946 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = BHJSDBBPS7;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = live/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = live;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = samuel.fullmoon.live;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		3A100DC72D5534FC00C4B946 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = BHJSDBBPS7;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = live/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = live;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = samuel.fullmoon.live;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 		860E9CDD2CB055B100C5BB52 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -285,13 +460,14 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "\"fullmoon/Preview Content\"";
-				DEVELOPMENT_TEAM = 2VT466P8NK;
+				DEVELOPMENT_TEAM = BHJSDBBPS7;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = fullmoon/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = fullmoon;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -307,7 +483,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.2;
-				PRODUCT_BUNDLE_IDENTIFIER = me.mainfra.fullmoon;
+				PRODUCT_BUNDLE_IDENTIFIER = samuel.fullmoon;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = NO;
 				SDKROOT = auto;
@@ -331,13 +507,14 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "\"fullmoon/Preview Content\"";
-				DEVELOPMENT_TEAM = 2VT466P8NK;
+				DEVELOPMENT_TEAM = BHJSDBBPS7;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = fullmoon/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = fullmoon;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_NSSupportsLiveActivities = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -353,7 +530,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.2;
-				PRODUCT_BUNDLE_IDENTIFIER = me.mainfra.fullmoon;
+				PRODUCT_BUNDLE_IDENTIFIER = samuel.fullmoon;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = NO;
 				SDKROOT = auto;
@@ -371,6 +548,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		3A100DC52D5534FC00C4B946 /* Build configuration list for PBXNativeTarget "liveExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3A100DC62D5534FC00C4B946 /* Debug */,
+				3A100DC72D5534FC00C4B946 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		860E9CC92CB055B000C5BB52 /* Build configuration list for PBXProject "fullmoon" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (

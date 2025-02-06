@@ -10,6 +10,8 @@ import MLXLLM
 import MLXLMCommon
 import MLXRandom
 import SwiftUI
+import BackgroundTasks
+import ActivityKit
 
 enum LLMEvaluatorError: Error {
     case modelNotFound(String)
@@ -27,6 +29,8 @@ class LLMEvaluator {
     var thinkingTime: TimeInterval?
     var collapsed: Bool = false
     var isThinking: Bool = false
+    var isPaused = false
+    var isModelFullyLoaded = false
 
     var elapsedTime: TimeInterval? {
         if let startTime {
@@ -39,6 +43,34 @@ class LLMEvaluator {
     private var startTime: Date?
 
     var modelConfiguration = ModelConfiguration.defaultModel
+
+    var downloadActivity: Activity<ModelDownloadAttributes>?
+    var backgroundTask: BGProcessingTask?
+    var backgroundTaskIdentifier: UIBackgroundTaskIdentifier?
+
+    init() {
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(handlePause),
+                                               name: .modelPauseNotification,
+                                               object: nil)
+        NotificationCenter.default.addObserver(self,
+                                               selector: #selector(handleResume),
+                                               name: .modelResumeNotification,
+                                               object: nil)
+    }
+
+    @objc private func handlePause() {
+        if self.progress >= 0.95 && !self.isModelFullyLoaded {
+            self.isPaused = true
+        }
+    }
+
+    @objc private func handleResume() {
+        if self.progress >= 0.95 && !self.isModelFullyLoaded {
+            self.isPaused = false
+            // Optionally resume final model loading here if needed.
+        }
+    }
 
     func switchModel(_ model: ModelConfiguration) async {
         progress = 0.0 // reset progress
@@ -72,20 +104,67 @@ class LLMEvaluator {
 
         switch loadState {
         case .idle:
-            // limit the buffer cache
-            MLX.GPU.set(cacheLimit: 20 * 1024 * 1024)
+            // Request background task extension
+            #if os(iOS)
+            // Register background task for download
+            backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask { [weak self] in
+                if let taskId = self?.backgroundTaskIdentifier {
+                    UIApplication.shared.endBackgroundTask(taskId)
+                    self?.backgroundTaskIdentifier = .invalid
+                }
+            }
+            #endif
+            
+            // Start Live Activity for download progress
+            if ActivityAuthorizationInfo().areActivitiesEnabled {
+                let initialContentState = ModelDownloadAttributes.ContentState(progress: 0)
+                let activityAttributes = ModelDownloadAttributes(modelName: modelName)
+                downloadActivity = try? Activity.request(
+                    attributes: activityAttributes,
+                    contentState: initialContentState,
+                    pushType: nil
+                )
+            }
 
             let modelContainer = try await LLMModelFactory.shared.loadContainer(configuration: model) {
                 [modelConfiguration] progress in
                 Task { @MainActor in
-                    self.modelInfo =
-                        "Downloading \(modelConfiguration.name): \(Int(progress.fractionCompleted * 100))%"
+                    self.modelInfo = "Downloading \(modelConfiguration.name): \(Int(progress.fractionCompleted * 100))%"
                     self.progress = progress.fractionCompleted
+                    
+                    // If we hit 95%, pause loading if in background
+                    if progress.fractionCompleted >= 0.95 && !self.isModelFullyLoaded {
+                        if UIApplication.shared.applicationState == .background {
+                            self.isPaused = true
+                        }
+                    }
+                    
+                    // Update Live Activity with appropriate message
+                    if let downloadActivity = self.downloadActivity {
+                        let status = self.isPaused ? "Ready - Open app to complete setup" : nil
+                        let updatedState = ModelDownloadAttributes.ContentState(
+                            progress: progress.fractionCompleted
+                        )
+                        await downloadActivity.update(using: updatedState)
+                    }
                 }
             }
-            modelInfo =
-                "Loaded \(modelConfiguration.id).  Weights: \(MLX.GPU.activeMemory / 1024 / 1024)M"
-            loadState = .loaded(modelContainer)
+            
+            // Only complete loading if not paused
+            if !isPaused {
+                modelInfo = "Loaded \(modelConfiguration.id). Weights: \(MLX.GPU.activeMemory / 1024 / 1024)M"
+                loadState = .loaded(modelContainer)
+                isModelFullyLoaded = true
+            }
+            
+            #if os(iOS)
+            // End background task if it exists
+            if let taskId = backgroundTaskIdentifier {
+                UIApplication.shared.endBackgroundTask(taskId)
+                backgroundTaskIdentifier = .invalid
+            }
+            #endif
+            
             return modelContainer
 
         case let .loaded(modelContainer):
@@ -154,6 +233,16 @@ class LLMEvaluator {
 
         } catch {
             output = "Failed: \(error)"
+            if let downloadActivity = self.downloadActivity {
+                let errorState = ModelDownloadAttributes.ContentState(
+                    progress: self.progress, 
+                    error: "Download failed: \(error.localizedDescription)"
+                )
+                await downloadActivity.update(using: errorState)
+                // Maybe wait a few seconds before ending the activity to show the error
+                try? await Task.sleep(for: .seconds(3))
+                await downloadActivity.end(dismissalPolicy: .immediate)
+            }
         }
 
         running = false

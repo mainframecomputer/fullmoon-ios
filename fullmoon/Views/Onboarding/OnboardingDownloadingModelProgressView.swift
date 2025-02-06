@@ -58,19 +58,32 @@ struct OnboardingDownloadingModelProgressView: View {
                 .buttonBorderShape(.capsule)
                 .padding(.horizontal)
             } else {
-                Text("keep this screen open and wait for the installation to complete.")
-                    .font(.caption)
-                    .foregroundStyle(.tertiary)
-                    .multilineTextAlignment(.center)
-                    .padding(.horizontal)
+                if llm.progress >= 0.95 && !llm.isModelFullyLoaded {
+                    Text("please keep app open to complete final setup")
+                        .font(.caption)
+                        .foregroundStyle(.tertiary)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal)
+                } else {
+                    Text("you'll receive a notification when the download is complete")
+                        .font(.caption)
+                        .foregroundStyle(.tertiary)
+                        .multilineTextAlignment(.center)
+                        .padding(.horizontal)
+                }
             }
         }
         .padding()
-        .navigationTitle("sit back and relax")
+        .navigationTitle("downloading model")
         .toolbar(installed ? .hidden : .visible)
         .navigationBarBackButtonHidden()
         .task {
+            // Prevent device from sleeping during download
+            UIApplication.shared.isIdleTimerDisabled = true
             await loadLLM()
+        }
+        .onDisappear {
+            UIApplication.shared.isIdleTimerDisabled = false
         }
         #if os(iOS)
         .sensoryFeedback(.success, trigger: installed)
