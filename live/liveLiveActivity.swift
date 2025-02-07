@@ -16,26 +16,26 @@ struct ModelDownloadLiveActivity: Widget {
             VStack(spacing: 12) {
                 if let error = context.state.error {
                     HStack {
-                        Image(systemName: "exclamationmark.triangle.fill")
+                        Image(systemName: "arrow.up.forward.app.fill")
                             .font(.title2)
-                            .foregroundStyle(.red)
+                            .foregroundStyle(.white)
                         Text(error)
                             .font(.headline)
                     }
                 } else {
                     HStack {
-                        Image("Moon")
+                        Image(systemName: "moonphase.waning.crescent.inverse")
                             .resizable()
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 32, height: 32)
-                            .mask(Circle().scale(0.99))
+                            .foregroundStyle(.white)
                         
                         Text("Downloading \(context.attributes.modelName)")
                             .font(.headline)
                     }
                     
                     ProgressView(value: context.state.progress, total: 1.0)
-                        .tint(.blue)
+                        .tint(.white)
                     
                     Text("\(Int(context.state.progress * 100))% Complete")
                         .font(.subheadline)
@@ -55,17 +55,17 @@ struct ModelDownloadLiveActivity: Widget {
                             .font(.headline)
                             .foregroundStyle(.primary)
                     } icon: {
-                        Image("Moon")
+                        Image(systemName: "moonphase.waning.crescent.inverse")
                             .resizable()
+                            .foregroundStyle(.white)
                             .aspectRatio(contentMode: .fit)
                             .frame(width: 24, height: 24)
-                            .mask(Circle().scale(0.99))
                     }
                 }
                 
                 DynamicIslandExpandedRegion(.trailing) {
                     ProgressView(value: context.state.progress, total: 1.0)
-                        .tint(.blue)
+                        .tint(.white)
                 }
                 
                 DynamicIslandExpandedRegion(.bottom) {
@@ -74,22 +74,21 @@ struct ModelDownloadLiveActivity: Widget {
                         .foregroundStyle(.secondary)
                 }
             } compactLeading: {
-                Image("Moon")
+                Image(systemName: "moonphase.waning.crescent.inverse")
                     .resizable()
+                    .foregroundStyle(.white)
                     .aspectRatio(contentMode: .fit)
                     .frame(width: 20, height: 20)
-                    .mask(Circle().scale(0.99))
             } compactTrailing: {
                 Text("\(Int(context.state.progress * 100))%")
                     .font(.caption2)
                     .foregroundStyle(.secondary)
             } minimal: {
-                Image("Moon")
+                Image(systemName: "moonphase.waning.crescent.inverse")
                     .resizable()
+                    .foregroundStyle(.white)
                     .aspectRatio(contentMode: .fit)
-                    .frame(width: 20, height: 20)
-                    .mask(Circle().scale(0.99))
-            }
+                    .frame(width: 20, height: 20)            }
         }
     }
 }

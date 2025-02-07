@@ -19,6 +19,10 @@ class AppManager: ObservableObject {
     @AppStorage("numberOfVisits") var numberOfVisits = 0
     @AppStorage("numberOfVisitsOfLastRequest") var numberOfVisitsOfLastRequest = 0
     
+    // Added for interrupted downloads – communicated via Notifications
+    @Published var interruptedDownloadModel: String?
+    @Published var interruptedDownloadProgress: Double = 0.0
+    
     var userInterfaceIdiom: LayoutType {
         #if os(visionOS)
         return .vision
@@ -123,6 +127,41 @@ class AppManager: ObservableObject {
         default:
             return "moonphase.new.moon" // New Moon (fallback)
         }
+    }
+    
+    
+    // Handle the interrupted download notification
+    @objc private func handleSaveInterruptedDownload(_ notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let model = userInfo["model"] as? String,
+              let progress = userInfo["progress"] as? Double else {
+            print("AppManager: Invalid notification data for saveInterruptedDownload")
+            return
+        }
+        print("AppManager: Received interrupted download - Model: \(model), Progress: \(progress)")
+        saveInterruptedDownload(model: model, progress: progress)
+    }
+    
+    func saveInterruptedDownload(model: String, progress: Double) {
+        UserDefaults.standard.set(model, forKey: "interruptedDownloadModel")
+        UserDefaults.standard.set(progress, forKey: "interruptedDownloadProgress")
+        // Post a notification so that other observers know of the update (if needed)
+        NotificationCenter.default.post(name: .saveInterruptedDownload, object: nil)
+    }
+    
+    func loadInterruptedDownload() -> (String, Double)? {
+        if let model = UserDefaults.standard.string(forKey: "interruptedDownloadModel") {
+            let progress = UserDefaults.standard.double(forKey: "interruptedDownloadProgress")
+            return (model, progress)
+        }
+        return nil
+    }
+    
+    func clearInterruptedDownload() {
+        UserDefaults.standard.removeObject(forKey: "interruptedDownloadModel")
+        UserDefaults.standard.removeObject(forKey: "interruptedDownloadProgress")
+        // Post a notification to inform others that this state has been cleared.
+        NotificationCenter.default.post(name: .saveInterruptedDownload, object: nil)
     }
 }
 

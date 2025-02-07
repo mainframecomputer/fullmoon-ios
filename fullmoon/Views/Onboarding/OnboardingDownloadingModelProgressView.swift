@@ -80,10 +80,19 @@ struct OnboardingDownloadingModelProgressView: View {
         .task {
             // Prevent device from sleeping during download
             UIApplication.shared.isIdleTimerDisabled = true
+            
+            // Check for an interrupted download and resume it automatically
+            if let (modelName, progress) = appManager.loadInterruptedDownload() {
+                selectedModel = ModelConfiguration.getModelByName(modelName) ?? selectedModel
+                llm.progress = progress
+                print("OnboardingDownloadingModelProgressView: Resuming interrupted download for model: \(modelName) at progress \(progress)")
+            }
+            
             await loadLLM()
         }
         .onDisappear {
             UIApplication.shared.isIdleTimerDisabled = false
+            appManager.clearInterruptedDownload()
         }
         #if os(iOS)
         .sensoryFeedback(.success, trigger: installed)

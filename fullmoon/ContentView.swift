@@ -38,7 +38,9 @@ struct ContentView: View {
         .environmentObject(appManager)
         .environment(llm)
         .task {
-            if appManager.installedModels.count == 0 {
+            if appManager.installedModels.count == 0 || appManager.loadInterruptedDownload() != nil {
+                // If no models are installed OR an interrupted download exists,
+                // immediately present the onboarding (download) page.
                 showOnboarding.toggle()
             } else {
                 isPromptFocused = true

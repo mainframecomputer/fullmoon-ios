@@ -33,5 +33,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 extension Notification.Name {
     static let modelPauseNotification = Notification.Name("modelPauseNotification")
     static let modelResumeNotification = Notification.Name("modelResumeNotification")
+    static let saveInterruptedDownload = Notification.Name("saveInterruptedDownload")
 }
 #endif 
