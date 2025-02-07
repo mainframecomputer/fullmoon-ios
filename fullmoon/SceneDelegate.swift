@@ -12,6 +12,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         NotificationCenter.default.post(name: .modelPauseNotification, object: nil)
     }
     
+    func sceneWillEnterForeground(_ scene: UIScene) {
+        // Post notification so that observers can reset the Live Activity.
+        NotificationCenter.default.post(name: .modelResumeNotification, object: nil)
+    }
+    
     func scheduleBackgroundTask() {
         let request = BGProcessingTaskRequest(identifier: "com.fullmoon.modeldownload")
         request.requiresNetworkConnectivity = true

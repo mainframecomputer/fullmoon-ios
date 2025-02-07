@@ -12,6 +12,7 @@ import MLXRandom
 import SwiftUI
 import BackgroundTasks
 import ActivityKit
+import UserNotifications
 
 enum LLMEvaluatorError: Error {
     case modelNotFound(String)
@@ -62,13 +63,13 @@ class LLMEvaluator {
     }
 
     @objc private func handlePause() {
-        if self.progress >= 0.95 && !self.isModelFullyLoaded {
+        if self.progress >= 0.80 && !self.isModelFullyLoaded {
             self.isPaused = true
         }
     }
 
     @objc private func handleResume() {
-        if self.progress >= 0.95 && !self.isModelFullyLoaded {
+        if self.progress >= 0.80 && !self.isModelFullyLoaded {
             self.isPaused = false
             // Optionally resume final model loading here if needed.
         }
@@ -78,6 +79,8 @@ class LLMEvaluator {
         progress = 0.0 // reset progress
         loadState = .idle
         modelConfiguration = model
+        // Clear any existing Live Activities before starting new download
+        await cleanupExistingActivities()
         _ = try? await load(modelName: model.name)
     }
 
@@ -104,8 +107,19 @@ class LLMEvaluator {
             throw LLMEvaluatorError.modelNotFound(modelName)
         }
         
+        // Reset state for new download
+        self.isDownloadComplete = false
+        self.isModelFullyLoaded = false
+        
+        // Add retry logic for network issues
+        var retryCount = 0
+        let maxRetries = 3
+        
         switch loadState {
         case .idle:
+            // Clean up any existing activities before starting new one
+            await cleanupExistingActivities()
+            
             // Start Live Activity for download progress first
             if ActivityAuthorizationInfo().areActivitiesEnabled {
                 let initialContentState = ModelDownloadAttributes.ContentState(progress: 0)
@@ -117,80 +131,75 @@ class LLMEvaluator {
                 )
             }
             
-            // If we're not active, wait until the app becomes active before continuing.
-            if UIApplication.shared.applicationState != .active {
-                // Show clear message in Live Activity for the user.
-                if let downloadActivity = self.downloadActivity {
-                    let updatedState = ModelDownloadAttributes.ContentState(
-                        progress: 1.0,
-                        error: "Please return to app to complete download"
-                    )
-                    await downloadActivity.update(using: updatedState)
-                }
-                self.modelInfo = "Waiting for app to become active to complete download."
-                // Wait until the app becomes active
-                await awaitActiveState()
-                // Additional brief delay to allow GPU/Metal to reinitialize
-                try await Task.sleep(nanoseconds: 200_000_000)
-                // Re-check the active state. If still not active, abort gracefully.
-                if UIApplication.shared.applicationState != .active {
-                    throw LLMEvaluatorError.backgroundModeError("App still in background. Please return to app to complete download.")
-                }
-            }
-            
-            // Now safe to proceed with model container initialization
-            #if os(iOS)
-            backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask { [weak self] in
-                if let taskId = self?.backgroundTaskIdentifier {
-                    UIApplication.shared.endBackgroundTask(taskId)
-                    self?.backgroundTaskIdentifier = .invalid
-                }
-            }
-            #endif
-            
-            // Directly load the container since we're already on the main actor
-            let container: ModelContainer = try await LLMModelFactory.shared.loadContainer(configuration: model) { [modelConfiguration] progress in
-                Task { @MainActor in
-                    print("LLMEvaluator: Received progress update: \(progress.fractionCompleted)")
-                    self.modelInfo = "Downloading \(modelConfiguration.name): \(Int(progress.fractionCompleted * 100))%"
-                    self.progress = progress.fractionCompleted
-                    
-                    // Show warning at 90% if in background
-                    if progress.fractionCompleted >= 0.9 && UIApplication.shared.applicationState != .active {
-                        if let downloadActivity = self.downloadActivity {
-                            let updatedState = ModelDownloadAttributes.ContentState(
-                                progress: progress.fractionCompleted,
-                                error: "Return to app to complete setup"
-                            )
-                            await downloadActivity.update(using: updatedState)
+            // Wrap the container loading in retry logic
+            let container: ModelContainer = try await withRetry(maxAttempts: maxRetries) {
+                try await LLMModelFactory.shared.loadContainer(configuration: model) { [modelConfiguration] progress in
+                    Task { @MainActor in
+                        self.modelInfo = "downloading \(modelConfiguration.name): \(Int(progress.fractionCompleted * 100))%"
+                        self.progress = progress.fractionCompleted
+                        
+                        // Check if we're in background at any point during download
+                        if UIApplication.shared.applicationState != .active {
+                            // Only cancel the download if we reach 80% in background
+                            if progress.fractionCompleted >= 0.80 {
+                                if let downloadActivity = self.downloadActivity {
+                                    let updatedState = ModelDownloadAttributes.ContentState(
+                                        progress: progress.fractionCompleted,
+                                        error: "Please return to fullmoon to finish download"
+                                    )
+                                    await downloadActivity.update(using: updatedState)
+                                }
+                                
+                                // Save state before cancelling
+                                NotificationCenter.default.post(
+                                    name: .saveInterruptedDownload,
+                                    object: nil,
+                                    userInfo: ["model": modelConfiguration.name, "progress": progress.fractionCompleted]
+                                )
+                                
+                                // If we're past 80% and go to background, we need to ensure we don't proceed
+                                self.isPaused = true
+                                throw LLMEvaluatorError.backgroundModeError("Please return to app to finish download")
+                            }
+                        } else {
+                            // If we're back in foreground and were paused, we need to resume
+                            if self.isPaused && progress.fractionCompleted >= 0.80 {
+                                self.isPaused = false
+                            }
+                        }
+                        
+                        // Verify download progress is actually complete before proceeding
+                        if progress.fractionCompleted >= 1.0 {
+                            // Add a small delay to ensure all data is written
+                            try? await Task.sleep(for: .seconds(1))
+                            self.isDownloadComplete = true
                         }
                     }
-                    
-                    // Update Live Activity with progress
-                    if let downloadActivity = self.downloadActivity {
-                        let updatedState = ModelDownloadAttributes.ContentState(
-                            progress: progress.fractionCompleted
-                        )
-                        await downloadActivity.update(using: updatedState)
-                    }
-                    
-                    if progress.fractionCompleted >= 1.0 {
-                        self.isDownloadComplete = true
-                    }
                 }
             }
             
-            // Now safe to proceed with GPU initialization
-            self.modelInfo = "Loaded \(modelConfiguration.id). Weights: \(MLX.GPU.activeMemory / 1024 / 1024)M"
-            self.loadState = .loaded(container)
-            self.isModelFullyLoaded = true
-            
-            #if os(iOS)
-            if let taskId = backgroundTaskIdentifier {
-                UIApplication.shared.endBackgroundTask(taskId)
-                backgroundTaskIdentifier = .invalid
+            // Only initialize GPU when the app is active and download is truly complete
+            if UIApplication.shared.applicationState == .active && self.isDownloadComplete && !self.isPaused {
+                self.modelInfo = "Initializing \(modelConfiguration.id)..."
+                let gpuTask = Task {
+                    self.modelInfo = "Loaded \(modelConfiguration.id). Weights: \(MLX.GPU.activeMemory / 1024 / 1024)M"
+                    self.loadState = .loaded(container)
+                    self.isModelFullyLoaded = true
+                }
+                
+                try? await withTimeout(seconds: 5) {
+                    try await gpuTask.value
+                }
+            } else {
+                // Be more specific about why we can't initialize GPU
+                if UIApplication.shared.applicationState != .active {
+                    throw LLMEvaluatorError.backgroundModeError("Cannot initialize GPU in background")
+                } else if self.isPaused {
+                    throw LLMEvaluatorError.backgroundModeError("Download paused - please return to app")
+                } else {
+                    throw LLMEvaluatorError.backgroundModeError("Download not complete")
+                }
             }
-            #endif
             
             return container
             
@@ -205,6 +214,9 @@ class LLMEvaluator {
     }
 
     func generate(modelName: String, thread: Thread, systemPrompt: String) async -> String {
+        guard UIApplication.shared.applicationState == .active else {
+            return "Cannot generate while app is in background"
+        }
         guard !running else { return "" }
 
         running = true
@@ -288,6 +300,84 @@ class LLMEvaluator {
                 continuation.resume()
                 NotificationCenter.default.removeObserver(observer)
             }
+        }
+    }
+
+    // New helper: resets any active Live Activity
+    func resetLiveActivity() async {
+        if let downloadActivity = self.downloadActivity {
+            await downloadActivity.end(dismissalPolicy: .immediate)
+            self.downloadActivity = nil
+            print("LLMEvaluator: Live activity has been reset.")
+        }
+    }
+
+    deinit {
+        Task {
+            if let downloadActivity = await self.downloadActivity {
+                await downloadActivity.end(dismissalPolicy: .immediate)
+            }
+        }
+    }
+
+    // Helper function to timeout long-running tasks
+    private func withTimeout<T>(seconds: TimeInterval, operation: @escaping () async throws -> T) async throws -> T {
+        try await withThrowingTaskGroup(of: T.self) { group in
+            group.addTask {
+                try await operation()
+            }
+            
+            group.addTask {
+                try await Task.sleep(nanoseconds: UInt64(seconds * 1_000_000_000))
+                throw LLMEvaluatorError.backgroundModeError("GPU initialization timed out")
+            }
+            
+            // Return the first result (either the operation completing or the timeout)
+            let result = try await group.next()!
+            
+            // Cancel any remaining tasks
+            group.cancelAll()
+            
+            return result
+        }
+    }
+
+    // Helper function to retry operations
+    private func withRetry<T>(maxAttempts: Int, operation: () async throws -> T) async throws -> T {
+        var lastError: Error?
+        
+        for attempt in 0..<maxAttempts {
+            do {
+                if attempt > 0 {
+                    // Add exponential backoff
+                    try await Task.sleep(nanoseconds: UInt64(pow(2.0, Double(attempt)) * 1_000_000_000))
+                }
+                return try await operation()
+            } catch {
+                lastError = error
+                if let downloadActivity = self.downloadActivity {
+                    let updatedState = ModelDownloadAttributes.ContentState(
+                        progress: self.progress,
+                        error: "Retrying download..."
+                    )
+                    await downloadActivity.update(using: updatedState)
+                }
+            }
+        }
+        
+        throw lastError ?? LLMEvaluatorError.backgroundModeError("Max retries exceeded")
+    }
+
+    private func cleanupExistingActivities() async {
+        // End the current Live Activity if it exists
+        if let downloadActivity = self.downloadActivity {
+            await downloadActivity.end(dismissalPolicy: .immediate)
+            self.downloadActivity = nil
+        }
+        
+        // Also end any other existing activities for this app
+        for activity in Activity<ModelDownloadAttributes>.activities {
+            await activity.end(dismissalPolicy: .immediate)
         }
     }
 }

@@ -8,6 +8,7 @@
 import Foundation
 import MLXLMCommon
 
+
 public extension ModelConfiguration {
     enum ModelType {
         case regular, reasoning

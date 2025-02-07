@@ -15,12 +15,18 @@ import AppKit
 #if os(iOS) || os(visionOS)
 struct PlayerView: UIViewRepresentable {
     var videoName: String
+    var resetAnimation: Bool
 
-    init(videoName: String) {
+    init(videoName: String, resetAnimation: Bool) {
         self.videoName = videoName
+        self.resetAnimation = resetAnimation
     }
 
-    func updateUIView(_: UIView, context _: UIViewRepresentableContext<PlayerView>) {}
+    func updateUIView(_ uiView: UIView, context: UIViewRepresentableContext<PlayerView>) {
+        if let playerView = uiView as? LoopingPlayerUIView {
+            playerView.restartPlayback()
+        }
+    }
 
     func makeUIView(context _: Context) -> UIView {
         return LoopingPlayerUIView(videoName: videoName)
@@ -64,6 +70,11 @@ class LoopingPlayerUIView: UIView {
     override func layoutSubviews() {
         super.layoutSubviews()
         playerLayer.frame = bounds
+    }
+
+    func restartPlayback() {
+        player.seek(to: .zero)
+        player.play()
     }
 }
 #endif
@@ -128,6 +139,7 @@ class LoopingPlayerNSView: NSView {
 
 struct MoonAnimationView: View {
     var isDone: Bool
+    var resetAnimation: Bool
     
     var body: some View {
         ZStack {
@@ -143,7 +155,7 @@ struct MoonAnimationView: View {
                     .aspectRatio(contentMode: .fit)
                 // video loop
                 
-                PlayerView(videoName: "moon-phases")
+                PlayerView(videoName: "moon-phases", resetAnimation: resetAnimation)
                     .aspectRatio(contentMode: .fit)
                     .mask {
                         Circle()
@@ -159,6 +171,6 @@ struct MoonAnimationView: View {
     @Previewable @State var done = false
     VStack(spacing: 50) {
         Toggle(isOn: $done, label: { Text("Done") })
-        MoonAnimationView(isDone: done)
+        MoonAnimationView(isDone: done, resetAnimation: false)
     }
 }
