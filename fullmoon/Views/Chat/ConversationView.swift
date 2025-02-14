@@ -197,8 +197,8 @@ struct MessageView: View {
 }
 
 struct ConversationView: View {
-    @Environment(LLMEvaluator.self) var llm
     @EnvironmentObject var appManager: AppManager
+    @Environment(LLMEvaluator.self) var llm
     let thread: Thread
     let generatingThreadID: UUID?
 
@@ -261,6 +261,5 @@ struct ConversationView: View {
 
 #Preview {
     ConversationView(thread: Thread(), generatingThreadID: nil)
-        .environment(LLMEvaluator())
         .environmentObject(AppManager())
 }

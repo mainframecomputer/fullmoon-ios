@@ -13,8 +13,17 @@ struct fullmoonApp: App {
     #if os(macOS)
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     #endif
-    @StateObject var appManager = AppManager()
-    @State var llm = LLMEvaluator()
+    @StateObject private var appManager: AppManager
+    @State private var llm: LLMEvaluator
+    
+    init() {
+        // First create the AppManager
+        let manager = AppManager()
+        // Initialize the StateObject
+        _appManager = StateObject(wrappedValue: manager)
+        // Then create the LLMEvaluator with the manager instance
+        _llm = State(initialValue: LLMEvaluator(appManager: manager))
+    }
     
     var body: some Scene {
         WindowGroup {
@@ -59,7 +68,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
     }
     
     func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
-        // if there’s a recently closed window, bring that back
+        // if there's a recently closed window, bring that back
         if let lastClosed = closedWindowsStack.popLast() {
             lastClosed.makeKeyAndOrderFront(self)
         } else {
