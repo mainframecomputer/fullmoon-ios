@@ -40,8 +40,10 @@ struct RequestLLMIntent: AppIntent {
 
     @MainActor
     func perform() async throws -> some IntentResult & ReturnsValue<String> & ProvidesDialog {
-        let llm = LLMEvaluator()
+        // Create AppManager first
         let appManager = AppManager()
+        // Pass appManager to LLMEvaluator
+        let llm = LLMEvaluator(appManager: appManager)
         
         if prompt.isEmpty {
             if let output = thread.messages.last?.content {

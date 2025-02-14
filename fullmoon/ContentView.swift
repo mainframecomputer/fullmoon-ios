@@ -36,7 +36,6 @@ struct ContentView: View {
             }
         }
         .environmentObject(appManager)
-        .environment(llm)
         .task {
             if appManager.installedModels.count == 0 {
                 showOnboarding.toggle()
@@ -71,7 +70,6 @@ struct ContentView: View {
         .sheet(isPresented: $showSettings) {
             SettingsView(currentThread: $currentThread)
                 .environmentObject(appManager)
-                .environment(llm)
                 .presentationDragIndicator(.hidden)
                 .if(appManager.userInterfaceIdiom == .phone) { view in
                     view.presentationDetents([.medium])

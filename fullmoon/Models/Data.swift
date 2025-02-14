@@ -18,6 +18,39 @@ class AppManager: ObservableObject {
     @AppStorage("shouldPlayHaptics") var shouldPlayHaptics = true
     @AppStorage("numberOfVisits") var numberOfVisits = 0
     @AppStorage("numberOfVisitsOfLastRequest") var numberOfVisitsOfLastRequest = 0
+    @AppStorage("isUsingServer") var isUsingServer = false
+    @AppStorage("serverAPIKey") var serverAPIKeyStorage = ""
+    @AppStorage("selectedServerId") var selectedServerIdString: String?
+    
+    @Published var servers: [ServerConfig] = []
+    @Published var selectedServerId: UUID? {
+        didSet {
+            selectedServerIdString = selectedServerId?.uuidString
+            // Reset current model when switching servers
+            currentModelName = nil
+        }
+    }
+    
+    private let serversKey = "savedServers"
+    
+    var currentServerURL: String {
+        if let server = currentServer {
+            return server.url
+        }
+        return ""
+    }
+    
+    var currentServerAPIKey: String {
+        if let server = currentServer {
+            return server.apiKey
+        }
+        return serverAPIKeyStorage
+    }
+    
+    var currentServer: ServerConfig? {
+        guard let id = selectedServerId else { return nil }
+        return servers.first { $0.id == id }
+    }
     
     var userInterfaceIdiom: LayoutType {
         #if os(visionOS)
@@ -43,7 +76,34 @@ class AppManager: ObservableObject {
         }
     }
     
+    // Add a dictionary to cache models for each server
+    @AppStorage("cachedServerModels") private var cachedServerModelsData: Data?
+    @Published private(set) var cachedServerModels: [UUID: [String]] = [:] {
+        didSet {
+            // Save to UserDefaults whenever cache updates
+            if let encoded = try? JSONEncoder().encode(cachedServerModels) {
+                cachedServerModelsData = encoded
+            }
+        }
+    }
+    
     init() {
+        // First load saved servers
+        loadServers()
+        
+        // Then restore selected server from saved ID string
+        if let savedIdString = selectedServerIdString,
+           let savedId = UUID(uuidString: savedIdString) {
+            selectedServerId = savedId
+        }
+        
+        // If we have servers but no selection, select the first one
+        if selectedServerId == nil && !servers.isEmpty {
+            selectedServerId = servers.first?.id
+        }
+        
+        // Finally load cached models
+        loadCachedModels()
         loadInstalledModelsFromUserDefaults()
     }
     
@@ -124,6 +184,128 @@ class AppManager: ObservableObject {
             return "moonphase.new.moon" // New Moon (fallback)
         }
     }
+    
+    func modelSource() -> ModelSource {
+        isUsingServer ? .server : .local
+    }
+    
+    private func loadServers() {
+        if let data = UserDefaults.standard.data(forKey: serversKey),
+           let decodedServers = try? JSONDecoder().decode([ServerConfig].self, from: data) {
+            servers = decodedServers
+        }
+    }
+    
+    func saveServers() {
+        if let encoded = try? JSONEncoder().encode(servers) {
+            UserDefaults.standard.set(encoded, forKey: serversKey)
+        }
+    }
+    
+    // Update server saving to happen immediately when servers change
+    func addServer(_ server: ServerConfig) {
+        servers.append(server)
+        saveServers()
+        
+        // Auto-select the first server if none is selected
+        if selectedServerId == nil {
+            selectedServerId = server.id
+        }
+    }
+    
+    func removeServer(_ server: ServerConfig) {
+        servers.removeAll { $0.id == server.id }
+        saveServers()
+        
+        // Clear selection if removed server was selected
+        if selectedServerId == server.id {
+            selectedServerId = servers.first?.id
+        }
+    }
+    
+    func updateServer(_ server: ServerConfig) {
+        if let index = servers.firstIndex(where: { $0.id == server.id }) {
+            servers[index] = server
+            saveServers()
+        }
+    }
+    
+    func addServerWithMetadata(_ server: ServerConfig) async {
+        var updatedServer = server
+        
+        // Try to fetch server metadata
+        let metadata = await fetchServerMetadata(url: server.url)
+        if let title = metadata.title {
+            updatedServer.name = title
+        }
+        
+        await MainActor.run {
+            addServer(updatedServer)
+            selectedServerId = updatedServer.id
+        }
+    }
+    
+    private func fetchServerMetadata(url: String) async -> (title: String?, version: String?) {
+        guard var baseURL = URL(string: url) else { return (nil, nil) }
+        // Remove /v1 or other API paths to get base URL
+        baseURL = baseURL.deletingLastPathComponent()
+        
+        do {
+            let (data, _) = try await URLSession.shared.data(from: baseURL)
+            if let html = String(data: data, encoding: .utf8) {
+                // Extract title from HTML metadata
+                let title = extractTitle(from: html)
+                let version = extractVersion(from: html)
+                return (title, version)
+            }
+        } catch {
+            print("Error fetching server metadata: \(error)")
+        }
+        return (nil, nil)
+    }
+    
+    private func extractTitle(from html: String) -> String? {
+        // Basic title extraction - could be made more robust
+        if let titleRange = html.range(of: "<title>.*?</title>", options: .regularExpression) {
+            let title = html[titleRange]
+                .replacingOccurrences(of: "<title>", with: "")
+                .replacingOccurrences(of: "</title>", with: "")
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            return title.isEmpty ? nil : title
+        }
+        return nil
+    }
+    
+    private func extractVersion(from html: String) -> String? {
+        // Basic version extraction - could be made more robust
+        if let metaRange = html.range(of: "content=\".*?version.*?\"", options: .regularExpression) {
+            let version = html[metaRange]
+                .replacingOccurrences(of: "content=\"", with: "")
+                .replacingOccurrences(of: "\"", with: "")
+                .trimmingCharacters(in: .whitespacesAndNewlines)
+            return version.isEmpty ? nil : version
+        }
+        return nil
+    }
+    
+    private func loadCachedModels() {
+        if let data = cachedServerModelsData,
+           let decoded = try? JSONDecoder().decode([String: [String]].self, from: data) {
+            // Convert string keys back to UUIDs
+            cachedServerModels = Dictionary(uniqueKeysWithValues: decoded.compactMap { key, value in
+                guard let uuid = UUID(uuidString: key) else { return nil }
+                return (uuid, value)
+            })
+        }
+    }
+    
+    func updateCachedModels(serverId: UUID, models: [String]) {
+        cachedServerModels[serverId] = models
+    }
+    
+    func getCachedModels(for serverId: UUID) -> [String] {
+        return cachedServerModels[serverId] ?? []
+    }
 }
 
 enum Role: String, Codable {
@@ -153,22 +335,23 @@ class Message {
 }
 
 @Model
-final class Thread: Sendable {
-    @Attribute(.unique) var id: UUID
-    var title: String?
+final class Thread {
+    @Attribute(.unique) let id: UUID
     var timestamp: Date
-    
-    @Relationship var messages: [Message] = []
-    
-    var sortedMessages: [Message] {
-        return messages.sorted { $0.timestamp < $1.timestamp }
-    }
+    var messages: [Message]
     
     init() {
         self.id = UUID()
         self.timestamp = Date()
+        self.messages = []
+    }
+    
+    var sortedMessages: [Message] {
+        messages.sorted { $0.timestamp < $1.timestamp }
     }
 }
+
+extension Thread: @unchecked Sendable {}
 
 enum AppTintColor: String, CaseIterable {
     case monochrome, blue, brown, gray, green, indigo, mint, orange, pink, purple, red, teal, yellow
@@ -257,3 +440,9 @@ enum AppFontSize: String, CaseIterable {
         }
     }
 }
+
+enum ModelSource {
+    case local
+    case server
+}
+
