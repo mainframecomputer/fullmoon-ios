@@ -15,16 +15,16 @@ struct OnboardingInstallModelView: View {
     @Binding var showOnboarding: Bool
     @State var selectedModel = ModelConfiguration.defaultModel
     let suggestedModel = ModelConfiguration.defaultModel
-    
+
     func sizeBadge(_ model: ModelConfiguration?) -> String? {
         guard let size = model?.modelSize else { return nil }
         return "\(size) GB"
     }
-    
+
     /// The maximum allowable model size as a fraction of the device's total RAM.
     /// For example, a value of 0.6 means the model's size should not exceed 60% of the device's total memory.
     let modelMemoryThreshold = 0.6
-    
+
     var modelsList: some View {
         Form {
             Section {
@@ -34,7 +34,7 @@ struct OnboardingInstallModelView: View {
                         .aspectRatio(contentMode: .fit)
                         .frame(width: 64, height: 64)
                         .foregroundStyle(.primary, .tertiary)
-                    
+
                     VStack(spacing: 4) {
                         Text("install a model")
                             .font(.title)
@@ -42,17 +42,17 @@ struct OnboardingInstallModelView: View {
                         Text("select from models that are optimized for apple silicon")
                             .foregroundStyle(.secondary)
                             .multilineTextAlignment(.center)
-#if DEBUG
+                        #if DEBUG
                         Text("ram: \(appManager.availableMemory) GB")
                             .foregroundStyle(.red)
-#endif
+                        #endif
                     }
                 }
                 .padding(.vertical)
                 .frame(maxWidth: .infinity)
             }
             .listRowBackground(Color.clear)
-            
+
             if appManager.installedModels.count > 0 {
                 Section(header: Text("installed")) {
                     ForEach(appManager.installedModels, id: \.self) { modelName in
@@ -65,11 +65,11 @@ struct OnboardingInstallModelView: View {
                             }
                         }
                         .badge(sizeBadge(model))
-#if os(macOS)
-                        .buttonStyle(.borderless)
-#endif
-                        .foregroundStyle(.secondary)
-                        .disabled(true)
+                        #if os(macOS)
+                            .buttonStyle(.borderless)
+                        #endif
+                            .foregroundStyle(.secondary)
+                            .disabled(true)
                     }
                 }
             } else {
@@ -83,12 +83,12 @@ struct OnboardingInstallModelView: View {
                         }
                     }
                     .badge(sizeBadge(suggestedModel))
-#if os(macOS)
-                    .buttonStyle(.borderless)
-#endif
+                    #if os(macOS)
+                        .buttonStyle(.borderless)
+                    #endif
                 }
             }
-            
+
             if filteredModels.count > 0 {
                 Section(header: Text("other")) {
                     ForEach(filteredModels, id: \.name) { model in
@@ -101,14 +101,14 @@ struct OnboardingInstallModelView: View {
                             }
                         }
                         .badge(sizeBadge(model))
-#if os(macOS)
-                        .buttonStyle(.borderless)
-#endif
+                        #if os(macOS)
+                            .buttonStyle(.borderless)
+                        #endif
                     }
                 }
             }
-            
-#if os(macOS)
+
+            #if os(macOS)
             Section {} footer: {
                 NavigationLink(destination: OnboardingDownloadingModelProgressView(showOnboarding: $showOnboarding, selectedModel: $selectedModel)) {
                     Text("install")
@@ -117,30 +117,30 @@ struct OnboardingInstallModelView: View {
                 .disabled(filteredModels.isEmpty)
             }
             .padding()
-#endif
+            #endif
         }
         .formStyle(.grouped)
     }
-    
+
     var body: some View {
         ZStack {
             if deviceSupportsMetal3 {
                 modelsList
-#if os(iOS) || os(visionOS)
-                    .toolbar {
-                        ToolbarItem(placement: .topBarTrailing) {
-                            NavigationLink(destination: OnboardingDownloadingModelProgressView(showOnboarding: $showOnboarding, selectedModel: $selectedModel)) {
-                                Text("install")
-                                    .font(.headline)
-                            }
-                            .disabled(filteredModels.isEmpty)
+                #if os(iOS) || os(visionOS)
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        NavigationLink(destination: OnboardingDownloadingModelProgressView(showOnboarding: $showOnboarding, selectedModel: $selectedModel)) {
+                            Text("install")
+                                .font(.headline)
                         }
+                        .disabled(filteredModels.isEmpty)
                     }
-                    .listStyle(.insetGrouped)
-#endif
-                    .task {
-                        checkModels()
-                    }
+                }
+                .listStyle(.insetGrouped)
+                #endif
+                .task {
+                    checkModels()
+                }
             } else {
                 DeviceNotSupportedView()
             }
@@ -149,7 +149,7 @@ struct OnboardingInstallModelView: View {
             checkMetal3Support()
         }
     }
-    
+
     var filteredModels: [ModelConfiguration] {
         ModelConfiguration.availableModels
             .filter { !appManager.installedModels.contains($0.name) }
@@ -162,7 +162,7 @@ struct OnboardingInstallModelView: View {
             }
             .sorted { $0.name < $1.name }
     }
-    
+
     func checkModels() {
         // automatically select the first available model
         if appManager.installedModels.contains(suggestedModel.name) {
@@ -171,19 +171,19 @@ struct OnboardingInstallModelView: View {
             }
         }
     }
-    
+
     func checkMetal3Support() {
-#if os(iOS)
+        #if os(iOS)
         if let device = MTLCreateSystemDefaultDevice() {
             deviceSupportsMetal3 = device.supportsFamily(.metal3)
         }
-#endif
+        #endif
     }
 }
 
 #Preview {
     @Previewable @State var appManager = AppManager()
-    
+
     OnboardingInstallModelView(showOnboarding: .constant(true))
         .environmentObject(appManager)
 }
