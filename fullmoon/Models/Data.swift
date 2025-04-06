@@ -7,7 +7,6 @@
 
 import SwiftUI
 import SwiftData
-import os
 
 class AppManager: ObservableObject {
     @AppStorage("systemPrompt") var systemPrompt = "you are a helpful assistant"
