@@ -38,7 +38,7 @@ extension ModelConfiguration: @retroactive Equatable {
     public static let deepseek_r1_distill_qwen_1_5b_4bit = ModelConfiguration(
         id: "mlx-community/DeepSeek-R1-Distill-Qwen-1.5B-4bit"
     )
-    
+
     public static let deepseek_r1_distill_qwen_1_5b_8bit = ModelConfiguration(
         id: "mlx-community/DeepSeek-R1-Distill-Qwen-1.5B-8bit"
     )
@@ -47,7 +47,7 @@ extension ModelConfiguration: @retroactive Equatable {
         llama_3_2_1b_4bit,
         llama_3_2_3b_4bit,
         deepseek_r1_distill_qwen_1_5b_4bit,
-        deepseek_r1_distill_qwen_1_5b_8bit
+        deepseek_r1_distill_qwen_1_5b_8bit,
     ]
 
     public static var defaultModel: ModelConfiguration {
@@ -84,15 +84,17 @@ extension ModelConfiguration: @retroactive Equatable {
     }
 
     func formatForTokenizer(_ message: String) -> String {
-        if self.modelType == .reasoning {
-            let pattern = "<think>.*?</think>"
-            if let regex = try? NSRegularExpression(pattern: pattern, options: .dotMatchesLineSeparators) {
-                let range = NSRange(message.startIndex..., in: message)
+        if modelType == .reasoning {
+            let pattern = "<think>.*?(</think>|$)"
+            do {
+                let regex = try NSRegularExpression(pattern: pattern, options: [.dotMatchesLineSeparators])
+                let range = NSRange(location: 0, length: message.utf16.count)
                 let formattedMessage = regex.stringByReplacingMatches(in: message, options: [], range: range, withTemplate: "")
                 return " " + formattedMessage
+            } catch {
+                return " " + message
             }
         }
-        
         return message
     }
 
