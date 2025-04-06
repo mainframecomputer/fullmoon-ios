@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import os
 
 class AppManager: ObservableObject {
     @AppStorage("systemPrompt") var systemPrompt = "you are a helpful assistant"
@@ -29,6 +30,12 @@ class AppManager: ObservableObject {
         #else
         return .unknown
         #endif
+    }
+    
+    var availableMemory: Double {
+        let ramInBytes = ProcessInfo.processInfo.physicalMemory
+        let ramInGB = Double(ramInBytes) / (1024 * 1024 * 1024)
+        return ramInGB
     }
 
     enum LayoutType {
