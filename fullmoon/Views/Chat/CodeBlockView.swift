@@ -9,6 +9,7 @@ private let languageMap: [String: String] = [
     "rb": "ruby",
     "shell": "bash",
     "sh": "bash",
+    "swift: "swift",
     "jsx": "javascript",
     "tsx": "typescript",
     "yml": "yaml",
