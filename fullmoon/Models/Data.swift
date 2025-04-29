@@ -153,22 +153,23 @@ class Message {
 }
 
 @Model
-final class Thread: Sendable {
-    @Attribute(.unique) var id: UUID
-    var title: String?
+final class Thread {
+    @Attribute(.unique) let id: UUID
     var timestamp: Date
-    
-    @Relationship var messages: [Message] = []
-    
-    var sortedMessages: [Message] {
-        return messages.sorted { $0.timestamp < $1.timestamp }
-    }
+    var messages: [Message]
     
     init() {
         self.id = UUID()
         self.timestamp = Date()
+        self.messages = []
+    }
+    
+    var sortedMessages: [Message] {
+        messages.sorted { $0.timestamp < $1.timestamp }
     }
 }
+
+extension Thread: @unchecked Sendable {}
 
 enum AppTintColor: String, CaseIterable {
     case monochrome, blue, brown, gray, green, indigo, mint, orange, pink, purple, red, teal, yellow
