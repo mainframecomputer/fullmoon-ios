@@ -30,6 +30,12 @@ class AppManager: ObservableObject {
         return .unknown
         #endif
     }
+    
+    var availableMemory: Double {
+        let ramInBytes = ProcessInfo.processInfo.physicalMemory
+        let ramInGB = Double(ramInBytes) / (1024 * 1024 * 1024)
+        return ramInGB
+    }
 
     enum LayoutType {
         case mac, phone, pad, vision, unknown

@@ -6,6 +6,7 @@
 //
 
 import MLXLMCommon
+import os
 import SwiftUI
 
 struct OnboardingInstallModelView: View {
@@ -19,6 +20,10 @@ struct OnboardingInstallModelView: View {
         guard let size = model?.modelSize else { return nil }
         return "\(size) GB"
     }
+
+    /// The maximum allowable model size as a fraction of the device's total RAM.
+    /// For example, a value of 0.6 means the model's size should not exceed 60% of the device's total memory.
+    let modelMemoryThreshold = 0.6
 
     var modelsList: some View {
         Form {
@@ -37,6 +42,10 @@ struct OnboardingInstallModelView: View {
                         Text("select from models that are optimized for apple silicon")
                             .foregroundStyle(.secondary)
                             .multilineTextAlignment(.center)
+                        #if DEBUG
+                        Text("ram: \(appManager.availableMemory) GB")
+                            .foregroundStyle(.red)
+                        #endif
                     }
                 }
                 .padding(.vertical)
@@ -146,6 +155,10 @@ struct OnboardingInstallModelView: View {
             .filter { !appManager.installedModels.contains($0.name) }
             .filter { model in
                 !(appManager.installedModels.isEmpty && model.name == suggestedModel.name)
+            }
+            .filter { model in
+                guard let size = model.modelSize else { return false }
+                return size <= Decimal(modelMemoryThreshold * appManager.availableMemory)
             }
             .sorted { $0.name < $1.name }
     }
