@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		25F645532D4E7A6F0049EFBE /* Transformers in Frameworks */ = {isa = PBXBuildFile; productRef = 25F645522D4E7A6F0049EFBE /* Transformers */; };
 		860F26A42CBC31D6004E8D40 /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = 860F26A32CBC31D6004E8D40 /* MarkdownUI */; };
 		869B97622D0DD46B0078DF5A /* MLXLMCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 869B97612D0DD46B0078DF5A /* MLXLMCommon */; };
 		869B97642D0DD4D80078DF5A /* MLXLLM in Frameworks */ = {isa = PBXBuildFile; productRef = 869B97632D0DD4D80078DF5A /* MLXLLM */; };
@@ -44,6 +45,7 @@
 			files = (
 				869B97642D0DD4D80078DF5A /* MLXLLM in Frameworks */,
 				869B97622D0DD46B0078DF5A /* MLXLMCommon in Frameworks */,
+				25F645532D4E7A6F0049EFBE /* Transformers in Frameworks */,
 				860F26A42CBC31D6004E8D40 /* MarkdownUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -98,6 +100,7 @@
 				860F26A32CBC31D6004E8D40 /* MarkdownUI */,
 				869B97612D0DD46B0078DF5A /* MLXLMCommon */,
 				869B97632D0DD4D80078DF5A /* MLXLLM */,
+				25F645522D4E7A6F0049EFBE /* Transformers */,
 			);
 			productName = fullmoon;
 			productReference = 860E9CCE2CB055B000C5BB52 /* fullmoon.app */;
@@ -130,6 +133,7 @@
 			packageReferences = (
 				860E9CE22CB0564600C5BB52 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */,
 				860F26A22CBC31D6004E8D40 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
+				25F645512D4E7A6F0049EFBE /* XCRemoteSwiftPackageReference "swift-transformers" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 860E9CCF2CB055B000C5BB52 /* Products */;
@@ -392,6 +396,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		25F645512D4E7A6F0049EFBE /* XCRemoteSwiftPackageReference "swift-transformers" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/huggingface/swift-transformers.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.1.17;
+			};
+		};
 		860E9CE22CB0564600C5BB52 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ml-explore/mlx-swift-examples/";
@@ -411,6 +423,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		25F645522D4E7A6F0049EFBE /* Transformers */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 25F645512D4E7A6F0049EFBE /* XCRemoteSwiftPackageReference "swift-transformers" */;
+			productName = Transformers;
+		};
 		860F26A32CBC31D6004E8D40 /* MarkdownUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 860F26A22CBC31D6004E8D40 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */;
