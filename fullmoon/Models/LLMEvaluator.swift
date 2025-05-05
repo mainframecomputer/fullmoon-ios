@@ -110,9 +110,9 @@ class LLMEvaluator {
             let modelContainer = try await load(modelName: modelName)
 
             // augment the prompt as needed
-            let promptHistory = modelContainer.configuration.getPromptHistory(thread: thread, systemPrompt: systemPrompt)
+            let promptHistory = await modelContainer.configuration.getPromptHistory(thread: thread, systemPrompt: systemPrompt)
 
-            if modelContainer.configuration.modelType == .reasoning {
+            if await modelContainer.configuration.modelType == .reasoning {
                 isThinking = true
             }
 
