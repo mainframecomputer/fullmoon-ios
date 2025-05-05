@@ -408,8 +408,8 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/ml-explore/mlx-swift-examples/";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 2.21.2;
+				branch = main;
+				kind = branch;
 			};
 		};
 		860F26A22CBC31D6004E8D40 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */ = {
