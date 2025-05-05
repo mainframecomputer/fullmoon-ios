@@ -76,13 +76,14 @@ extension ModelConfiguration: @retroactive Equatable {
             let role = message.role.rawValue
             history.append([
                 "role": role,
-                "content": formatForTokenizer(message.content), // Remove reasoning part
+                "content": formatForTokenizer(message.content), // remove reasoning part
             ])
         }
 
         return history
     }
 
+    // TODO: Remove this function when Jinja gets updated
     func formatForTokenizer(_ message: String) -> String {
         if modelType == .reasoning {
             let pattern = "<think>.*?(</think>|$)"
