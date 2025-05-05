@@ -49,16 +49,14 @@ struct MessageView: View {
     }
 
     var time: String {
-        if llm.running, let elapsedTime = llm.elapsedTime {
+        if isThinking, llm.running, let elapsedTime = llm.elapsedTime {
             if isThinking {
                 return "(\(elapsedTime.formatted))"
             }
             if let thinkingTime = llm.thinkingTime {
                 return thinkingTime.formatted
             }
-        }
-
-        if let generatingTime = message.generatingTime {
+        } else if let generatingTime = message.generatingTime {
             return "\(generatingTime.formatted)"
         }
 
