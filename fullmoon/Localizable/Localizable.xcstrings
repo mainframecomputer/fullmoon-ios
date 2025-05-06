@@ -1,0 +1,522 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "%@" : {
+
+    },
+    "appearance" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "모양"
+          }
+        }
+      }
+    },
+    "are you sure?" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "확실합니까?"
+          }
+        }
+      }
+    },
+    "cancel" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "취소"
+          }
+        }
+      }
+    },
+    "chat" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "채팅"
+          }
+        }
+      }
+    },
+    "chat with private and local large language models" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "개인용으로 로컬에서 실행되는 대형 언어 모델과 채팅하기"
+          }
+        }
+      }
+    },
+    "chats" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "채팅들"
+          }
+        }
+      }
+    },
+    "color" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "색상"
+          }
+        }
+      }
+    },
+    "continue chatting in the app" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "앱에서 채팅을 계속하기"
+          }
+        }
+      }
+    },
+    "continuous chat" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "지속적인 채팅"
+          }
+        }
+      }
+    },
+    "credits" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "크레딧"
+          }
+        }
+      }
+    },
+    "delete" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "삭제"
+          }
+        }
+      }
+    },
+    "delete all chats" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "모든 채팅 삭제"
+          }
+        }
+      }
+    },
+    "design" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "디자인"
+          }
+        }
+      }
+    },
+    "device not supported" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "지원되지 않는 기기입니다"
+          }
+        }
+      }
+    },
+    "done" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "완료"
+          }
+        }
+      }
+    },
+    "fast" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "빠름"
+          }
+        }
+      }
+    },
+    "font" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "글꼴"
+          }
+        }
+      }
+    },
+    "fullmoon" : {
+
+    },
+    "get started" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "시작하기"
+          }
+        }
+      }
+    },
+    "haptics" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "햅틱"
+          }
+        }
+      }
+    },
+    "install" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "설치"
+          }
+        }
+      }
+    },
+    "install a model" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "모델 설치"
+          }
+        }
+      }
+    },
+    "installed" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "설치됨"
+          }
+        }
+      }
+    },
+    "installing" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "설치 중"
+          }
+        }
+      }
+    },
+    "keep this screen open and wait for the installation to complete." : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 화면을 열어두고 설치가 완료될 때까지 기다리세요."
+          }
+        }
+      }
+    },
+    "Mainframe" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "메인프레임"
+          }
+        }
+      }
+    },
+    "message" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "메시지"
+          }
+        }
+      }
+    },
+    "MLX Swift" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "MLX 스위프트"
+          }
+        }
+      }
+    },
+    "models" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "모델들"
+          }
+        }
+      }
+    },
+    "new chat" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "새 채팅"
+          }
+        }
+      }
+    },
+    "new chat with ${prompt}" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "\"${prompt}로 새 채팅 시작\""
+          }
+        }
+      }
+    },
+    "no chats yet" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아직 채팅이 없습니다"
+          }
+        }
+      }
+    },
+    "no results" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "결과 없음"
+          }
+        }
+      }
+    },
+    "open source" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오픈 소스"
+          }
+        }
+      }
+    },
+    "optimized for apple silicon" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "애플 실리콘에 최적화됨"
+          }
+        }
+      }
+    },
+    "other" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기타"
+          }
+        }
+      }
+    },
+    "private" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "개인 정보 보호"
+          }
+        }
+      }
+    },
+    "runs locally on your device" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기기에서 로컬로 실행됨"
+          }
+        }
+      }
+    },
+    "search" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "검색"
+          }
+        }
+      }
+    },
+    "select from models that are optimized for apple silicon" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "애플 실리콘에 최적화된 모델 중에서 선택하세요"
+          }
+        }
+      }
+    },
+    "settings" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "설정"
+          }
+        }
+      }
+    },
+    "sit back and relax" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "편안히 기다려 주세요"
+          }
+        }
+      }
+    },
+    "size" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "크기"
+          }
+        }
+      }
+    },
+    "sorry, fullmoon can only run on devices that support Metal 3." : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "죄송합니다, fullmoon은 Metal 3을 지원하는 기기에서만 실행할 수 있습니다."
+          }
+        }
+      }
+    },
+    "start a new chat" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "새 채팅 시작"
+          }
+        }
+      }
+    },
+    "suggested" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "추천"
+          }
+        }
+      }
+    },
+    "system prompt" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "시스템 프롬프트"
+          }
+        }
+      }
+    },
+    "untitled" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "제목 없음"
+          }
+        }
+      }
+    },
+    "v%@.%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "v%1$@.%2$@"
+          }
+        }
+      }
+    },
+    "view and contribute to the source code" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "소스 코드 보기 및 기여"
+          }
+        }
+      }
+    },
+    "welcome" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "환영합니다"
+          }
+        }
+      }
+    },
+    "width" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "너비"
+          }
+        }
+      }
+    }
+  },
+  "version" : "1.0"
+}
