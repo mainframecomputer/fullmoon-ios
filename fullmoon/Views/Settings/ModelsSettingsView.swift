@@ -16,21 +16,45 @@ struct ModelsSettingsView: View {
     var body: some View {
         Form {
             if appManager.selectedProvider == .anthropic {
-                Section(header: Text("api model")) {
-                    Button {
-                        appManager.currentModelName = "claude-opus-4"
-                        appManager.playHaptic()
-                    } label: {
-                        Label {
-                            Text("Claude 4 Opus")
-                                .tint(.primary)
-                        } icon: {
-                            Image(systemName: appManager.currentModelName == "claude-opus-4" ? "checkmark.circle.fill" : "circle")
+                Section(header: Text("available models")) {
+                    ForEach(AnthropicModel.availableModels) { model in
+                        Button {
+                            appManager.selectedAnthropicModelId = model.id
+                            appManager.playHaptic()
+                        } label: {
+                            HStack {
+                                Label {
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        HStack {
+                                            Text(model.name)
+                                                .tint(.primary)
+                                            if model.isLatest {
+                                                Text("Latest")
+                                                    .font(.caption)
+                                                    .padding(.horizontal, 6)
+                                                    .padding(.vertical, 2)
+                                                    .background(Color.blue.opacity(0.2))
+                                                    .foregroundColor(.blue)
+                                                    .cornerRadius(4)
+                                            }
+                                        }
+                                        Text(model.description)
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                    }
+                                } icon: {
+                                    Image(systemName: appManager.selectedAnthropicModelId == model.id ? "checkmark.circle.fill" : "circle")
+                                }
+                                Spacer()
+                                Text("\(model.contextWindow / 1000)K")
+                                    .font(.caption)
+                                    .foregroundStyle(.tertiary)
+                            }
                         }
+                        #if os(macOS)
+                        .buttonStyle(.borderless)
+                        #endif
                     }
-                    #if os(macOS)
-                    .buttonStyle(.borderless)
-                    #endif
                 }
             } else {
                 Section(header: Text("installed")) {

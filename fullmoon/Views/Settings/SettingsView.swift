@@ -32,7 +32,9 @@ struct SettingsView: View {
                         } icon: {
                             Image(systemName: "arrow.down.circle")
                         }
-                        .badge(appManager.selectedProvider == .anthropic ? "Claude 4 Opus" : appManager.modelDisplayName(appManager.currentModelName ?? ""))
+                        .badge(appManager.selectedProvider == .anthropic ? 
+                               AnthropicModel.availableModels.first(where: { $0.id == appManager.selectedAnthropicModelId })?.name ?? "Claude" : 
+                               appManager.modelDisplayName(appManager.currentModelName ?? ""))
                     }
                     
                     if appManager.selectedProvider == .anthropic {

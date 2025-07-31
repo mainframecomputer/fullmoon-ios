@@ -28,7 +28,7 @@ struct OnboardingCompleteView: View {
                     Text("all set!")
                         .font(.title)
                         .fontWeight(.semibold)
-                    Text("You're ready to start using Claude 4 Opus")
+                    Text("You're ready to start using Claude")
                         .foregroundStyle(.secondary)
                         .multilineTextAlignment(.center)
                 }
@@ -40,7 +40,7 @@ struct OnboardingCompleteView: View {
                 // Save the API key and provider selection
                 appManager.selectedProvider = selectedProvider
                 appManager.anthropicAPIKey = anthropicAPIKey
-                appManager.currentModelName = "claude-opus-4"
+                appManager.currentModelName = nil
                 showOnboarding = false
             } label: {
                 Text("get started")

@@ -10,7 +10,7 @@ import SwiftData
 
 enum ModelProvider: String, CaseIterable {
     case local = "Local Models"
-    case anthropic = "Claude 4 Opus"
+    case anthropic = "Claude API"
     
     var icon: String {
         switch self {
@@ -26,7 +26,7 @@ enum ModelProvider: String, CaseIterable {
         case .local:
             return "Run models locally on your device"
         case .anthropic:
-            return "Use Anthropic's Claude 4 Opus API"
+            return "Use Anthropic's Claude API"
         }
     }
 }
@@ -43,6 +43,7 @@ class AppManager: ObservableObject {
     @AppStorage("numberOfVisitsOfLastRequest") var numberOfVisitsOfLastRequest = 0
     @AppStorage("selectedProvider") var selectedProvider: ModelProvider = .local
     @AppStorage("anthropicAPIKey") var anthropicAPIKey: String = ""
+    @AppStorage("selectedAnthropicModelId") var selectedAnthropicModelId: String = AnthropicModel.defaultModel.id
     
     var userInterfaceIdiom: LayoutType {
         #if os(visionOS)

@@ -117,7 +117,7 @@ class AnthropicClient: ObservableObject {
         self.apiKey = apiKey
     }
     
-    func streamChat(messages: [AnthropicMessage], systemPrompt: String?, temperature: Double = 0.5, maxTokens: Int = 4096) -> AsyncThrowingStream<String, Error> {
+    func streamChat(messages: [AnthropicMessage], model: String, systemPrompt: String?, temperature: Double = 0.5, maxTokens: Int = 4096) -> AsyncThrowingStream<String, Error> {
         AsyncThrowingStream { continuation in
             Task {
                 do {
@@ -132,7 +132,7 @@ class AnthropicClient: ObservableObject {
                     request.setValue("2023-06-01", forHTTPHeaderField: "anthropic-version")
                     
                     let requestBody = AnthropicRequest(
-                        model: "claude-3-opus-20240229",
+                        model: model,
                         messages: messages,
                         max_tokens: maxTokens,
                         temperature: temperature,

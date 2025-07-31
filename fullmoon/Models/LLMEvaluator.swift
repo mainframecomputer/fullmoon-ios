@@ -178,6 +178,10 @@ class LLMEvaluator {
         
         anthropicClient = AnthropicClient(apiKey: apiKey)
         
+        // Get the selected model
+        let appManager = AppManager()
+        let selectedModel = appManager.selectedAnthropicModelId
+        
         // Convert thread messages to Anthropic format
         let messages = thread.sortedMessages.map { message in
             AnthropicMessage(
@@ -189,6 +193,7 @@ class LLMEvaluator {
         do {
             let stream = anthropicClient!.streamChat(
                 messages: messages,
+                model: selectedModel,
                 systemPrompt: systemPrompt,
                 temperature: Double(generateParameters.temperature),
                 maxTokens: maxTokens
