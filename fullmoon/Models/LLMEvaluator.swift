@@ -27,6 +27,8 @@ class LLMEvaluator {
     var thinkingTime: TimeInterval?
     var collapsed: Bool = false
     var isThinking: Bool = false
+    
+    private var anthropicClient: AnthropicClient?
 
     var elapsedTime: TimeInterval? {
         if let startTime {
@@ -105,6 +107,13 @@ class LLMEvaluator {
         cancelled = false
         output = ""
         startTime = Date()
+        
+        let appManager = AppManager()
+        
+        // Check if we should use Anthropic API
+        if appManager.selectedProvider == .anthropic {
+            return await generateWithAnthropic(thread: thread, systemPrompt: systemPrompt, apiKey: appManager.anthropicAPIKey)
+        }
 
         do {
             let modelContainer = try await load(modelName: modelName)
@@ -156,6 +165,62 @@ class LLMEvaluator {
             output = "Failed: \(error)"
         }
 
+        running = false
+        return output
+    }
+    
+    private func generateWithAnthropic(thread: Thread, systemPrompt: String, apiKey: String) async -> String {
+        guard !apiKey.isEmpty else {
+            output = "Error: No Anthropic API key configured"
+            running = false
+            return output
+        }
+        
+        anthropicClient = AnthropicClient(apiKey: apiKey)
+        
+        // Get the selected model
+        let appManager = AppManager()
+        let selectedModel = appManager.selectedAnthropicModelId
+        
+        // Convert thread messages to Anthropic format
+        let messages = thread.sortedMessages.map { message in
+            AnthropicMessage(
+                role: message.role == .user ? "user" : "assistant",
+                content: message.content
+            )
+        }
+        
+        do {
+            let stream = anthropicClient!.streamChat(
+                messages: messages,
+                model: selectedModel,
+                systemPrompt: systemPrompt,
+                temperature: Double(generateParameters.temperature),
+                maxTokens: maxTokens
+            )
+            
+            var tokenCount = 0
+            let streamStartTime = Date()
+            
+            for try await text in stream {
+                if cancelled {
+                    break
+                }
+                
+                output = text
+                tokenCount += 1
+                
+                // Calculate tokens per second
+                let elapsed = Date().timeIntervalSince(streamStartTime)
+                if elapsed > 0 {
+                    let tokensPerSecond = Double(tokenCount) / elapsed
+                    stat = " Tokens/second: \(String(format: "%.3f", tokensPerSecond))"
+                }
+            }
+        } catch {
+            output = "Error: \(error.localizedDescription)"
+        }
+        
         running = false
         return output
     }

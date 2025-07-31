@@ -38,12 +38,16 @@ struct ContentView: View {
         .environmentObject(appManager)
         .environment(llm)
         .task {
-            if appManager.installedModels.count == 0 {
+            // Show onboarding if no provider is configured
+            let hasLocalModels = appManager.installedModels.count > 0
+            let hasAnthropicConfig = appManager.selectedProvider == .anthropic && !appManager.anthropicAPIKey.isEmpty
+            
+            if !hasLocalModels && !hasAnthropicConfig {
                 showOnboarding.toggle()
             } else {
                 isPromptFocused = true
-                // load the model
-                if let modelName = appManager.currentModelName {
+                // load the model if using local provider
+                if appManager.selectedProvider == .local, let modelName = appManager.currentModelName {
                     _ = try? await llm.load(modelName: modelName)
                 }
             }
@@ -80,7 +84,10 @@ struct ContentView: View {
         .sheet(isPresented: $showOnboarding, onDismiss: dismissOnboarding) {
             OnboardingView(showOnboarding: $showOnboarding)
                 .environment(llm)
-                .interactiveDismissDisabled(appManager.installedModels.count == 0)
+                .interactiveDismissDisabled(
+                    appManager.installedModels.count == 0 && 
+                    !(appManager.selectedProvider == .anthropic && !appManager.anthropicAPIKey.isEmpty)
+                )
             
         }
         #if !os(visionOS)

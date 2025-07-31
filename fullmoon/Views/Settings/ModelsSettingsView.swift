@@ -15,34 +15,77 @@ struct ModelsSettingsView: View {
     
     var body: some View {
         Form {
-            Section(header: Text("installed")) {
-                ForEach(appManager.installedModels, id: \.self) { modelName in
-                    Button {
-                        Task {
-                            await switchModel(modelName)
+            if appManager.selectedProvider == .anthropic {
+                Section(header: Text("available models")) {
+                    ForEach(AnthropicModel.availableModels) { model in
+                        Button {
+                            appManager.selectedAnthropicModelId = model.id
+                            appManager.playHaptic()
+                        } label: {
+                            HStack {
+                                Label {
+                                    VStack(alignment: .leading, spacing: 4) {
+                                        HStack {
+                                            Text(model.name)
+                                                .tint(.primary)
+                                            if model.isLatest {
+                                                Text("Latest")
+                                                    .font(.caption)
+                                                    .padding(.horizontal, 6)
+                                                    .padding(.vertical, 2)
+                                                    .background(Color.blue.opacity(0.2))
+                                                    .foregroundColor(.blue)
+                                                    .cornerRadius(4)
+                                            }
+                                        }
+                                        Text(model.description)
+                                            .font(.caption)
+                                            .foregroundStyle(.secondary)
+                                    }
+                                } icon: {
+                                    Image(systemName: appManager.selectedAnthropicModelId == model.id ? "checkmark.circle.fill" : "circle")
+                                }
+                                Spacer()
+                                Text("\(model.contextWindow / 1000)K")
+                                    .font(.caption)
+                                    .foregroundStyle(.tertiary)
+                            }
                         }
-                    } label: {
-                        Label {
-                            Text(appManager.modelDisplayName(modelName))
-                                .tint(.primary)
-                        } icon: {
-                            Image(systemName: appManager.currentModelName == modelName ? "checkmark.circle.fill" : "circle")
-                        }
+                        #if os(macOS)
+                        .buttonStyle(.borderless)
+                        #endif
                     }
-                    #if os(macOS)
-                    .buttonStyle(.borderless)
-                    #endif
                 }
+            } else {
+                Section(header: Text("installed")) {
+                    ForEach(appManager.installedModels, id: \.self) { modelName in
+                        Button {
+                            Task {
+                                await switchModel(modelName)
+                            }
+                        } label: {
+                            Label {
+                                Text(appManager.modelDisplayName(modelName))
+                                    .tint(.primary)
+                            } icon: {
+                                Image(systemName: appManager.currentModelName == modelName ? "checkmark.circle.fill" : "circle")
+                            }
+                        }
+                        #if os(macOS)
+                        .buttonStyle(.borderless)
+                        #endif
+                    }
+                }
+                
+                Button {
+                    showOnboardingInstallModelView.toggle()
+                } label: {
+                    Label("install a model", systemImage: "arrow.down.circle.dotted")
+                }
+                #if os(macOS)
+                .buttonStyle(.borderless)
+                #endif
             }
-            
-            Button {
-                showOnboardingInstallModelView.toggle()
-            } label: {
-                Label("install a model", systemImage: "arrow.down.circle.dotted")
-            }
-            #if os(macOS)
-            .buttonStyle(.borderless)
-            #endif
         }
         .formStyle(.grouped)
         .navigationTitle("models")
