@@ -32,7 +32,13 @@ struct SettingsView: View {
                         } icon: {
                             Image(systemName: "arrow.down.circle")
                         }
-                        .badge(appManager.modelDisplayName(appManager.currentModelName ?? ""))
+                        .badge(appManager.selectedProvider == .anthropic ? "Claude 4 Opus" : appManager.modelDisplayName(appManager.currentModelName ?? ""))
+                    }
+                    
+                    if appManager.selectedProvider == .anthropic {
+                        NavigationLink(destination: AnthropicSettingsView()) {
+                            Label("api settings", systemImage: "key")
+                        }
                     }
                 }
 

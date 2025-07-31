@@ -15,34 +15,53 @@ struct ModelsSettingsView: View {
     
     var body: some View {
         Form {
-            Section(header: Text("installed")) {
-                ForEach(appManager.installedModels, id: \.self) { modelName in
+            if appManager.selectedProvider == .anthropic {
+                Section(header: Text("api model")) {
                     Button {
-                        Task {
-                            await switchModel(modelName)
-                        }
+                        appManager.currentModelName = "claude-opus-4"
+                        appManager.playHaptic()
                     } label: {
                         Label {
-                            Text(appManager.modelDisplayName(modelName))
+                            Text("Claude 4 Opus")
                                 .tint(.primary)
                         } icon: {
-                            Image(systemName: appManager.currentModelName == modelName ? "checkmark.circle.fill" : "circle")
+                            Image(systemName: appManager.currentModelName == "claude-opus-4" ? "checkmark.circle.fill" : "circle")
                         }
                     }
                     #if os(macOS)
                     .buttonStyle(.borderless)
                     #endif
                 }
+            } else {
+                Section(header: Text("installed")) {
+                    ForEach(appManager.installedModels, id: \.self) { modelName in
+                        Button {
+                            Task {
+                                await switchModel(modelName)
+                            }
+                        } label: {
+                            Label {
+                                Text(appManager.modelDisplayName(modelName))
+                                    .tint(.primary)
+                            } icon: {
+                                Image(systemName: appManager.currentModelName == modelName ? "checkmark.circle.fill" : "circle")
+                            }
+                        }
+                        #if os(macOS)
+                        .buttonStyle(.borderless)
+                        #endif
+                    }
+                }
+                
+                Button {
+                    showOnboardingInstallModelView.toggle()
+                } label: {
+                    Label("install a model", systemImage: "arrow.down.circle.dotted")
+                }
+                #if os(macOS)
+                .buttonStyle(.borderless)
+                #endif
             }
-            
-            Button {
-                showOnboardingInstallModelView.toggle()
-            } label: {
-                Label("install a model", systemImage: "arrow.down.circle.dotted")
-            }
-            #if os(macOS)
-            .buttonStyle(.borderless)
-            #endif
         }
         .formStyle(.grouped)
         .navigationTitle("models")
