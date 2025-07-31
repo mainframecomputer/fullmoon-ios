@@ -8,6 +8,29 @@
 import SwiftUI
 import SwiftData
 
+enum ModelProvider: String, CaseIterable {
+    case local = "Local Models"
+    case anthropic = "Claude 4 Opus"
+    
+    var icon: String {
+        switch self {
+        case .local:
+            return "internaldrive"
+        case .anthropic:
+            return "cloud"
+        }
+    }
+    
+    var description: String {
+        switch self {
+        case .local:
+            return "Run models locally on your device"
+        case .anthropic:
+            return "Use Anthropic's Claude 4 Opus API"
+        }
+    }
+}
+
 class AppManager: ObservableObject {
     @AppStorage("systemPrompt") var systemPrompt = "you are a helpful assistant"
     @AppStorage("appTintColor") var appTintColor: AppTintColor = .monochrome
@@ -18,6 +41,8 @@ class AppManager: ObservableObject {
     @AppStorage("shouldPlayHaptics") var shouldPlayHaptics = true
     @AppStorage("numberOfVisits") var numberOfVisits = 0
     @AppStorage("numberOfVisitsOfLastRequest") var numberOfVisitsOfLastRequest = 0
+    @AppStorage("selectedProvider") var selectedProvider: ModelProvider = .local
+    @AppStorage("anthropicAPIKey") var anthropicAPIKey: String = ""
     
     var userInterfaceIdiom: LayoutType {
         #if os(visionOS)

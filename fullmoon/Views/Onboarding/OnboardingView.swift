@@ -90,7 +90,7 @@ struct OnboardingView: View {
                 
                 Spacer()
                 
-                NavigationLink(destination: OnboardingInstallModelView(showOnboarding: $showOnboarding)) {
+                NavigationLink(destination: OnboardingProviderSelectionView(showOnboarding: $showOnboarding)) {
                     Text("get started")
                         #if os(iOS) || os(visionOS)
                         .font(.headline)
