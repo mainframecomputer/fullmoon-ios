@@ -91,7 +91,7 @@ struct NewChatShortcut: AppShortcutsProvider {
         AppShortcut(
             intent: RequestLLMIntent(),
             phrases: [
-                "Start a new chat",
+                "Start a new \(.applicationName) chat",
                 "Start a \(.applicationName) chat",
                 "Chat with \(.applicationName)",
                 "Ask \(.applicationName) a question"
