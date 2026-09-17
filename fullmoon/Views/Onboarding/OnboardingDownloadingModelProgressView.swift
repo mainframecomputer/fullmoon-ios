@@ -14,9 +14,17 @@ struct OnboardingDownloadingModelProgressView: View {
     @Binding var selectedModel: ModelConfiguration
     @Environment(LLMEvaluator.self) var llm
     @State var didSwitchModel = false
+    @State private var loadAttempt = UUID()
     
     var installed: Bool {
-        llm.progress == 1 && didSwitchModel
+        llm.modelLoadStatus == .loaded && didSwitchModel
+    }
+
+    var failed: Bool {
+        if case .failed = llm.modelLoadStatus {
+            return true
+        }
+        return false
     }
     
     var body: some View {
@@ -27,7 +35,7 @@ struct OnboardingDownloadingModelProgressView: View {
                 MoonAnimationView(isDone: installed)
                 
                 VStack(spacing: 4) {
-                    Text(installed ? "installed" : "installing")
+                    Text(installed ? "installed" : failed ? "download failed" : "installing")
                         .font(.title)
                         .fontWeight(.semibold)
                     Text(appManager.modelDisplayName(selectedModel.name))
@@ -57,6 +65,21 @@ struct OnboardingDownloadingModelProgressView: View {
                 .buttonStyle(.borderedProminent)
                 .buttonBorderShape(.capsule)
                 .padding(.horizontal)
+            } else if failed {
+                VStack(spacing: 12) {
+                    Text("The model could not be downloaded. Check your connection and try again.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                        .multilineTextAlignment(.center)
+
+                    Button("try again") {
+                        didSwitchModel = false
+                        loadAttempt = UUID()
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .buttonBorderShape(.capsule)
+                }
+                .padding(.horizontal)
             } else {
                 Text("keep this screen open and wait for the installation to complete.")
                     .font(.caption)
@@ -68,20 +91,12 @@ struct OnboardingDownloadingModelProgressView: View {
         .padding()
         .navigationTitle("sit back and relax")
         .toolbar(installed ? .hidden : .visible)
-        .navigationBarBackButtonHidden()
-        .task {
+        .task(id: loadAttempt) {
             await loadLLM()
         }
         #if os(iOS)
         .sensoryFeedback(.success, trigger: installed)
         #endif
-        .onChange(of: installed) {
-            #if os(iOS)
-            UIApplication.shared.isIdleTimerDisabled = false
-            #endif
-            addInstalledModel()
-        }
-        .interactiveDismissDisabled(!installed)
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
@@ -94,8 +109,16 @@ struct OnboardingDownloadingModelProgressView: View {
     }
     
     func loadLLM() async {
-        await llm.switchModel(selectedModel)
+        guard await llm.switchModel(selectedModel) else {
+            didSwitchModel = false
+            return
+        }
+
         didSwitchModel = true
+        #if os(iOS)
+        UIApplication.shared.isIdleTimerDisabled = false
+        #endif
+        addInstalledModel()
     }
     
     func addInstalledModel() {
