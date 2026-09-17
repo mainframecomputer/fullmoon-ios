@@ -11,8 +11,27 @@ import MLXLMCommon
 import MLXRandom
 import SwiftUI
 
-enum LLMEvaluatorError: Error {
+enum LLMEvaluatorError: LocalizedError {
     case modelNotFound(String)
+
+    var errorDescription: String? {
+        switch self {
+        case let .modelNotFound(modelName):
+            return "The model \(modelName) is no longer available."
+        }
+    }
+}
+
+enum ModelLoadStatus: Equatable {
+    case idle
+    case loading
+    case loaded
+    case failed(String)
+
+    var errorMessage: String? {
+        guard case let .failed(message) = self else { return nil }
+        return message
+    }
 }
 
 @Observable
@@ -27,6 +46,7 @@ class LLMEvaluator {
     var thinkingTime: TimeInterval?
     var collapsed: Bool = false
     var isThinking: Bool = false
+    private(set) var modelLoadStatus: ModelLoadStatus = .idle
 
     var elapsedTime: TimeInterval? {
         if let startTime {
@@ -40,11 +60,84 @@ class LLMEvaluator {
 
     var modelConfiguration = ModelConfiguration.defaultModel
 
-    func switchModel(_ model: ModelConfiguration) async {
+    @discardableResult
+    func switchModel(_ model: ModelConfiguration) async -> Bool {
         progress = 0.0 // reset progress
+        modelInfo = ""
+        modelLoadStatus = .idle
         loadState = .idle
         modelConfiguration = model
-        _ = try? await load(modelName: model.name)
+
+        do {
+            _ = try await load(modelName: model.name)
+            return true
+        } catch {
+            return false
+        }
+    }
+
+    private func loadContainerWithRetry(
+        configuration: ModelConfiguration,
+        retriesRemaining: Int = 1
+    ) async throws -> ModelContainer {
+        do {
+            return try await LLMModelFactory.shared.loadContainer(configuration: configuration) {
+                [configuration] progress in
+                Task { @MainActor in
+                    self.modelInfo =
+                        "Downloading \(configuration.name): \(Int(progress.fractionCompleted * 100))%"
+                    self.progress = progress.fractionCompleted
+                }
+            }
+        } catch {
+            guard !isCancellationError(error) else {
+                throw CancellationError()
+            }
+            guard retriesRemaining > 0, isTransientNetworkError(error) else {
+                throw error
+            }
+
+            modelInfo = "Connection interrupted. Retrying \(configuration.name)…"
+            try await Task.sleep(nanoseconds: 1_500_000_000)
+            return try await loadContainerWithRetry(
+                configuration: configuration,
+                retriesRemaining: retriesRemaining - 1
+            )
+        }
+    }
+
+    private func isCancellationError(_ error: Error) -> Bool {
+        if error is CancellationError { return true }
+
+        let error = error as NSError
+        return error.domain == NSURLErrorDomain && error.code == URLError.cancelled.rawValue
+    }
+
+    private func isTransientNetworkError(_ error: Error) -> Bool {
+        var currentError: NSError? = error as NSError
+
+        while let currentErrorValue = currentError {
+            if currentErrorValue.domain == NSURLErrorDomain {
+                switch URLError.Code(rawValue: currentErrorValue.code) {
+                case .timedOut,
+                     .cannotFindHost,
+                     .cannotConnectToHost,
+                     .networkConnectionLost,
+                     .dnsLookupFailed,
+                     .notConnectedToInternet,
+                     .resourceUnavailable,
+                     .cannotLoadFromNetwork,
+                     .backgroundSessionWasDisconnected:
+                    return true
+                default:
+                    return false
+                }
+            }
+
+            currentError = currentErrorValue.userInfo[NSUnderlyingErrorKey] as? NSError
+        }
+
+        return false
     }
 
     /// parameters controlling the output
@@ -67,7 +160,9 @@ class LLMEvaluator {
     /// just return the loaded model
     func load(modelName: String) async throws -> ModelContainer {
         guard let model = ModelConfiguration.getModelByName(modelName) else {
-            throw LLMEvaluatorError.modelNotFound(modelName)
+            let error = LLMEvaluatorError.modelNotFound(modelName)
+            modelLoadStatus = .failed(error.localizedDescription)
+            throw error
         }
 
         switch loadState {
@@ -75,20 +170,31 @@ class LLMEvaluator {
             // limit the buffer cache
             MLX.GPU.set(cacheLimit: 20 * 1024 * 1024)
 
-            let modelContainer = try await LLMModelFactory.shared.loadContainer(configuration: model) {
-                [modelConfiguration] progress in
-                Task { @MainActor in
-                    self.modelInfo =
-                        "Downloading \(modelConfiguration.name): \(Int(progress.fractionCompleted * 100))%"
-                    self.progress = progress.fractionCompleted
-                }
+            modelLoadStatus = .loading
+
+            do {
+                let modelContainer = try await loadContainerWithRetry(configuration: model)
+                try Task.checkCancellation()
+                modelInfo =
+                    "Loaded \(modelConfiguration.id).  Weights: \(MLX.GPU.activeMemory / 1024 / 1024)M"
+                progress = 1.0
+                loadState = .loaded(modelContainer)
+                modelLoadStatus = .loaded
+                return modelContainer
+            } catch is CancellationError {
+                modelInfo = ""
+                progress = 0.0
+                modelLoadStatus = .idle
+                throw CancellationError()
+            } catch {
+                modelInfo = "Failed to load \(modelConfiguration.name): \(error.localizedDescription)"
+                modelLoadStatus = .failed(error.localizedDescription)
+                throw error
             }
-            modelInfo =
-                "Loaded \(modelConfiguration.id).  Weights: \(MLX.GPU.activeMemory / 1024 / 1024)M"
-            loadState = .loaded(modelContainer)
-            return modelContainer
 
         case let .loaded(modelContainer):
+            progress = 1.0
+            modelLoadStatus = .loaded
             return modelContainer
         }
     }
