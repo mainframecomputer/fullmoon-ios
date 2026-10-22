@@ -11,12 +11,14 @@ import MLXLMCommon
 struct OnboardingDownloadingModelProgressView: View {
     @Binding var showOnboarding: Bool
     @EnvironmentObject var appManager: AppManager
+    @Environment(\.dismiss) private var dismiss
     @Binding var selectedModel: ModelConfiguration
     @Environment(LLMEvaluator.self) var llm
     @State var didSwitchModel = false
+    @State private var loadAttempt = UUID()
     
     var installed: Bool {
-        llm.progress == 1 && didSwitchModel
+        llm.modelLoadStatus == .loaded && didSwitchModel
     }
     
     var body: some View {
@@ -24,10 +26,18 @@ struct OnboardingDownloadingModelProgressView: View {
             Spacer()
             
             VStack(spacing: 16) {
-                MoonAnimationView(isDone: installed)
+                if llm.modelLoadStatus.errorMessage == nil {
+                    MoonAnimationView(isDone: installed)
+                } else {
+                    Image(.moon)
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 64, height: 64)
+                        .opacity(0.6)
+                }
                 
                 VStack(spacing: 4) {
-                    Text(installed ? "installed" : "installing")
+                    Text(statusTitle)
                         .font(.title)
                         .fontWeight(.semibold)
                     Text(appManager.modelDisplayName(selectedModel.name))
@@ -35,9 +45,26 @@ struct OnboardingDownloadingModelProgressView: View {
                         .multilineTextAlignment(.center)
                 }
                 
-                ProgressView(value: llm.progress, total: 1)
-                    .progressViewStyle(.linear)
-                    .padding(.horizontal, 48)
+                if let errorMessage = llm.modelLoadStatus.errorMessage {
+                    VStack(spacing: 8) {
+                        Text("your download is saved. continue when your connection is ready.")
+                            .foregroundStyle(.secondary)
+                        DisclosureGroup("details") {
+                            Text(errorMessage)
+                                .font(.caption)
+                                .foregroundStyle(.tertiary)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                        }
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                    }
+                    .multilineTextAlignment(.center)
+                    .padding(.horizontal)
+                } else {
+                    ProgressView(value: llm.progress, total: 1)
+                        .progressViewStyle(.linear)
+                        .padding(.horizontal, 48)
+                }
             }
             
             Spacer()
@@ -57,6 +84,26 @@ struct OnboardingDownloadingModelProgressView: View {
                 .buttonStyle(.borderedProminent)
                 .buttonBorderShape(.capsule)
                 .padding(.horizontal)
+            } else if llm.modelLoadStatus.errorMessage != nil {
+                VStack(spacing: 12) {
+                    Button(action: retryLoad) {
+                        Text("continue")
+                            #if os(iOS) || os(visionOS)
+                            .font(.headline)
+                            .frame(maxWidth: .infinity)
+                            .frame(height: 40)
+                            #endif
+                    }
+                    .buttonStyle(.borderedProminent)
+                    .buttonBorderShape(.capsule)
+
+                    Button("choose another model") {
+                        dismiss()
+                    }
+                    .buttonStyle(.plain)
+                    .foregroundStyle(.secondary)
+                }
+                .padding(.horizontal)
             } else {
                 Text("keep this screen open and wait for the installation to complete.")
                     .font(.caption)
@@ -66,22 +113,14 @@ struct OnboardingDownloadingModelProgressView: View {
             }
         }
         .padding()
-        .navigationTitle("sit back and relax")
+        .navigationTitle(llm.modelLoadStatus.errorMessage == nil ? "sit back and relax" : "model download")
         .toolbar(installed ? .hidden : .visible)
-        .navigationBarBackButtonHidden()
-        .task {
+        .task(id: loadAttempt) {
             await loadLLM()
         }
         #if os(iOS)
         .sensoryFeedback(.success, trigger: installed)
         #endif
-        .onChange(of: installed) {
-            #if os(iOS)
-            UIApplication.shared.isIdleTimerDisabled = false
-            #endif
-            addInstalledModel()
-        }
-        .interactiveDismissDisabled(!installed)
         #if os(iOS)
         .navigationBarTitleDisplayMode(.inline)
         .onAppear {
@@ -94,8 +133,29 @@ struct OnboardingDownloadingModelProgressView: View {
     }
     
     func loadLLM() async {
-        await llm.switchModel(selectedModel)
+        let succeeded = await llm.switchModel(selectedModel)
+        guard succeeded else { return }
+
         didSwitchModel = true
+        addInstalledModel()
+
+        #if os(iOS)
+        UIApplication.shared.isIdleTimerDisabled = false
+        #endif
+    }
+
+    func retryLoad() {
+        loadAttempt = UUID()
+    }
+
+    var statusTitle: String {
+        if installed {
+            return "installed"
+        } else if llm.modelLoadStatus.errorMessage != nil {
+            return "download paused"
+        } else {
+            return "installing"
+        }
     }
     
     func addInstalledModel() {
