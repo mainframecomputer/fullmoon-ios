@@ -5,7 +5,6 @@
 //  Created by Jordan Singer on 10/5/24.
 //
 
-import StoreKit
 import SwiftData
 import SwiftUI
 
@@ -18,8 +17,6 @@ struct ChatsListView: View {
     @Query(sort: \Thread.timestamp, order: .reverse) var threads: [Thread]
     @State var search = ""
     @State var selection: Thread?
-
-    @Environment(\.requestReview) private var requestReview
 
     var body: some View {
         NavigationStack {
@@ -100,9 +97,6 @@ struct ChatsListView: View {
                             selection = nil
                             // create new thread
                             setCurrentThread(nil)
-
-                            // ask for review if appropriate
-                            requestReviewIfAppropriate()
                         }) {
                             Image(systemName: "plus")
                         }
@@ -117,9 +111,6 @@ struct ChatsListView: View {
                             selection = nil
                             // create new thread
                             setCurrentThread(nil)
-
-                            // ask for review if appropriate
-                            requestReviewIfAppropriate()
                         }) {
                             Label("new", systemImage: "plus")
                         }
@@ -139,13 +130,6 @@ struct ChatsListView: View {
             search.isEmpty || thread.messages.contains { message in
                 message.content.localizedCaseInsensitiveContains(search)
             }
-        }
-    }
-
-    func requestReviewIfAppropriate() {
-        if appManager.numberOfVisits - appManager.numberOfVisitsOfLastRequest >= 5 {
-            requestReview() // can only be prompted if the user hasn't given a review in the last year, so it will prompt again when apple deems appropriate
-            appManager.numberOfVisitsOfLastRequest = appManager.numberOfVisits
         }
     }
 

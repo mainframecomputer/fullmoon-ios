@@ -7,10 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		25F645532D4E7A6F0049EFBE /* Transformers in Frameworks */ = {isa = PBXBuildFile; productRef = 25F645522D4E7A6F0049EFBE /* Transformers */; };
 		860F26A42CBC31D6004E8D40 /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = 860F26A32CBC31D6004E8D40 /* MarkdownUI */; };
-		869B97622D0DD46B0078DF5A /* MLXLMCommon in Frameworks */ = {isa = PBXBuildFile; productRef = 869B97612D0DD46B0078DF5A /* MLXLMCommon */; };
-		869B97642D0DD4D80078DF5A /* MLXLLM in Frameworks */ = {isa = PBXBuildFile; productRef = 869B97632D0DD4D80078DF5A /* MLXLLM */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,9 +40,6 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				869B97642D0DD4D80078DF5A /* MLXLLM in Frameworks */,
-				869B97622D0DD46B0078DF5A /* MLXLMCommon in Frameworks */,
-				25F645532D4E7A6F0049EFBE /* Transformers in Frameworks */,
 				860F26A42CBC31D6004E8D40 /* MarkdownUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -98,9 +92,6 @@
 			name = fullmoon;
 			packageProductDependencies = (
 				860F26A32CBC31D6004E8D40 /* MarkdownUI */,
-				869B97612D0DD46B0078DF5A /* MLXLMCommon */,
-				869B97632D0DD4D80078DF5A /* MLXLLM */,
-				25F645522D4E7A6F0049EFBE /* Transformers */,
 			);
 			productName = fullmoon;
 			productReference = 860E9CCE2CB055B000C5BB52 /* fullmoon.app */;
@@ -131,9 +122,7 @@
 			mainGroup = 860E9CC52CB055B000C5BB52;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				860E9CE22CB0564600C5BB52 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */,
 				860F26A22CBC31D6004E8D40 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
-				25F645512D4E7A6F0049EFBE /* XCRemoteSwiftPackageReference "swift-transformers" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 860E9CCF2CB055B000C5BB52 /* Products */;
@@ -289,7 +278,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "\"fullmoon/Preview Content\"";
-				DEVELOPMENT_TEAM = 2VT466P8NK;
+				DEVELOPMENT_TEAM = P9TXP3LGTK;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -311,7 +300,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.2;
-				PRODUCT_BUNDLE_IDENTIFIER = me.mainfra.fullmoon;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sebastiendaguin.NoctisAi;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = NO;
 				SDKROOT = auto;
@@ -335,7 +324,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_ASSET_PATHS = "\"fullmoon/Preview Content\"";
-				DEVELOPMENT_TEAM = 2VT466P8NK;
+				DEVELOPMENT_TEAM = P9TXP3LGTK;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -357,7 +346,7 @@
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 14.0;
 				MARKETING_VERSION = 1.2;
-				PRODUCT_BUNDLE_IDENTIFIER = me.mainfra.fullmoon;
+				PRODUCT_BUNDLE_IDENTIFIER = com.sebastiendaguin.NoctisAi;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				REGISTER_APP_GROUPS = NO;
 				SDKROOT = auto;
@@ -396,22 +385,6 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		25F645512D4E7A6F0049EFBE /* XCRemoteSwiftPackageReference "swift-transformers" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/huggingface/swift-transformers.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.1.17;
-			};
-		};
-		860E9CE22CB0564600C5BB52 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/ml-explore/mlx-swift-examples/";
-			requirement = {
-				branch = main;
-				kind = branch;
-			};
-		};
 		860F26A22CBC31D6004E8D40 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/gonzalezreal/swift-markdown-ui";
@@ -423,25 +396,10 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		25F645522D4E7A6F0049EFBE /* Transformers */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 25F645512D4E7A6F0049EFBE /* XCRemoteSwiftPackageReference "swift-transformers" */;
-			productName = Transformers;
-		};
 		860F26A32CBC31D6004E8D40 /* MarkdownUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 860F26A22CBC31D6004E8D40 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */;
 			productName = MarkdownUI;
-		};
-		869B97612D0DD46B0078DF5A /* MLXLMCommon */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 860E9CE22CB0564600C5BB52 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
-			productName = MLXLMCommon;
-		};
-		869B97632D0DD4D80078DF5A /* MLXLLM */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 860E9CE22CB0564600C5BB52 /* XCRemoteSwiftPackageReference "mlx-swift-examples" */;
-			productName = MLXLLM;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

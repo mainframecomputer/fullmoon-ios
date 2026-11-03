@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import MLXLLM
 
 @main
 struct fullmoonApp: App {
@@ -14,15 +13,12 @@ struct fullmoonApp: App {
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     #endif
     @StateObject var appManager = AppManager()
-    @State var llm = LLMEvaluator()
     
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .modelContainer(for: [Thread.self, Message.self])
                 .environmentObject(appManager)
-                .environment(llm)
-                .environment(DeviceStat())
                 #if os(macOS) || os(visionOS)
                 .frame(minWidth: 640, maxWidth: .infinity, minHeight: 420, maxHeight: .infinity)
                 #if os(macOS)

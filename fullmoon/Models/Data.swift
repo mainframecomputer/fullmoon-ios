@@ -14,10 +14,7 @@ class AppManager: ObservableObject {
     @AppStorage("appFontDesign") var appFontDesign: AppFontDesign = .standard
     @AppStorage("appFontSize") var appFontSize: AppFontSize = .medium
     @AppStorage("appFontWidth") var appFontWidth: AppFontWidth = .standard
-    @AppStorage("currentModelName") var currentModelName: String?
     @AppStorage("shouldPlayHaptics") var shouldPlayHaptics = true
-    @AppStorage("numberOfVisits") var numberOfVisits = 0
-    @AppStorage("numberOfVisitsOfLastRequest") var numberOfVisitsOfLastRequest = 0
     
     var userInterfaceIdiom: LayoutType {
         #if os(visionOS)
@@ -31,50 +28,10 @@ class AppManager: ObservableObject {
         #endif
     }
     
-    var availableMemory: Double {
-        let ramInBytes = ProcessInfo.processInfo.physicalMemory
-        let ramInGB = Double(ramInBytes) / (1024 * 1024 * 1024)
-        return ramInGB
-    }
-
     enum LayoutType {
         case mac, phone, pad, vision, unknown
     }
         
-    private let installedModelsKey = "installedModels"
-        
-    @Published var installedModels: [String] = [] {
-        didSet {
-            saveInstalledModelsToUserDefaults()
-        }
-    }
-    
-    init() {
-        loadInstalledModelsFromUserDefaults()
-    }
-    
-    func incrementNumberOfVisits() {
-        numberOfVisits += 1
-        print("app visits: \(numberOfVisits)")
-    }
-    
-    // Function to save the array to UserDefaults as JSON
-    private func saveInstalledModelsToUserDefaults() {
-        if let jsonData = try? JSONEncoder().encode(installedModels) {
-            UserDefaults.standard.set(jsonData, forKey: installedModelsKey)
-        }
-    }
-    
-    // Function to load the array from UserDefaults
-    private func loadInstalledModelsFromUserDefaults() {
-        if let jsonData = UserDefaults.standard.data(forKey: installedModelsKey),
-           let decodedArray = try? JSONDecoder().decode([String].self, from: jsonData) {
-            self.installedModels = decodedArray
-        } else {
-            self.installedModels = [] // Default to an empty array if there's no data
-        }
-    }
-    
     func playHaptic() {
         if shouldPlayHaptics {
             #if os(iOS)
@@ -82,16 +39,6 @@ class AppManager: ObservableObject {
             impact.impactOccurred()
             #endif
         }
-    }
-    
-    func addInstalledModel(_ model: String) {
-        if !installedModels.contains(model) {
-            installedModels.append(model)
-        }
-    }
-    
-    func modelDisplayName(_ modelName: String) -> String {
-        return modelName.replacingOccurrences(of: "mlx-community/", with: "").lowercased()
     }
     
     func getMoonPhaseIcon() -> String {

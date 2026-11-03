@@ -1,12 +1,30 @@
-# fullmoon iOS
-![fullmoon iOS](https://fullmoon.app/images/app.png)
+<!-- Created by Sébastien DAGUIN -->
 
-[fullmoon](https://fullmoon.app) is an iOS app to chat with local large language models that’s optimized for Apple silicon and works on iPhone, iPad, and Mac. your chat history is saved locally, and you can customize the appearance of the app.
+# Interface Noctis — base Fullmoon
 
-## supported models
-- [x] [Llama 3.2 1B](https://huggingface.co/mlx-community/Llama-3.2-1B-Instruct-4bit)
-- [x] [Llama 3.2 3B](https://huggingface.co/mlx-community/Llama-3.2-3B-Instruct-4bit)
-- [x] [DeepSeek-R1-Distill-Qwen-1.5B-4bit](https://huggingface.co/mlx-community/DeepSeek-R1-Distill-Qwen-1.5B-4bit)
+Cette copie de Fullmoon est allégée pour préparer l’intégration du moteur Noctis.
 
-## credits
-fullmoon is made possible by [MLX Swift](https://github.com/ml-explore/mlx-swift) from Apple. [MLX](https://github.com/ml-explore/mlx) is an array framework for machine learning research on Apple silicon.
+## Fonctions conservées
+
+- Interface SwiftUI pour Mac, iPhone, iPad et visionOS.
+- Conversations et historique local avec SwiftData.
+- Consultation des messages avec rendu Markdown.
+- Recherche et suppression des conversations.
+- Réglages d’apparence, prompt système et retours haptiques.
+
+Le moteur Noctis n’est pas encore intégré. L’ancien moteur Fullmoon et ses
+dépendances directes MLX et Transformers ont été retirés. L’application ne
+charge ni ne télécharge de modèle. La saisie est désactivée avec le message
+« Noctis n’est pas encore connecté. » jusqu’au branchement du package Noctis.
+L’historique existant reste consultable et les réglages sont conservés.
+
+La sélection de modèles, le parcours d’installation initial, l’affichage du
+raisonnement, les raccourcis Siri, les demandes de note App Store et le suivi
+GPU inutilisé ont été retirés. Les champs des modèles SwiftData existants sont
+conservés pour ne pas modifier le schéma de stockage à cette étape.
+
+## Origine et licence
+
+Projet d’origine : [Fullmoon](https://github.com/mainframecomputer/fullmoon-ios),
+par Mainframe Computer, Inc. Licence MIT : voir `LICENSE`.
+Le moteur d’origine utilise [MLX Swift](https://github.com/ml-explore/mlx-swift).

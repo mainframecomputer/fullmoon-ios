@@ -11,8 +11,6 @@ import SwiftUI
 struct ContentView: View {
     @EnvironmentObject var appManager: AppManager
     @Environment(\.modelContext) var modelContext
-    @Environment(LLMEvaluator.self) var llm
-    @State var showOnboarding = false
     @State var showSettings = false
     @State var showChats = false
     @State var currentThread: Thread?
@@ -36,18 +34,6 @@ struct ContentView: View {
             }
         }
         .environmentObject(appManager)
-        .environment(llm)
-        .task {
-            if appManager.installedModels.count == 0 {
-                showOnboarding.toggle()
-            } else {
-                isPromptFocused = true
-                // load the model
-                if let modelName = appManager.currentModelName {
-                    _ = try? await llm.load(modelName: modelName)
-                }
-            }
-        }
         .if(appManager.userInterfaceIdiom == .phone) { view in
             view
                 .gesture(
@@ -71,17 +57,10 @@ struct ContentView: View {
         .sheet(isPresented: $showSettings) {
             SettingsView(currentThread: $currentThread)
                 .environmentObject(appManager)
-                .environment(llm)
                 .presentationDragIndicator(.hidden)
                 .if(appManager.userInterfaceIdiom == .phone) { view in
                     view.presentationDetents([.medium])
                 }
-        }
-        .sheet(isPresented: $showOnboarding, onDismiss: dismissOnboarding) {
-            OnboardingView(showOnboarding: $showOnboarding)
-                .environment(llm)
-                .interactiveDismissDisabled(appManager.installedModels.count == 0)
-            
         }
         #if !os(visionOS)
         .tint(appManager.appTintColor.getColor())
@@ -89,13 +68,6 @@ struct ContentView: View {
         .fontDesign(appManager.appFontDesign.getFontDesign())
         .environment(\.dynamicTypeSize, appManager.appFontSize.getFontSize())
         .fontWidth(appManager.appFontWidth.getFontWidth())
-        .onAppear {
-            appManager.incrementNumberOfVisits()
-        }
-    }
-    
-    func dismissOnboarding() {
-        isPromptFocused = true
     }
 }
 
