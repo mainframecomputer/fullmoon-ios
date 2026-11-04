@@ -4,6 +4,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 struct ChatView: View {
     @Environment(AppManager.self) private var appManager
