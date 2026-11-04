@@ -126,7 +126,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				860F26A22CBC31D6004E8D40 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
-				CF7089EC309A4D0400C368FB /* XCRemoteSwiftPackageReference "NoctisAi" */,
+				CF7089EC309A4D0400C368FB /* XCLocalSwiftPackageReference "NoctisAi" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 860E9CCF2CB055B000C5BB52 /* Products */;
@@ -388,6 +388,13 @@
 		};
 /* End XCConfigurationList section */
 
+/* Begin XCLocalSwiftPackageReference section */
+		CF7089EC309A4D0400C368FB /* XCLocalSwiftPackageReference "NoctisAi" */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ../NoctisAi;
+		};
+/* End XCLocalSwiftPackageReference section */
+
 /* Begin XCRemoteSwiftPackageReference section */
 		860F26A22CBC31D6004E8D40 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -395,14 +402,6 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 2.4.1;
-			};
-		};
-		CF7089EC309A4D0400C368FB /* XCRemoteSwiftPackageReference "NoctisAi" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/Sebastien972-collab/NoctisAi.git";
-			requirement = {
-				branch = main;
-				kind = branch;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -415,7 +414,7 @@
 		};
 		CF7089ED309A4D0400C368FB /* Noctis */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = CF7089EC309A4D0400C368FB /* XCRemoteSwiftPackageReference "NoctisAi" */;
+			package = CF7089EC309A4D0400C368FB /* XCLocalSwiftPackageReference "NoctisAi" */;
 			productName = Noctis;
 		};
 /* End XCSwiftPackageProductDependency section */
