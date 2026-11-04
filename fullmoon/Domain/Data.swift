@@ -31,10 +31,20 @@ final class AppManager {
         didSet { defaults.set(shouldPlayHaptics, forKey: "shouldPlayHaptics") }
     }
 
+    var appearance: ChatAppearance {
+        didSet {
+            if let data = try? JSONEncoder().encode(appearance) {
+                defaults.set(data, forKey: "chatAppearance")
+            }
+        }
+    }
+
     private let defaults: UserDefaults
 
     init(defaults: UserDefaults = .standard) {
         self.defaults = defaults
+        appearance = defaults.data(forKey: "chatAppearance")
+            .flatMap { try? JSONDecoder().decode(ChatAppearance.self, from: $0) } ?? ChatAppearance()
         systemPrompt = defaults.string(forKey: "systemPrompt") ?? "you are a helpful assistant"
         appTintColor = defaults.string(forKey: "appTintColor").flatMap(AppTintColor.init(rawValue:)) ?? .monochrome
         appFontDesign = defaults.string(forKey: "appFontDesign").flatMap(AppFontDesign.init(rawValue:)) ?? .standard

@@ -33,8 +33,10 @@ struct ChatView: View {
                         viewModel.send(to: currentThread, in: modelContext) { currentThread = $0 }
                     }
                 )
-                .padding()
+                .frame(maxWidth: appManager.appearance.contentWidth)
+                .padding(DesignTokens.pageInset)
             }
+            .background(appManager.appearance.theme.background)
             .navigationTitle(
                 viewModel.chatTitle(for: currentThread)
             )
@@ -46,6 +48,12 @@ struct ChatView: View {
             }
         }
         .onDisappear { viewModel.stop() }
+        .onChange(of: currentThread?.id) {
+            if let generatingID = viewModel.generatingMessageID,
+               currentThread?.messages.contains(where: { $0.id == generatingID }) != true {
+                viewModel.stop()
+            }
+        }
         .task {
             guard ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] != "1" else {
                 return
@@ -91,23 +99,18 @@ struct ChatView: View {
     @ViewBuilder
     private var conversationContent: some View {
         if let currentThread {
-            ConversationView(thread: currentThread, generatingMessageID: viewModel.generatingMessageID)
+            ConversationView(thread: currentThread, onRegenerate: { message in
+                viewModel.regenerate(message, in: currentThread, context: modelContext) { self.currentThread = $0 }
+            }, generatingMessageID: viewModel.generatingMessageID)
         } else {
             emptyConversation
         }
     }
 
     private var emptyConversation: some View {
-        VStack {
-            Spacer()
-
-            Image(systemName: appManager.getMoonPhaseIcon())
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 32, height: 32)
-                .foregroundStyle(.quaternary)
-
-            Spacer()
+        WelcomeConversation { suggestion in
+            viewModel.prompt = suggestion
+            isPromptFocused = true
         }
     }
 
@@ -124,7 +127,7 @@ struct ChatView: View {
                 }
             }
         } else if !viewModel.isSending {
-            Text("Prêt")
+            Label("Modèle local · Prêt", systemImage: "checkmark.circle")
                 .font(.caption)
                 .foregroundStyle(.secondary)
         }
@@ -167,11 +170,12 @@ struct ChatView: View {
             showSettings.toggle()
         } label: {
 #if os(macOS)
-            Label("settings", systemImage: "gear")
+            Label("Réglages", systemImage: "slider.horizontal.3")
 #else
-            Image(systemName: "gear")
+            Label("Réglages", systemImage: "slider.horizontal.3")
 #endif
         }
+        .keyboardShortcut(",", modifiers: .command)
     }
 }
 

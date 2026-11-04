@@ -67,7 +67,7 @@ struct ContentView: View {
         .tint(appManager.appTintColor.getColor())
         #endif
         .fontDesign(appManager.appFontDesign.getFontDesign())
-        .environment(\.dynamicTypeSize, appManager.appFontSize.getFontSize())
+        .modifier(AppearanceRoot())
         .fontWidth(appManager.appFontWidth.getFontWidth())
     }
 }
@@ -84,5 +84,6 @@ extension View {
 
 #Preview {
     ContentView()
+        .modelContainer(for: [Thread.self, Message.self], inMemory: true)
         .environment(AppManager())
 }

@@ -126,7 +126,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				860F26A22CBC31D6004E8D40 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
-				CF7089EC309A4D0400C368FB /* XCLocalSwiftPackageReference "NoctisAi" */,
+				CF7089EC309A4D0400C368FB /* XCLocalSwiftPackageReference "../NoctisAi" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 860E9CCF2CB055B000C5BB52 /* Products */;
@@ -287,7 +287,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = fullmoon/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = fullmoon;
+				INFOPLIST_KEY_CFBundleDisplayName = "Noctis Chat";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
@@ -333,7 +333,7 @@
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = fullmoon/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = fullmoon;
+				INFOPLIST_KEY_CFBundleDisplayName = "Noctis Chat";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
@@ -389,7 +389,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		CF7089EC309A4D0400C368FB /* XCLocalSwiftPackageReference "NoctisAi" */ = {
+		CF7089EC309A4D0400C368FB /* XCLocalSwiftPackageReference "../NoctisAi" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = ../NoctisAi;
 		};
@@ -414,7 +414,7 @@
 		};
 		CF7089ED309A4D0400C368FB /* Noctis */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = CF7089EC309A4D0400C368FB /* XCLocalSwiftPackageReference "NoctisAi" */;
+			package = CF7089EC309A4D0400C368FB /* XCLocalSwiftPackageReference "../NoctisAi" */;
 			productName = Noctis;
 		};
 /* End XCSwiftPackageProductDependency section */

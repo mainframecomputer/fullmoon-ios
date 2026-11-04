@@ -17,7 +17,7 @@ struct SettingsView: View {
             Form {
                 Section {
                     NavigationLink(destination: AppearanceSettingsView()) {
-                        Label("appearance", systemImage: "paintpalette")
+                        Label("Apparence et personnalisation", systemImage: "paintpalette")
                     }
 
                     NavigationLink(destination: ChatsSettingsView(currentThread: $currentThread)) {
@@ -70,7 +70,7 @@ struct SettingsView: View {
         #if !os(visionOS)
         .tint(appManager.appTintColor.getColor())
         #endif
-        .environment(\.dynamicTypeSize, appManager.appFontSize.getFontSize())
+        .modifier(AppearanceRoot())
     }
 }
 
