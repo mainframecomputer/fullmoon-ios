@@ -14,7 +14,7 @@ struct ChatView: View {
     @Binding var showChats: Bool
     @Binding var showSettings: Bool
 
-    @State private var viewModel: ViewModel = .init()
+    let viewModel: ViewModel
 
 
     var body: some View {
@@ -122,6 +122,10 @@ struct ChatView: View {
                     Task { await viewModel.loadModel() }
                 }
             }
+        } else if !viewModel.isSending {
+            Text("Prêt")
+                .font(.caption)
+                .foregroundStyle(.secondary)
         }
     }
 
@@ -177,7 +181,8 @@ struct ChatView: View {
         currentThread: .constant(nil),
         isPromptFocused: $isPromptFocused,
         showChats: .constant(false),
-        showSettings: .constant(false)
+        showSettings: .constant(false),
+        viewModel: .init()
     )
     .environment(AppManager())
 }

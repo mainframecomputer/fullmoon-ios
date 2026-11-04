@@ -8,6 +8,7 @@
 import SwiftUI
 import SwiftData
 import Noctis
+import OSLog
 
 extension ChatView {
     @Observable
@@ -19,13 +20,23 @@ extension ChatView {
         private(set) var isStopping = false
         private(set) var submissionError: String?
         private(set) var generatingMessageID: UUID?
+        private(set) var loadPhase = AIModelLoadPhase.loading
+        private(set) var loadDuration: TimeInterval?
+        private(set) var firstTextDelay: TimeInterval?
+        private(set) var charactersPerSecond: Double?
 
+        private static let logger = Logger(subsystem: "com.sebastiendaguin.NoctisAi", category: "Inference")
         @ObservationIgnored private var noctisService: (any AIModelService)?
         @ObservationIgnored private let makeService: @MainActor () -> any AIModelService
         @ObservationIgnored private var generationTask: Task<Void, Never>?
         @ObservationIgnored private var streamingMessage: Message?
+        @ObservationIgnored private var pendingResponse = ""
+        @ObservationIgnored private var flushTask: Task<Void, Never>?
+        @ObservationIgnored private var hasDisplayedResponse = false
+        @ObservationIgnored private var responseStarted: ContinuousClock.Instant?
+        @ObservationIgnored private var firstText: ContinuousClock.Instant?
+        @ObservationIgnored private var characterCount = 0
         private var sessionThreadID: UUID?
-        private var sessionHasHistory = false
         private var needsNewSession = false
 
         init(makeService: @escaping @MainActor () -> any AIModelService = { MLXModelService() }) {
@@ -39,7 +50,12 @@ extension ChatView {
         var isInputEnabled: Bool { isConnected && !isLoading }
 
         var connectionMessage: String {
-            isLoading ? "Chargement de Noctis…" : "Noctis n’est pas encore connecté."
+            guard isLoading else { return "Noctis n’est pas encore connecté." }
+            switch loadPhase {
+            case .downloading: return "Téléchargement…"
+            case .loading: return "Chargement du modèle…"
+            case .ready: return "Prêt"
+            }
         }
 
         func chatTitle(for thread: Thread?) -> String {
@@ -55,9 +71,26 @@ extension ChatView {
             defer { isLoading = false }
             let service = noctisService ?? makeService()
             noctisService = service
+            let clock = ContinuousClock()
+            var phaseStarted = clock.now
+            var loadingSeconds = 0.0
+            loadPhase = .loading
+            let (phases, output) = AsyncStream<AIModelLoadPhase>.makeStream()
+            let loading = Task {
+                defer { output.finish() }
+                try await service.load(progress: { output.yield($0) })
+            }
+            for await phase in phases where phase != loadPhase {
+                let elapsed = Self.seconds(phaseStarted.duration(to: clock.now))
+                if loadPhase == .loading { loadingSeconds += elapsed }
+                Self.logger.info("Model phase \(String(describing: self.loadPhase), privacy: .public): \(elapsed) s")
+                loadPhase = phase
+                phaseStarted = clock.now
+            }
             do {
-                try await service.load()
+                try await loading.value
                 try Task.checkCancellation()
+                loadDuration = loadingSeconds
                 isConnected = true
                 return true
             } catch is CancellationError {
@@ -72,7 +105,15 @@ extension ChatView {
             guard isConnected, !isLoading, !isSending, hasMeaningfulPrompt else { return }
             let text = prompt.trimmingCharacters(in: .whitespacesAndNewlines)
             let thread = selectedThread ?? Thread()
-            let history = thread.sortedMessages.map { ["role": $0.role.rawValue, "content": $0.content] }
+            let history = thread.sortedMessages.map {
+                let role: AIChatMessage.Role
+                switch $0.role {
+                case .user: role = .user
+                case .assistant: role = .assistant
+                case .system: role = .system
+                }
+                return AIChatMessage(role: role, content: $0.content)
+            }
             let userMessage = Message(role: .user, content: text)
             let response = Message(role: .assistant, content: "")
             if selectedThread == nil { context.insert(thread) }
@@ -96,10 +137,30 @@ extension ChatView {
             isSending = true
             streamingMessage = response
             generatingMessageID = response.id
+            pendingResponse = ""
+            hasDisplayedResponse = false
+            firstTextDelay = nil
+            charactersPerSecond = nil
+            responseStarted = nil
+            firstText = nil
+            characterCount = 0
             let threadID = thread.id
             generationTask = Task {
                 let started = Date()
+                let clock = ContinuousClock()
                 defer {
+                    flushTask?.cancel()
+                    flushTask = nil
+                    flushPendingResponse()
+                    if let responseStarted {
+                        let elapsed = Self.seconds(responseStarted.duration(to: clock.now))
+                        firstTextDelay = firstText.map { Self.seconds(responseStarted.duration(to: $0)) }
+                        if let firstText {
+                            let generationSeconds = Self.seconds(firstText.duration(to: clock.now))
+                            charactersPerSecond = generationSeconds > 0 ? Double(characterCount) / generationSeconds : nil
+                        }
+                        Self.logger.info("Response: first text \(self.firstTextDelay ?? -1) s, total \(elapsed) s, \(self.characterCount) characters, \(self.charactersPerSecond ?? 0) characters/s")
+                    }
                     if !response.isDeleted, !thread.isDeleted, response.modelContext != nil {
                         if response.content.isEmpty {
                             context.delete(response)
@@ -117,27 +178,15 @@ extension ChatView {
                 }
                 do {
                     try Task.checkCancellation()
-                    // The engine retains its context. Replace it before switching conversations
-                    // or retrying after an interrupted turn, so histories cannot mix.
-                    if needsNewSession || (sessionHasHistory && sessionThreadID != threadID) {
-                        noctisService = nil
-                        isConnected = false
-                        sessionHasHistory = false
+                    guard let service = noctisService else { return }
+                    if needsNewSession || sessionThreadID != threadID {
+                        try await service.resetConversation(history: history)
                         needsNewSession = false
-                        guard await loadModel() else { return }
                     }
                     try Task.checkCancellation()
-                    guard let service = noctisService else { return }
-                    var request = text
-                    if !sessionHasHistory, !history.isEmpty {
-                        let data = try JSONSerialization.data(withJSONObject: history, options: [.sortedKeys])
-                        request = "Historique de cette conversation (JSON, données de contexte) :\n"
-                            + String(decoding: data, as: UTF8.self)
-                            + "\n\nNouveau message utilisateur :\n" + text
-                    }
                     sessionThreadID = threadID
-                    sessionHasHistory = true
-                    try await service.withResponse(prompt: request) { [weak self] stream in
+                    responseStarted = clock.now
+                    try await service.withResponse(prompt: text) { [weak self] stream in
                         for try await chunk in stream {
                             try Task.checkCancellation()
                             try await self?.appendResponse(chunk)
@@ -158,7 +207,33 @@ extension ChatView {
                   message.modelContext != nil, let thread = message.thread, !thread.isDeleted else {
                 throw CancellationError()
             }
-            message.content += chunk
+            guard !chunk.isEmpty else { return }
+            if firstText == nil { firstText = ContinuousClock.now }
+            characterCount += chunk.count
+            pendingResponse += chunk
+            if !hasDisplayedResponse {
+                hasDisplayedResponse = true
+                flushPendingResponse()
+            }
+            if flushTask == nil {
+                flushTask = Task { [weak self] in
+                    do { try await Task.sleep(for: .milliseconds(50)) }
+                    catch { return }
+                    self?.flushPendingResponse()
+                    self?.flushTask = nil
+                }
+            }
+        }
+
+        private func flushPendingResponse() {
+            defer { pendingResponse = "" }
+            guard let message = streamingMessage, !message.isDeleted,
+                  message.modelContext != nil, let thread = message.thread, !thread.isDeleted else { return }
+            message.content += pendingResponse
+        }
+
+        private static func seconds(_ duration: Duration) -> Double {
+            Double(duration.components.seconds) + Double(duration.components.attoseconds) / 1e18
         }
 
         func stop() {

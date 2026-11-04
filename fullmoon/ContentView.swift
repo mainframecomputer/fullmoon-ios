@@ -14,6 +14,7 @@ struct ContentView: View {
     @State var showSettings = false
     @State var showChats = false
     @State var currentThread: Thread?
+    @State private var chatViewModel = ChatView.ViewModel()
     @FocusState var isPromptFocused: Bool
 
     var body: some View {
@@ -26,11 +27,11 @@ struct ContentView: View {
                     .navigationSplitViewColumnWidth(min: 240, ideal: 240, max: 320)
                     #endif
                 } detail: {
-                    ChatView(currentThread: $currentThread, isPromptFocused: $isPromptFocused, showChats: $showChats, showSettings: $showSettings)
+                    ChatView(currentThread: $currentThread, isPromptFocused: $isPromptFocused, showChats: $showChats, showSettings: $showSettings, viewModel: chatViewModel)
                 }
             } else {
                 // iPhone
-                ChatView(currentThread: $currentThread, isPromptFocused: $isPromptFocused, showChats: $showChats, showSettings: $showSettings)
+                ChatView(currentThread: $currentThread, isPromptFocused: $isPromptFocused, showChats: $showChats, showSettings: $showSettings, viewModel: chatViewModel)
             }
         }
         .environment(appManager)

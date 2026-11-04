@@ -4,6 +4,9 @@
 //
 
 import SwiftUI
+#if os(macOS)
+import AppKit
+#endif
 
 struct ChatInputView: View {
     @Binding var prompt: String
@@ -43,6 +46,20 @@ struct ChatInputView: View {
                 .disabled(!isEnabled || isLoading)
                 .accessibilityLabel("Message")
                 .accessibilityHint(status)
+                .onSubmit {
+                    if sendEnabled { onSend() }
+                }
+#if os(macOS)
+                .onKeyPress(.return, phases: .down) { press in
+                    if press.modifiers.contains(.shift) {
+                        guard let editor = NSApp.keyWindow?.firstResponder as? NSTextView else { return .ignored }
+                        editor.insertNewlineIgnoringFieldEditor(nil)
+                        return .handled
+                    }
+                    if sendEnabled { onSend() }
+                    return .handled
+                }
+#endif
 
             Button {
                 if isSending {
