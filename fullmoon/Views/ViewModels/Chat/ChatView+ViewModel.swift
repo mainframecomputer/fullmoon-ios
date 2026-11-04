@@ -59,7 +59,7 @@ extension ChatView {
         }
 
         func chatTitle(for thread: Thread?) -> String {
-            thread?.sortedMessages.first?.content ?? "chat"
+            thread?.title ?? thread?.sortedMessages.first.map { String($0.content.prefix(70)) } ?? "Nouvelle conversation"
         }
 
         @discardableResult
@@ -234,6 +234,27 @@ extension ChatView {
 
         private static func seconds(_ duration: Duration) -> Double {
             Double(duration.components.seconds) + Double(duration.components.attoseconds) / 1e18
+        }
+
+        /// Keep the original answer intact by regenerating in a separate conversation.
+        func regenerate(_ message: Message, in thread: Thread, context: ModelContext, select: (Thread) -> Void) {
+            guard !isSending, isConnected,
+                  let index = thread.sortedMessages.firstIndex(where: { $0.id == message.id }),
+                  let userIndex = thread.sortedMessages[..<index].lastIndex(where: { $0.role == .user }) else { return }
+            let messages = thread.sortedMessages
+            let branch = Thread()
+            branch.title = "Variante · " + String(messages[userIndex].content.prefix(60))
+            context.insert(branch)
+            for original in messages[..<userIndex] {
+                let copy = Message(role: original.role, content: original.content)
+                context.insert(copy)
+                branch.messages.append(copy)
+            }
+            let draft = prompt
+            prompt = messages[userIndex].content
+            needsNewSession = true
+            send(to: branch, in: context, select: select)
+            prompt = draft
         }
 
         func stop() {

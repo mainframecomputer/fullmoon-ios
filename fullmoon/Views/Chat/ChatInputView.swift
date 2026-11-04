@@ -9,6 +9,8 @@ import AppKit
 #endif
 
 struct ChatInputView: View {
+    @Environment(AppManager.self) private var appManager
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @Binding var prompt: String
     @FocusState.Binding var isPromptFocused: Bool
 
@@ -35,7 +37,7 @@ struct ChatInputView: View {
 
     var body: some View {
         HStack(alignment: .bottom, spacing: 8) {
-            TextField("message", text: $prompt, axis: .vertical)
+            TextField("Écrivez à Fullmoon…", text: $prompt, axis: .vertical)
                 .font(.body)
                 .textFieldStyle(.plain)
                 .lineLimit(1...6)
@@ -90,6 +92,7 @@ struct ChatInputView: View {
             .keyboardShortcut(.return, modifiers: .command)
 #endif
         }
+        .animation(reduceMotion || appManager.appearance.reduceAnimations ? nil : .easeInOut(duration: 0.18), value: isSending)
         .padding(6)
         .background {
             ComposerBackground()
@@ -99,13 +102,14 @@ struct ChatInputView: View {
 
 /// Keep appearance changes in the background so the editor retains its identity and selection.
 private struct ComposerBackground: View {
+    @Environment(AppManager.self) private var appManager
     @Environment(\.accessibilityReduceTransparency) private var reduceTransparency
     @Environment(\.colorSchemeContrast) private var contrast
 
     var body: some View {
-        let shape = RoundedRectangle(cornerRadius: 26, style: .continuous)
+        let shape = RoundedRectangle(cornerRadius: DesignTokens.composerRadius, style: .continuous)
 
-        if reduceTransparency || contrast == .increased {
+        if reduceTransparency || contrast == .increased || !appManager.appearance.useGlass {
             shape.fill(.background)
                 .overlay {
                     shape.strokeBorder(.primary, lineWidth: 1)
@@ -145,6 +149,7 @@ private struct ComposerPreview: View {
             onSend: { prompt = "" }
         )
         .padding()
+        .environment(AppManager())
     }
 }
 

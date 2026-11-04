@@ -1,177 +1,116 @@
-//
-//  ChatsListView.swift
-//  fullmoon
-//
-//  Created by Jordan Singer on 10/5/24.
-//
-
 import SwiftData
 import SwiftUI
 
 struct ChatsListView: View {
     @Environment(AppManager.self) private var appManager
-    @Environment(\.dismiss) var dismiss
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.modelContext) private var modelContext
     @Binding var currentThread: Thread?
     @FocusState.Binding var isPromptFocused: Bool
-    @Environment(\.modelContext) var modelContext
-    @Query(sort: \Thread.timestamp, order: .reverse) var threads: [Thread]
-    @State var search = ""
-    @State var selection: Thread?
+    @Query(sort: \Thread.timestamp, order: .reverse) private var threads: [Thread]
+    @State private var search = ""
+    @State private var deletionError: String?
+    @State private var pendingDeletion: Thread?
+
+    private var groups: [ConversationGroup] {
+        let matches = threads.filter {
+            search.isEmpty || ($0.title?.localizedCaseInsensitiveContains(search) == true)
+                || $0.messages.contains { $0.content.localizedCaseInsensitiveContains(search) }
+        }
+        let calendar = Calendar.current
+        let weekAgo = calendar.date(byAdding: .day, value: -7, to: .now) ?? .now
+        return [
+            ConversationGroup(title: "Aujourd’hui", threads: matches.filter { calendar.isDateInToday($0.timestamp) }),
+            ConversationGroup(title: "7 derniers jours", threads: matches.filter { !calendar.isDateInToday($0.timestamp) && $0.timestamp >= weekAgo }),
+            ConversationGroup(title: "Plus anciennes", threads: matches.filter { $0.timestamp < weekAgo })
+        ].filter { !$0.threads.isEmpty }
+    }
 
     var body: some View {
         NavigationStack {
-            ZStack {
-                List(selection: $selection) {
-                    #if os(macOS)
-                    Section {} // adds some space below the search bar on mac
-                    #endif
-                    ForEach(filteredThreads, id: \.id) { thread in
-                        VStack(alignment: .leading) {
-                            ZStack {
-                                if let firstMessage = thread.sortedMessages.first {
-                                    Text(firstMessage.content)
-                                        .lineLimit(1)
-                                } else {
-                                    Text("untitled")
+            List(selection: $currentThread) {
+                ForEach(groups) { group in
+                    Section(group.title) {
+                        ForEach(group.threads) { thread in
+                            ConversationRow(thread: thread)
+                                .tag(thread)
+                                .contextMenu {
+                                    Button("Supprimer la conversation", role: .destructive) { pendingDeletion = thread }
                                 }
-                            }
-                            .foregroundStyle(.primary)
-                            .font(.headline)
-
-                            Text("\(thread.timestamp.formatted())")
-                                .foregroundStyle(.secondary)
-                                .font(.subheadline)
                         }
-                        #if os(macOS)
-                            .swipeActions {
-                                Button("Delete") {
-                                    deleteThread(thread)
-                                }
-                                .tint(.red)
-                            }
-                            .contextMenu {
-                                Button {
-                                    deleteThread(thread)
-                                } label: {
-                                    Text("delete")
-                                }
-                            }
-                        #endif
-                            .tag(thread)
-                    }
-                    .onDelete(perform: deleteThreads)
-                }
-                .onChange(of: selection) {
-                    setCurrentThread(selection)
-                }
-                #if os(iOS)
-                .listStyle(.insetGrouped)
-                #elseif os(macOS) || os(visionOS)
-                .listStyle(.sidebar)
-                #endif
-                if filteredThreads.count == 0 {
-                    ContentUnavailableView {
-                        Label(threads.count == 0 ? "no chats yet" : "no results", systemImage: "message")
-                    }
-                }
-            }
-            .navigationTitle("chats")
-            #if os(iOS) || os(visionOS)
-                .navigationBarTitleDisplayMode(.inline)
-                .searchable(text: $search, prompt: "search")
-            #elseif os(macOS)
-                .searchable(text: $search, placement: .sidebar, prompt: "search")
-            #endif
-                .toolbar {
-                    #if os(iOS) || os(visionOS)
-                    if appManager.userInterfaceIdiom == .phone {
-                        ToolbarItem(placement: .topBarLeading) {
-                            Button(action: { dismiss() }) {
-                                Image(systemName: "xmark")
-                            }
+                        .onDelete { offsets in
+                            if let first = offsets.first { pendingDeletion = group.threads[first] }
                         }
                     }
-
-                    ToolbarItem(placement: .topBarTrailing) {
-                        Button(action: {
-                            selection = nil
-                            // create new thread
-                            setCurrentThread(nil)
-                        }) {
-                            Image(systemName: "plus")
-                        }
-                        .keyboardShortcut("N", modifiers: [.command])
-                        #if os(visionOS)
-                            .buttonStyle(.bordered)
-                        #endif
-                    }
-                    #elseif os(macOS)
-                    ToolbarItem(placement: .primaryAction) {
-                        Button(action: {
-                            selection = nil
-                            // create new thread
-                            setCurrentThread(nil)
-                        }) {
-                            Label("new", systemImage: "plus")
-                        }
-                        .keyboardShortcut("N", modifiers: [.command])
-                    }
-                    #endif
-                }
-        }
-        #if !os(visionOS)
-        .tint(appManager.appTintColor.getColor())
-        #endif
-        .environment(\.dynamicTypeSize, appManager.appFontSize.getFontSize())
-    }
-
-    var filteredThreads: [Thread] {
-        threads.filter { thread in
-            search.isEmpty || thread.messages.contains { message in
-                message.content.localizedCaseInsensitiveContains(search)
-            }
-        }
-    }
-
-    private func deleteThreads(at offsets: IndexSet) {
-        for offset in offsets {
-            let thread = threads[offset]
-
-            if let currentThread = currentThread {
-                if currentThread.id == thread.id {
-                    setCurrentThread(nil)
                 }
             }
-
-            // Adding a delay fixes a crash on iOS following a deletion
-            let delay = appManager.userInterfaceIdiom == .phone ? 1.0 : 0.0
-            DispatchQueue.main.asyncAfter(deadline: .now() + delay) {
-                modelContext.delete(thread)
+            .overlay {
+                if groups.isEmpty {
+                    ContentUnavailableView(search.isEmpty ? "Votre espace de réflexion" : "Aucun résultat",
+                                           systemImage: search.isEmpty ? "moon.stars" : "magnifyingglass",
+                                           description: Text(search.isEmpty ? "Vos conversations apparaîtront ici." : "Essayez d’autres mots."))
+                }
             }
-        }
-    }
-
-    private func deleteThread(_ thread: Thread) {
-        if let currentThread = currentThread {
-            if currentThread.id == thread.id {
-                setCurrentThread(nil)
+            .listStyle(.sidebar)
+            .navigationTitle("Fullmoon")
+            .searchable(text: $search, prompt: "Rechercher dans l’historique")
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    Button {
+                        currentThread = nil
+                        isPromptFocused = true
+                        if appManager.userInterfaceIdiom == .phone { dismiss() }
+                    } label: {
+                        Label("Nouvelle conversation", systemImage: "square.and.pencil")
+                    }
+                    .keyboardShortcut("n", modifiers: .command)
+                }
             }
+            .onChange(of: currentThread) {
+                isPromptFocused = true
+                if appManager.userInterfaceIdiom == .phone { dismiss() }
+            }
+            .confirmationDialog("Supprimer cette conversation ?", isPresented: Binding(
+                get: { pendingDeletion != nil }, set: { if !$0 { pendingDeletion = nil } }
+            ), titleVisibility: .visible) {
+                Button("Supprimer", role: .destructive) {
+                    guard let thread = pendingDeletion else { return }
+                    if currentThread?.id == thread.id { currentThread = nil }
+                    for message in thread.messages { modelContext.delete(message) }
+                    modelContext.delete(thread)
+                    do { try modelContext.save() }
+                    catch { deletionError = error.localizedDescription }
+                    pendingDeletion = nil
+                }
+            }
+            .alert("Suppression impossible", isPresented: Binding(
+                get: { deletionError != nil }, set: { if !$0 { deletionError = nil } }
+            )) {
+                Button("OK") { deletionError = nil }
+            } message: { Text(deletionError ?? "") }
         }
-        modelContext.delete(thread)
-    }
-
-    private func setCurrentThread(_ thread: Thread? = nil) {
-        currentThread = thread
-        isPromptFocused = true
-        #if os(iOS)
-        dismiss()
-        #endif
-        appManager.playHaptic()
     }
 }
 
-#Preview {
-    @FocusState var isPromptFocused: Bool
-    ChatsListView(currentThread: .constant(nil), isPromptFocused: $isPromptFocused)
-        .environment(AppManager())
+private struct ConversationGroup: Identifiable {
+    let title: String
+    let threads: [Thread]
+    var id: String { title }
+}
+
+private struct ConversationRow: View {
+    let thread: Thread
+    var body: some View {
+        HStack(spacing: 10) {
+            Image(systemName: "bubble.left").foregroundStyle(.secondary)
+            VStack(alignment: .leading, spacing: 5) {
+                Text(thread.title ?? thread.sortedMessages.first?.content ?? "Nouvelle conversation")
+                    .font(.body.weight(.medium)).lineLimit(1)
+                Text(thread.timestamp, format: .dateTime.day().month().hour().minute())
+                    .font(.caption).foregroundStyle(.secondary)
+            }
+            .padding(.vertical, 5)
+        }
+        .accessibilityElement(children: .combine)
+    }
 }
