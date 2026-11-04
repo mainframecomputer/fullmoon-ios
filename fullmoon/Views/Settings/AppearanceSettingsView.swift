@@ -8,9 +8,11 @@
 import SwiftUI
 
 struct AppearanceSettingsView: View {
-    @EnvironmentObject var appManager: AppManager
+    @Environment(AppManager.self) private var appManager
 
     var body: some View {
+        @Bindable var appManager = appManager
+
         Form {
             #if os(iOS)
             Section {
@@ -67,4 +69,5 @@ struct AppearanceSettingsView: View {
 
 #Preview {
     AppearanceSettingsView()
+        .environment(AppManager())
 }

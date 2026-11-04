@@ -9,7 +9,7 @@ import SwiftData
 import SwiftUI
 
 struct ChatsListView: View {
-    @EnvironmentObject var appManager: AppManager
+    @Environment(AppManager.self) private var appManager
     @Environment(\.dismiss) var dismiss
     @Binding var currentThread: Thread?
     @FocusState.Binding var isPromptFocused: Bool
@@ -173,4 +173,5 @@ struct ChatsListView: View {
 #Preview {
     @FocusState var isPromptFocused: Bool
     ChatsListView(currentThread: .constant(nil), isPromptFocused: $isPromptFocused)
+        .environment(AppManager())
 }

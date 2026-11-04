@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @EnvironmentObject var appManager: AppManager
+    @Environment(AppManager.self) private var appManager
     @Environment(\.dismiss) var dismiss
     @Binding var currentThread: Thread?
 
@@ -86,5 +86,5 @@ extension Bundle {
 
 #Preview {
     SettingsView(currentThread: .constant(nil))
-        .environmentObject(AppManager())
+        .environment(AppManager())
 }

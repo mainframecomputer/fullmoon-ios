@@ -9,7 +9,7 @@ import SwiftData
 import SwiftUI
 
 struct ContentView: View {
-    @EnvironmentObject var appManager: AppManager
+    @Environment(AppManager.self) private var appManager
     @Environment(\.modelContext) var modelContext
     @State var showSettings = false
     @State var showChats = false
@@ -33,7 +33,7 @@ struct ContentView: View {
                 ChatView(currentThread: $currentThread, isPromptFocused: $isPromptFocused, showChats: $showChats, showSettings: $showSettings)
             }
         }
-        .environmentObject(appManager)
+        .environment(appManager)
         .if(appManager.userInterfaceIdiom == .phone) { view in
             view
                 .gesture(
@@ -48,7 +48,7 @@ struct ContentView: View {
         }
         .sheet(isPresented: $showChats) {
             ChatsListView(currentThread: $currentThread, isPromptFocused: $isPromptFocused)
-                .environmentObject(appManager)
+                .environment(appManager)
                 .presentationDragIndicator(.hidden)
                 .if(appManager.userInterfaceIdiom == .phone) { view in
                     view.presentationDetents([.medium, .large])
@@ -56,7 +56,7 @@ struct ContentView: View {
         }
         .sheet(isPresented: $showSettings) {
             SettingsView(currentThread: $currentThread)
-                .environmentObject(appManager)
+                .environment(appManager)
                 .presentationDragIndicator(.hidden)
                 .if(appManager.userInterfaceIdiom == .phone) { view in
                     view.presentationDetents([.medium])
@@ -83,4 +83,5 @@ extension View {
 
 #Preview {
     ContentView()
+        .environment(AppManager())
 }

@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		860F26A42CBC31D6004E8D40 /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = 860F26A32CBC31D6004E8D40 /* MarkdownUI */; };
+		CF7089EE309A4D0400C368FB /* Noctis in Frameworks */ = {isa = PBXBuildFile; productRef = CF7089ED309A4D0400C368FB /* Noctis */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -40,6 +41,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF7089EE309A4D0400C368FB /* Noctis in Frameworks */,
 				860F26A42CBC31D6004E8D40 /* MarkdownUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -92,6 +94,7 @@
 			name = fullmoon;
 			packageProductDependencies = (
 				860F26A32CBC31D6004E8D40 /* MarkdownUI */,
+				CF7089ED309A4D0400C368FB /* Noctis */,
 			);
 			productName = fullmoon;
 			productReference = 860E9CCE2CB055B000C5BB52 /* fullmoon.app */;
@@ -123,6 +126,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				860F26A22CBC31D6004E8D40 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
+				CF7089EC309A4D0400C368FB /* XCRemoteSwiftPackageReference "NoctisAi" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 860E9CCF2CB055B000C5BB52 /* Products */;
@@ -298,7 +302,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MACOSX_DEPLOYMENT_TARGET = 15.6;
 				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.sebastiendaguin.NoctisAi;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -344,7 +348,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
-				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MACOSX_DEPLOYMENT_TARGET = 15.6;
 				MARKETING_VERSION = 1.2;
 				PRODUCT_BUNDLE_IDENTIFIER = com.sebastiendaguin.NoctisAi;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -393,6 +397,14 @@
 				minimumVersion = 2.4.1;
 			};
 		};
+		CF7089EC309A4D0400C368FB /* XCRemoteSwiftPackageReference "NoctisAi" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Sebastien972-collab/NoctisAi.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -400,6 +412,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 860F26A22CBC31D6004E8D40 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */;
 			productName = MarkdownUI;
+		};
+		CF7089ED309A4D0400C368FB /* Noctis */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CF7089EC309A4D0400C368FB /* XCRemoteSwiftPackageReference "NoctisAi" */;
+			productName = Noctis;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

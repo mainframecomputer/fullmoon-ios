@@ -5,16 +5,43 @@
 //  Created by Jordan Singer on 10/5/24.
 //
 
+import Observation
 import SwiftUI
 import SwiftData
 
-class AppManager: ObservableObject {
-    @AppStorage("systemPrompt") var systemPrompt = "you are a helpful assistant"
-    @AppStorage("appTintColor") var appTintColor: AppTintColor = .monochrome
-    @AppStorage("appFontDesign") var appFontDesign: AppFontDesign = .standard
-    @AppStorage("appFontSize") var appFontSize: AppFontSize = .medium
-    @AppStorage("appFontWidth") var appFontWidth: AppFontWidth = .standard
-    @AppStorage("shouldPlayHaptics") var shouldPlayHaptics = true
+@MainActor
+@Observable
+final class AppManager {
+    var systemPrompt: String {
+        didSet { defaults.set(systemPrompt, forKey: "systemPrompt") }
+    }
+    var appTintColor: AppTintColor {
+        didSet { defaults.set(appTintColor.rawValue, forKey: "appTintColor") }
+    }
+    var appFontDesign: AppFontDesign {
+        didSet { defaults.set(appFontDesign.rawValue, forKey: "appFontDesign") }
+    }
+    var appFontSize: AppFontSize {
+        didSet { defaults.set(appFontSize.rawValue, forKey: "appFontSize") }
+    }
+    var appFontWidth: AppFontWidth {
+        didSet { defaults.set(appFontWidth.rawValue, forKey: "appFontWidth") }
+    }
+    var shouldPlayHaptics: Bool {
+        didSet { defaults.set(shouldPlayHaptics, forKey: "shouldPlayHaptics") }
+    }
+
+    private let defaults: UserDefaults
+
+    init(defaults: UserDefaults = .standard) {
+        self.defaults = defaults
+        systemPrompt = defaults.string(forKey: "systemPrompt") ?? "you are a helpful assistant"
+        appTintColor = defaults.string(forKey: "appTintColor").flatMap(AppTintColor.init(rawValue:)) ?? .monochrome
+        appFontDesign = defaults.string(forKey: "appFontDesign").flatMap(AppFontDesign.init(rawValue:)) ?? .standard
+        appFontSize = defaults.string(forKey: "appFontSize").flatMap(AppFontSize.init(rawValue:)) ?? .medium
+        appFontWidth = defaults.string(forKey: "appFontWidth").flatMap(AppFontWidth.init(rawValue:)) ?? .standard
+        shouldPlayHaptics = defaults.object(forKey: "shouldPlayHaptics") as? Bool ?? true
+    }
     
     var userInterfaceIdiom: LayoutType {
         #if os(visionOS)
@@ -85,43 +112,6 @@ enum Role: String, Codable {
     case system
 }
 
-@Model
-class Message {
-    @Attribute(.unique) var id: UUID
-    var role: Role
-    var content: String
-    var timestamp: Date
-    var generatingTime: TimeInterval?
-    
-    @Relationship(inverse: \Thread.messages) var thread: Thread?
-    
-    init(role: Role, content: String, thread: Thread? = nil, generatingTime: TimeInterval? = nil) {
-        self.id = UUID()
-        self.role = role
-        self.content = content
-        self.timestamp = Date()
-        self.thread = thread
-        self.generatingTime = generatingTime
-    }
-}
-
-@Model
-final class Thread: Sendable {
-    @Attribute(.unique) var id: UUID
-    var title: String?
-    var timestamp: Date
-    
-    @Relationship var messages: [Message] = []
-    
-    var sortedMessages: [Message] {
-        return messages.sorted { $0.timestamp < $1.timestamp }
-    }
-    
-    init() {
-        self.id = UUID()
-        self.timestamp = Date()
-    }
-}
 
 enum AppTintColor: String, CaseIterable {
     case monochrome, blue, brown, gray, green, indigo, mint, orange, pink, purple, red, teal, yellow

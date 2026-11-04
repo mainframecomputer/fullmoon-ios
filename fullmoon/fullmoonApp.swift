@@ -12,13 +12,13 @@ struct fullmoonApp: App {
     #if os(macOS)
     @NSApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     #endif
-    @StateObject var appManager = AppManager()
+    @State private var appManager = AppManager()
     
     var body: some Scene {
         WindowGroup {
             ContentView()
                 .modelContainer(for: [Thread.self, Message.self])
-                .environmentObject(appManager)
+                .environment(appManager)
                 #if os(macOS) || os(visionOS)
                 .frame(minWidth: 640, maxWidth: .infinity, minHeight: 420, maxHeight: .infinity)
                 #if os(macOS)

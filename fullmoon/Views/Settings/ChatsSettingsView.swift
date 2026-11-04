@@ -8,13 +8,15 @@
 import SwiftUI
 
 struct ChatsSettingsView: View {
-    @EnvironmentObject var appManager: AppManager
+    @Environment(AppManager.self) private var appManager
     @Environment(\.modelContext) var modelContext
     @State var systemPrompt = ""
     @State var deleteAllChats = false
     @Binding var currentThread: Thread?
     
     var body: some View {
+        @Bindable var appManager = appManager
+
         Form {
             Section(header: Text("system prompt")) {
                 TextEditor(text: $appManager.systemPrompt)
@@ -66,4 +68,5 @@ struct ChatsSettingsView: View {
 
 #Preview {
     ChatsSettingsView(currentThread: .constant(nil))
+        .environment(AppManager())
 }
