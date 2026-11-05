@@ -11,6 +11,7 @@ import SwiftUI
 struct MessageView: View {
     @Environment(AppManager.self) private var appManager
     @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @ScaledMetric(relativeTo: .body) private var textScale = 1.0
 
     let message: Message
@@ -23,10 +24,15 @@ struct MessageView: View {
 
     @State private var copied = false
     @State private var showDeleteConfirmation = false
-    @State private var cursorVisible = true
+    @State private var responseVisible = false
+    @State private var markdownContent = MarkdownContent("")
 
     private var isUser: Bool {
         message.role == .user
+    }
+
+    private var reducesAnimations: Bool {
+        reduceMotion || appManager.appearance.reduceAnimations
     }
 
     private var authorName: String {
@@ -51,6 +57,14 @@ struct MessageView: View {
                     if appearance.showTimestamps {
                         Text(message.timestamp, style: .time)
                             .font(.caption2)
+                    }
+                    if isStreaming && !isUser {
+                        Image(systemName: "ellipsis")
+                            .font(.caption2.weight(.semibold))
+                            .foregroundStyle(appManager.appTintColor.getColor())
+                            .symbolEffect(.variableColor.iterative, options: .repeating,
+                                          isActive: !reducesAnimations)
+                            .accessibilityHidden(true)
                     }
                 }
                 .foregroundStyle(.secondary)
@@ -99,6 +113,11 @@ struct MessageView: View {
         } message: {
             Text("Ce message sera définitivement retiré de la conversation.")
         }
+        .onChange(of: message.content, initial: true) { _, content in
+            if !isUser {
+                markdownContent = MarkdownContent(content)
+            }
+        }
         .accessibilityElement(children: .combine)
         .accessibilityLabel(accessibilityDescription)
     }
@@ -125,48 +144,38 @@ struct MessageView: View {
         let appearance = appManager.appearance
 
         VStack(alignment: .leading, spacing: 8) {
-            if isStreaming {
-                if message.content.isEmpty {
-                    HStack(spacing: 8) {
-                        ProgressView()
-                            .controlSize(.small)
-                        Text("Noctis réfléchit…")
-                            .font(.subheadline)
-                            .foregroundStyle(.secondary)
-                    }
-                    .padding(.vertical, 4)
-                } else {
-                    HStack(alignment: .bottom, spacing: 2) {
-                        Text(message.content)
-                            .font(.system(size: appearance.fontSize * textScale))
-                            .foregroundStyle(isUser ? userTextColor : .primary)
-                        
-                        // Streaming blinking cursor
-                        Circle()
-                            .fill(appManager.appTintColor.getColor())
-                            .frame(width: 7, height: 7)
-                            .opacity(cursorVisible ? 1.0 : 0.2)
-                            .padding(.bottom, 4)
-                            .animation(.easeInOut(duration: 0.5).repeatForever(), value: cursorVisible)
-                            .onAppear { cursorVisible = false }
-                    }
+            if isUser {
+                Text(message.content)
+                    .font(.system(size: appearance.fontSize * textScale))
+                    .foregroundStyle(userTextColor)
+                    .textSelection(.enabled)
+            } else if isStreaming && message.content.isEmpty {
+                HStack(spacing: 8) {
+                    ProgressView()
+                        .controlSize(.small)
+                    Text("Noctis réfléchit…")
+                        .font(.subheadline)
+                        .foregroundStyle(.secondary)
                 }
+                .padding(.vertical, 4)
             } else {
-                if isUser {
-                    Text(message.content)
-                        .font(.system(size: appearance.fontSize * textScale))
-                        .foregroundStyle(userTextColor)
-                        .textSelection(.enabled)
-                } else {
-                    Markdown(message.content)
-                        .markdownTextStyle {
-                            FontSize(appearance.fontSize * textScale)
-                        }
-                        .markdownBlockStyle(\.codeBlock) { configuration in
-                            MessageCodeBlock(configuration: configuration)
-                        }
-                        .textSelection(.enabled)
-                }
+                // MarkdownUI preserves unchanged blocks; keep the same renderer when streaming ends.
+                Markdown(markdownContent)
+                    .markdownTextStyle {
+                        FontSize(appearance.fontSize * textScale)
+                    }
+                    .markdownBlockStyle(\.codeBlock) { configuration in
+                        MessageCodeBlock(configuration: configuration)
+                    }
+                    .textSelection(.enabled)
+                    .transaction { transaction in
+                        transaction.animation = nil
+                        transaction.disablesAnimations = true
+                    }
+                    .opacity(responseVisible || reducesAnimations ? 1 : 0)
+                    .animation(reducesAnimations ? nil : .easeOut(duration: 0.18), value: responseVisible)
+                    .onAppear { responseVisible = true }
+                    .onDisappear { responseVisible = false }
             }
         }
     }

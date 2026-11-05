@@ -301,7 +301,7 @@ extension ChatView {
             }
             if flushTask == nil {
                 flushTask = Task { [weak self] in
-                    do { try await Task.sleep(for: .milliseconds(40)) }
+                    do { try await Task.sleep(for: .milliseconds(100)) }
                     catch { return }
                     self?.flushPendingResponse()
                     self?.flushTask = nil
@@ -310,6 +310,7 @@ extension ChatView {
         }
 
         private func flushPendingResponse() {
+            guard !pendingResponse.isEmpty else { return }
             defer { pendingResponse = "" }
             guard let message = streamingMessage, !message.isDeleted,
                   message.modelContext != nil, let thread = message.thread, !thread.isDeleted else { return }

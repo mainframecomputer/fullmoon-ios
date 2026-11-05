@@ -106,14 +106,9 @@ struct ConversationView: View {
                 proxy.scrollTo(bottomAnchorID, anchor: .bottom)
             }
             .onChange(of: generatingMessageID) {
-                guard let id = generatingMessageID, thread.messages.contains(where: { $0.id == id }) else { return }
-                followsResponse = true
+                guard followsResponse, let id = generatingMessageID,
+                      thread.messages.contains(where: { $0.id == id }) else { return }
                 proxy.scrollTo(bottomAnchorID, anchor: .bottom)
-            }
-            .onChange(of: thread.messages.last?.content) {
-                if followsResponse && isGenerating {
-                    proxy.scrollTo(bottomAnchorID, anchor: .bottom)
-                }
             }
         }
     }
