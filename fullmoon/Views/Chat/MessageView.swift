@@ -5,6 +5,7 @@ struct MessageView: View {
     @Environment(AppManager.self) private var appManager
     @ScaledMetric(relativeTo: .body) private var textScale = 1.0
     let message: Message
+    var isStreaming = false
     var onRegenerate: (() -> Void)? = nil
     @State private var copied = false
 
@@ -27,14 +28,21 @@ struct MessageView: View {
                     }
                 }
                 .foregroundStyle(.secondary)
-                Markdown(message.content)
-                    .markdownTextStyle {
-                        FontSize(appearance.fontSize * textScale)
+                Group {
+                    if isStreaming {
+                        Text(message.content)
+                            .font(.system(size: appearance.fontSize * textScale))
+                    } else {
+                        Markdown(message.content)
+                            .markdownTextStyle {
+                                FontSize(appearance.fontSize * textScale)
+                            }
+                            .markdownBlockStyle(\.codeBlock) { configuration in
+                                MessageCodeBlock(configuration: configuration)
+                            }
                     }
-                    .markdownBlockStyle(\.codeBlock) { configuration in
-                        MessageCodeBlock(configuration: configuration)
-                    }
-                    .textSelection(.enabled)
+                }
+                .textSelection(.enabled)
                 HStack(spacing: 16) {
                     Button {
                         #if os(macOS)

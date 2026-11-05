@@ -21,13 +21,13 @@ struct SettingsView: View {
                     }
 
                     NavigationLink(destination: ChatsSettingsView(currentThread: $currentThread)) {
-                        Label("chats", systemImage: "message")
+                        Label("Conversations", systemImage: "message")
                     }
                 }
 
                 Section {
                     NavigationLink(destination: CreditsView()) {
-                        Text("credits")
+                        Text("Crédits")
                     }
                 }
 
@@ -47,7 +47,7 @@ struct SettingsView: View {
                 }
             }
             .formStyle(.grouped)
-            .navigationTitle("settings")
+            .navigationTitle("Réglages")
             #if os(iOS)
                 .navigationBarTitleDisplayMode(.inline)
             #endif

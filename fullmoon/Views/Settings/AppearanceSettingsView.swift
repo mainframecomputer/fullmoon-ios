@@ -2,6 +2,7 @@ import SwiftUI
 
 struct AppearanceSettingsView: View {
     @Environment(AppManager.self) private var appManager
+    @ScaledMetric(relativeTo: .body) private var textScale = 1.0
 
     var body: some View {
         @Bindable var manager = appManager
@@ -56,7 +57,7 @@ struct AppearanceSettingsView: View {
             }
             Section("Aperçu") {
                 Text("Un peu de calme pour vos grandes idées.")
-                    .font(.system(size: manager.appearance.fontSize))
+                    .font(.system(size: manager.appearance.fontSize * textScale))
                     .padding()
                     .background(manager.appTintColor.getColor().opacity(manager.appearance.intensity.opacity),
                                 in: RoundedRectangle(cornerRadius: DesignTokens.cornerRadius))

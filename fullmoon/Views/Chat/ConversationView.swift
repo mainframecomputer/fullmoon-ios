@@ -27,7 +27,11 @@ struct ConversationView: View {
                                 ProgressView("Noctis réfléchit…")
                                     .controlSize(.small)
                             } else {
-                                MessageView(message: message, onRegenerate: message.role == .assistant && generatingMessageID == nil ? onRegenerate.map { action in { action(message) } } : nil)
+                                MessageView(
+                                    message: message,
+                                    isStreaming: message.id == generatingMessageID,
+                                    onRegenerate: message.role == .assistant && generatingMessageID == nil ? onRegenerate.map { action in { action(message) } } : nil
+                                )
                             }
                         }
                         .id(message.id)
