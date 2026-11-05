@@ -1,54 +1,57 @@
 //
 //  ChatView.swift
-//  Noctis
+//  fullmoon
+//
+//  Created by Jordan Singer on 10/4/24.
 //
 
-import SwiftUI
 import SwiftData
+import SwiftUI
 
 struct ChatView: View {
-    @Environment(AppManager.self) private var appManager
     @Environment(\.modelContext) private var modelContext
+    @Environment(AppManager.self) private var appManager
     @Binding var currentThread: Thread?
-    @FocusState.Binding var isPromptFocused: Bool
-
+    var isPromptFocused: FocusState<Bool>.Binding
     @Binding var showChats: Bool
     @Binding var showSettings: Bool
-
-    let viewModel: ViewModel
-
+    @Bindable var viewModel: ViewModel
 
     var body: some View {
         NavigationStack {
             VStack(spacing: 0) {
-
                 conversationContent
 
                 connectionStatus
 
                 Composer(
                     viewModel: viewModel,
-                    isPromptFocused: $isPromptFocused,
+                    isPromptFocused: isPromptFocused,
                     onSend: {
                         viewModel.send(to: currentThread, in: modelContext) { currentThread = $0 }
                     }
                 )
                 .frame(maxWidth: appManager.appearance.contentWidth)
-                .padding(DesignTokens.pageInset)
+                .padding(.horizontal, DesignTokens.pageInset)
+                .padding(.bottom, DesignTokens.pageInset)
             }
             .background(appManager.appearance.theme.background)
-            .navigationTitle(
-                viewModel.chatTitle(for: currentThread)
-            )
-#if os(iOS) || os(visionOS)
+            .navigationTitle(viewModel.chatTitle(for: currentThread))
+            #if os(iOS) || os(visionOS)
             .navigationBarTitleDisplayMode(.inline)
-#endif
+            #endif
             .toolbar {
                 chatToolbar
             }
         }
-        .onDisappear { viewModel.stop() }
+        .onAppear {
+            viewModel.updateThreadSelection(currentThread)
+        }
+        .onDisappear {
+            viewModel.stop()
+        }
         .onChange(of: currentThread?.id) {
+            viewModel.updateThreadSelection(currentThread)
             if let generatingID = viewModel.generatingMessageID,
                currentThread?.messages.contains(where: { $0.id == generatingID }) != true {
                 viewModel.stop()
@@ -58,7 +61,6 @@ struct ChatView: View {
             guard ProcessInfo.processInfo.environment["XCODE_RUNNING_FOR_PREVIEWS"] != "1" else {
                 return
             }
-
             await viewModel.loadModel()
         }
     }
@@ -70,26 +72,42 @@ struct ChatView: View {
         let onSend: () -> Void
 
         var body: some View {
-            VStack(spacing: 8) {
+            VStack(spacing: 6) {
                 if let error = viewModel.submissionError {
-                    Text(error)
-                        .font(.caption)
-                        .foregroundStyle(.primary)
-                        .accessibilityLabel("Message could not be sent: \(error)")
+                    HStack(spacing: 8) {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundStyle(.orange)
+                            .font(.caption)
+                        Text(error)
+                            .font(.caption)
+                            .foregroundStyle(.primary)
+                            .lineLimit(2)
+                        Spacer()
+                        if viewModel.lastFailedPrompt != nil {
+                            Button("Restaurer le texte") {
+                                viewModel.restoreLastFailedPrompt()
+                                isPromptFocused = true
+                            }
+                            .buttonStyle(.bordered)
+                            .controlSize(.mini)
+                        }
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 8)
+                    .background(.orange.opacity(0.12), in: RoundedRectangle(cornerRadius: 12, style: .continuous))
                 }
 
                 ChatInputView(
                     prompt: $viewModel.prompt,
-                    isPromptFocused: $isPromptFocused,
                     isEnabled: viewModel.isInputEnabled,
-                    canSend: viewModel.hasMeaningfulPrompt,
-                    isLoading: viewModel.isLoading,
                     isSending: viewModel.isSending,
                     isStopping: viewModel.isStopping,
-                    onStop: { viewModel.stop() }
-                ) {
-                    onSend()
-                }
+                    isLoading: viewModel.isLoading,
+                    status: viewModel.connectionMessage,
+                    onSend: onSend,
+                    onStop: { viewModel.stop() },
+                    focusState: $isPromptFocused
+                )
             }
         }
     }
@@ -99,9 +117,26 @@ struct ChatView: View {
     @ViewBuilder
     private var conversationContent: some View {
         if let currentThread {
-            ConversationView(thread: currentThread, onRegenerate: { message in
-                viewModel.regenerate(message, in: currentThread, context: modelContext) { self.currentThread = $0 }
-            }, generatingMessageID: viewModel.generatingMessageID)
+            ConversationView(
+                thread: currentThread,
+                onRegenerate: { message in
+                    viewModel.regenerate(message, in: currentThread, context: modelContext)
+                },
+                onRetry: { message in
+                    viewModel.regenerate(message, in: currentThread, context: modelContext)
+                },
+                onEdit: { message in
+                    viewModel.editUserMessage(message, in: currentThread, context: modelContext)
+                    isPromptFocused.wrappedValue = true
+                },
+                onDelete: { message in
+                    viewModel.deleteMessage(message, in: currentThread, context: modelContext)
+                },
+                onBranch: { message in
+                    viewModel.createBranch(from: message, in: currentThread, context: modelContext) { self.currentThread = $0 }
+                },
+                generatingMessageID: viewModel.generatingMessageID
+            )
         } else {
             emptyConversation
         }
@@ -110,35 +145,48 @@ struct ChatView: View {
     private var emptyConversation: some View {
         WelcomeConversation { suggestion in
             viewModel.prompt = suggestion
-            isPromptFocused = true
+            isPromptFocused.wrappedValue = true
         }
     }
 
-    // MARK: - Connection Status
+    // MARK: - Connection Status (Subtle floating capsule when not ready)
+
     @ViewBuilder
     private var connectionStatus: some View {
         if !viewModel.isConnected {
-            Text(viewModel.connectionMessage)
-                .font(.caption)
-                .foregroundStyle(.secondary)
-            if !viewModel.isLoading && viewModel.submissionError != nil {
-                Button("Réessayer") {
-                    Task { await viewModel.loadModel() }
+            HStack(spacing: 8) {
+                if viewModel.isLoading {
+                    ProgressView()
+                        .controlSize(.mini)
+                } else {
+                    Image(systemName: "wifi.slash")
+                        .font(.caption2)
+                        .foregroundStyle(.secondary)
+                }
+                Text(viewModel.connectionMessage)
+                    .font(.caption2.weight(.medium))
+                    .foregroundStyle(.secondary)
+                if !viewModel.isLoading && viewModel.submissionError != nil {
+                    Button("Réessayer") {
+                        Task { await viewModel.loadModel() }
+                    }
+                    .font(.caption2.weight(.semibold))
+                    .buttonStyle(.plain)
+                    .foregroundStyle(appManager.appTintColor.getColor())
                 }
             }
-        } else if !viewModel.isSending {
-            Label("Modèle local · Prêt", systemImage: "checkmark.circle")
-                .font(.caption)
-                .foregroundStyle(.secondary)
+            .padding(.horizontal, 12)
+            .padding(.vertical, 4)
+            .background(.quaternary.opacity(0.3), in: Capsule())
+            .padding(.bottom, 4)
         }
     }
 
     // MARK: - Toolbar
+
     @ToolbarContentBuilder
     private var chatToolbar: some ToolbarContent {
-
-#if os(iOS) || os(visionOS)
-
+        #if os(iOS) || os(visionOS)
         if appManager.userInterfaceIdiom == .phone {
             ToolbarItem(placement: .topBarLeading) {
                 Button {
@@ -147,43 +195,57 @@ struct ChatView: View {
                 } label: {
                     Image(systemName: "list.bullet")
                 }
+                .accessibilityLabel("Liste des conversations")
             }
         }
 
         ToolbarItem(placement: .topBarTrailing) {
             settingsButton
         }
-
-#elseif os(macOS)
-
+        #elseif os(macOS)
         ToolbarItem(placement: .primaryAction) {
             settingsButton
         }
-
-#endif
+        #endif
     }
 
     // MARK: - Actions
+
     private var settingsButton: some View {
         Button {
             appManager.playHaptic()
             showSettings.toggle()
         } label: {
-#if os(macOS)
             Label("Réglages", systemImage: "slider.horizontal.3")
-#else
-            Label("Réglages", systemImage: "slider.horizontal.3")
-#endif
         }
+        .accessibilityLabel("Ouvrir les réglages")
         .keyboardShortcut(",", modifiers: .command)
     }
 }
 
-#Preview {
-    @Previewable @FocusState var isPromptFocused: Bool
+// MARK: - Previews
 
+#Preview("Conversation vide") {
+    @Previewable @FocusState var isPromptFocused: Bool
     ChatView(
         currentThread: .constant(nil),
+        isPromptFocused: $isPromptFocused,
+        showChats: .constant(false),
+        showSettings: .constant(false),
+        viewModel: .init()
+    )
+    .environment(AppManager())
+}
+
+#Preview("Conversation active") {
+    @Previewable @FocusState var isPromptFocused: Bool
+    let thread = Thread()
+    thread.messages = [
+        Message(role: .user, content: "Explique-moi le protocole Sendable en Swift."),
+        Message(role: .assistant, content: "Le protocole `Sendable` indique qu'un type peut être partagé en toute sécurité à travers des limites concurrentes.\n\n```swift\nstruct UserProfile: Sendable {\n    let id: UUID\n    let username: String\n}\n```")
+    ]
+    return ChatView(
+        currentThread: .constant(thread),
         isPromptFocused: $isPromptFocused,
         showChats: .constant(false),
         showSettings: .constant(false),

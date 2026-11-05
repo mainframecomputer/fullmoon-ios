@@ -13,64 +13,108 @@ struct ConversationView: View {
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
     let thread: Thread
     var onRegenerate: ((Message) -> Void)? = nil
+    var onRetry: ((Message) -> Void)? = nil
+    var onEdit: ((Message) -> Void)? = nil
+    var onDelete: ((Message) -> Void)? = nil
+    var onBranch: ((Message) -> Void)? = nil
     var generatingMessageID: UUID? = nil
+
     @State private var followsResponse = true
     @State private var isUserScrolling = false
+    private let bottomAnchorID = "conversation_bottom_anchor"
 
     var body: some View {
+        let sorted = thread.sortedMessages
+        let isGenerating = generatingMessageID != nil
+
         ScrollViewReader { proxy in
-            ScrollView(.vertical) {
-                LazyVStack(alignment: .leading, spacing: appManager.appearance.density.spacing) {
-                    ForEach(thread.sortedMessages) { message in
-                        VStack(alignment: .leading) {
-                            if message.id == generatingMessageID && message.content.isEmpty {
-                                ProgressView("Noctis réfléchit…")
-                                    .controlSize(.small)
-                            } else {
-                                MessageView(
-                                    message: message,
-                                    isStreaming: message.id == generatingMessageID,
-                                    onRegenerate: message.role == .assistant && generatingMessageID == nil ? onRegenerate.map { action in { action(message) } } : nil
-                                )
-                            }
+            ZStack(alignment: .bottom) {
+                ScrollView(.vertical) {
+                    LazyVStack(alignment: .leading, spacing: appManager.appearance.density.spacing) {
+                        ForEach(sorted) { message in
+                            MessageView(
+                                message: message,
+                                isStreaming: message.id == generatingMessageID,
+                                onRegenerate: onRegenerate.map { action in { action(message) } },
+                                onRetry: onRetry.map { action in { action(message) } },
+                                onEdit: onEdit.map { action in { action(message) } },
+                                onDelete: onDelete.map { action in { action(message) } },
+                                onBranch: onBranch.map { action in { action(message) } }
+                            )
+                            .id(message.id)
+                            .transition(.opacity)
                         }
-                        .id(message.id)
-                        .transition(.opacity)
+
+                        // Bottom anchor for stable scrolling
+                        Color.clear
+                            .frame(height: 8)
+                            .id(bottomAnchorID)
                     }
+                    .padding(DesignTokens.pageInset)
+                    .frame(maxWidth: appManager.appearance.contentWidth)
+                    .frame(maxWidth: .infinity)
+                    .animation(
+                        reduceMotion || appManager.appearance.reduceAnimations ? nil : .easeInOut(duration: 0.18),
+                        value: thread.messages.count
+                    )
                 }
-                .padding(DesignTokens.pageInset)
-                .frame(maxWidth: appManager.appearance.contentWidth)
-                .frame(maxWidth: .infinity)
-                .animation(reduceMotion || appManager.appearance.reduceAnimations ? nil : .easeInOut(duration: 0.18), value: thread.messages.count)
-            }
-            .overlay(alignment: .bottomTrailing) {
+                .modifier(ConversationScrollTracking(followsResponse: $followsResponse, isUserScrolling: $isUserScrolling))
+                #if os(iOS)
+                .scrollDismissesKeyboard(.interactively)
+                #endif
+
+                // Floating "Back to bottom" Pill
                 if !followsResponse {
                     Button {
-                        followsResponse = true
-                        if let id = thread.sortedMessages.last?.id { proxy.scrollTo(id, anchor: .bottom) }
+                        withAnimation(.spring(response: 0.35, dampingFraction: 0.82)) {
+                            followsResponse = true
+                            proxy.scrollTo(bottomAnchorID, anchor: .bottom)
+                        }
                     } label: {
-                        Label("Dernier message", systemImage: "arrow.down")
+                        HStack(spacing: 6) {
+                            Image(systemName: "arrow.down")
+                                .font(.caption.weight(.bold))
+                            if isGenerating {
+                                Text("Nouveaux messages")
+                                    .font(.caption.weight(.medium))
+                            } else {
+                                Text("Dernier message")
+                                    .font(.caption.weight(.medium))
+                            }
+                        }
+                        .foregroundStyle(appManager.appTintColor.getColor())
+                        .padding(.horizontal, 14)
+                        .padding(.vertical, 8)
+                        .background {
+                            Capsule()
+                                .fill(.ultraThinMaterial)
+                        }
+                        .overlay {
+                            Capsule()
+                                .strokeBorder(.secondary.opacity(0.2), lineWidth: 0.5)
+                        }
+                        .shadow(color: .black.opacity(0.12), radius: 8, x: 0, y: 4)
                     }
-                    .buttonStyle(.borderedProminent)
-                    .padding()
+                    .buttonStyle(.plain)
+                    .padding(.bottom, 12)
+                    .transition(.move(edge: .bottom).combined(with: .opacity))
+                    .accessibilityLabel(isGenerating ? "Nouveaux messages reçus, faire défiler vers le bas" : "Faire défiler vers le bas")
                 }
             }
-            .modifier(ConversationScrollTracking(followsResponse: $followsResponse, isUserScrolling: $isUserScrolling))
             .onChange(of: thread.id) {
                 followsResponse = true
-                if let id = thread.sortedMessages.last?.id { proxy.scrollTo(id, anchor: .bottom) }
+                proxy.scrollTo(bottomAnchorID, anchor: .bottom)
             }
             .onChange(of: generatingMessageID) {
                 guard let id = generatingMessageID, thread.messages.contains(where: { $0.id == id }) else { return }
                 followsResponse = true
-                proxy.scrollTo(id, anchor: .bottom)
+                proxy.scrollTo(bottomAnchorID, anchor: .bottom)
             }
-            .onChange(of: thread.sortedMessages.last?.content) {
-                if followsResponse, let id = generatingMessageID { proxy.scrollTo(id, anchor: .bottom) }
+            .onChange(of: thread.messages.last?.content) {
+                if followsResponse && isGenerating {
+                    proxy.scrollTo(bottomAnchorID, anchor: .bottom)
+                }
             }
-            #if os(iOS)
-                .scrollDismissesKeyboard(.interactively)
-            #endif
         }
     }
 }
@@ -90,7 +134,11 @@ private struct ConversationScrollTracking: ViewModifier {
                 .onScrollGeometryChange(for: Bool.self) { geometry in
                     geometry.contentOffset.y + geometry.containerSize.height >= geometry.contentSize.height - 80
                 } action: { _, isNearBottom in
-                    if isUserScrolling { followsResponse = isNearBottom }
+                    if isUserScrolling {
+                        followsResponse = isNearBottom
+                    } else if isNearBottom {
+                        followsResponse = true
+                    }
                 }
         } else {
             content
@@ -102,11 +150,11 @@ private struct ConversationScrollTracking: ViewModifier {
 
 #Preview {
     let thread = Thread()
-    let _ = thread.messages = [
+    thread.messages = [
         Message(role: .user, content: "Comment garder mes idées organisées ?"),
         Message(role: .assistant, content: "Commencez par **une idée par note**.\n\n- Capturez sans trier.\n- Relisez chaque semaine.\n- Choisissez une prochaine action.\n\n```swift\nlet prochaineAction = \"Faire un premier pas\"\n```")
     ]
-    ConversationView(thread: thread)
+    return ConversationView(thread: thread)
         .environment(AppManager())
         .frame(width: 760, height: 600)
 }
