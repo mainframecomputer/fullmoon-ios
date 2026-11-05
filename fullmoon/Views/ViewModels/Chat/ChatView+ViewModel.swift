@@ -27,7 +27,7 @@ extension ChatView {
 
         private static let logger = Logger(subsystem: "com.sebastiendaguin.NoctisAi", category: "Inference")
         @ObservationIgnored private var noctisService: (any AIModelService)?
-        @ObservationIgnored private let makeService: @MainActor () -> any AIModelService
+        @ObservationIgnored private let makeService: @MainActor () throws -> any AIModelService
         @ObservationIgnored private var generationTask: Task<Void, Never>?
         @ObservationIgnored private var streamingMessage: Message?
         @ObservationIgnored private var pendingResponse = ""
@@ -39,7 +39,18 @@ extension ChatView {
         private var sessionThreadID: UUID?
         private var needsNewSession = false
 
-        init(makeService: @escaping @MainActor () -> any AIModelService = { MLXModelService() }) {
+        init(makeService: @escaping @MainActor () throws -> any AIModelService = {
+            #if os(macOS)
+            guard let search = try EmbeddedSearXNGService.bundled() else {
+                throw EmbeddedSearXNGError.runtimeUnavailable
+            }
+            return MLXModelService(webSearchService: search)
+            #elseif os(iOS)
+            return MLXModelService(webSearchService: IOSWebSearchService.shared)
+            #else
+            return MLXModelService()
+            #endif
+        }) {
             self.makeService = makeService
         }
 
@@ -69,7 +80,13 @@ extension ChatView {
             isLoading = true
             submissionError = nil
             defer { isLoading = false }
-            let service = noctisService ?? makeService()
+            let service: any AIModelService
+            do {
+                service = try noctisService ?? makeService()
+            } catch {
+                submissionError = error.localizedDescription
+                return false
+            }
             noctisService = service
             let clock = ContinuousClock()
             var phaseStarted = clock.now

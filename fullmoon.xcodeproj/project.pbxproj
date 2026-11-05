@@ -83,6 +83,7 @@
 				860E9CCA2CB055B000C5BB52 /* Sources */,
 				860E9CCB2CB055B000C5BB52 /* Frameworks */,
 				860E9CCC2CB055B000C5BB52 /* Resources */,
+				CF5EA2C0309BC000005EA2C0 /* Embed SearXNG */,
 			);
 			buildRules = (
 			);
@@ -147,6 +148,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		CF5EA2C0309BC000005EA2C0 /* Embed SearXNG */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "Embed SearXNG";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "/bin/sh \"${SRCROOT}/scripts/embed-searxng.sh\"\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		860E9CCA2CB055B000C5BB52 /* Sources */ = {
@@ -285,7 +304,12 @@
 				DEVELOPMENT_TEAM = P9TXP3LGTK;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) $(PROJECT_DIR)/build/SearXNG-iOS/Python.xcframework/ios-arm64";
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) $(PROJECT_DIR)/build/SearXNG-iOS/Python.xcframework/ios-arm64_x86_64-simulator";
+				"OTHER_LDFLAGS[sdk=iphoneos*]" = "$(inherited) -framework Python";
+				"OTHER_LDFLAGS[sdk=iphonesimulator*]" = "$(inherited) -framework Python";
 				INFOPLIST_FILE = fullmoon/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Noctis Chat";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
@@ -331,7 +355,12 @@
 				DEVELOPMENT_TEAM = P9TXP3LGTK;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphoneos*]" = "$(inherited) $(PROJECT_DIR)/build/SearXNG-iOS/Python.xcframework/ios-arm64";
+				"FRAMEWORK_SEARCH_PATHS[sdk=iphonesimulator*]" = "$(inherited) $(PROJECT_DIR)/build/SearXNG-iOS/Python.xcframework/ios-arm64_x86_64-simulator";
+				"OTHER_LDFLAGS[sdk=iphoneos*]" = "$(inherited) -framework Python";
+				"OTHER_LDFLAGS[sdk=iphonesimulator*]" = "$(inherited) -framework Python";
 				INFOPLIST_FILE = fullmoon/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Noctis Chat";
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";

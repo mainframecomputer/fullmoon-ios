@@ -17,6 +17,67 @@ NoctisAI/
 Ouvrir `fullmoon.xcodeproj`, sélectionner la cible Mac et lancer l’application. Le modèle reste
 `mlx-community/Ministral-3-14B-Instruct-2512-4bit` ; aucune version de dépendance n’a été changée.
 
+### Recherche Web sur Mac, sans Docker
+
+Préparer une seule fois le runtime autonome depuis ce dépôt (Python 3.10+, Git et `uv` requis) :
+
+```sh
+python3 ../NoctisAi/infrastructure/searxng/setup_runtime.py --standalone --destination build/SearXNG
+```
+
+Cette préparation télécharge Python 3.13.13 pour l’architecture du Mac et installe la révision
+SearXNG épinglée par Noctis. Les fichiers restent dans `build/`, ignoré par Git.
+La phase Xcode `Embed SearXNG` copie le runtime dans les ressources de l’app et signe ses
+bibliothèques et son interpréteur avec l’identité de Fullmoon, avant la signature finale.
+Le script de build a besoin de l’accès au trousseau ; son sandbox de build est désactivé.
+Le sandbox de l’application reste actif, avec les droits réseau client et serveur.
+
+Fullmoon démarre SearXNG à la première recherche, sur un port local attribué automatiquement,
+puis l’arrête après 120 secondes d’inactivité ou à la fermeture du canal parent.
+L’app ne dépend ni de Docker, ni du Python installé sur le Mac de l’utilisateur.
+Si le runtime manque, une erreur est affichée au lieu de se connecter au port Docker 8888.
+Un accès Internet reste nécessaire pour interroger les moteurs de recherche.
+
+Le runtime préparé est propre à une architecture : compiler et préparer séparément les
+distributions Apple Silicon et Intel. La notarisation et la validation App Store restent
+des étapes de distribution distinctes.
+
+### Recherche Web embarquée sur iOS
+
+Après la préparation du runtime Mac ci-dessus, préparer les variantes iPhone et simulateur :
+
+```sh
+build/SearXNG/python/bin/python3 ../NoctisAi/infrastructure/searxng/setup_ios_runtime.py \
+  --mac-runtime build/SearXNG --destination build/SearXNG-iOS
+```
+
+Cette étape nécessite Xcode complet et un accès Internet. Elle conserve les versions de
+SearXNG et de ses dépendances, prépare Python iOS 3.13 via BeeWare `3.13-b14`, et compile
+`lxml`, `msgspec` et le pont de `curl_cffi` pour **arm64 iPhone et simulateur Apple Silicon**.
+Les binaires de `cffi` et `MarkupSafe` viennent de leurs distributions iOS sur PyPI ;
+libcurl-impersonate vient de sa distribution iOS officielle `2.3.1`.
+La préparation réutilise les fichiers Python du runtime de build Mac, sans le modifier.
+
+Sélectionner ensuite la destination iPhone ou simulateur dans Xcode. La phase existante
+`Embed SearXNG` choisit le packaging iOS et signe les modules natifs comme frameworks.
+Les ressources et binaires préparés restent dans `build/`, ignoré par Git.
+
+`IOSWebSearchService` conserve un interpréteur pour le processus de l’app et exécute les
+recherches sur une file série de fond. Il appelle le pipeline WSGI de SearXNG directement :
+aucun sous-processus, port HTTP local, Docker ou serveur distant n’est utilisé.
+Les requêtes restent des arguments Python, jamais du code à exécuter. Les résultats sont
+limités à 2 Mio puis passent par les contrôles habituels de Noctis.
+Une annulation libère immédiatement l’appelant ; une recherche Python déjà commencée
+termine en arrière-plan avec les délais réseau SearXNG, avant la prochaine recherche.
+L’interpréteur n’est pas déchargé pendant la vie du processus iOS.
+
+Deux adaptations sont appliquées uniquement à la copie iOS de SearXNG : métadonnées de version
+figées pour éviter un appel Git à l’exécution, et retrait de `pwd` dans le diagnostic
+d’erreur Valkey, iOS n’exposant pas de base d’utilisateurs Unix. Le runtime macOS et son
+cycle de processus restent inchangés.
+
+La validation sur un iPhone physique et la distribution App Store restent à effectuer.
+
 ## Chargement et conversations
 
 - Les fichiers du modèle sont conservés dans le cache Hugging Face utilisé par l’application.
