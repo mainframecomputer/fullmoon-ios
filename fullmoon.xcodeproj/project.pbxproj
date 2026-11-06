@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		CF9AC159309D414600515FF2 /* AIEffectsKit in Frameworks */ = {isa = PBXBuildFile; productRef = CF9AC158309D414600515FF2 /* AIEffectsKit */; };
 		860F26A42CBC31D6004E8D40 /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = 860F26A32CBC31D6004E8D40 /* MarkdownUI */; };
 		CF7089EE309A4D0400C368FB /* Noctis in Frameworks */ = {isa = PBXBuildFile; productRef = CF7089ED309A4D0400C368FB /* Noctis */; };
 /* End PBXBuildFile section */
@@ -41,6 +42,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF9AC159309D414600515FF2 /* AIEffectsKit in Frameworks */,
 				CF7089EE309A4D0400C368FB /* Noctis in Frameworks */,
 				860F26A42CBC31D6004E8D40 /* MarkdownUI in Frameworks */,
 			);
@@ -94,6 +96,7 @@
 			);
 			name = fullmoon;
 			packageProductDependencies = (
+				CF9AC158309D414600515FF2 /* AIEffectsKit */,
 				860F26A32CBC31D6004E8D40 /* MarkdownUI */,
 				CF7089ED309A4D0400C368FB /* Noctis */,
 			);
@@ -126,9 +129,9 @@
 			mainGroup = 860E9CC52CB055B000C5BB52;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
+				CF9AC157309D414600515FF2 /* XCRemoteSwiftPackageReference "AIEffectsKit" */,
 				860F26A22CBC31D6004E8D40 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
 				CF7089EC309A4D0400C368FB /* XCLocalSwiftPackageReference "../NoctisAi" */,
-				CF9AC157309D414600515FF2 /* XCRemoteSwiftPackageReference "AIEffectsKit" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 860E9CCF2CB055B000C5BB52 /* Products */;
@@ -472,13 +475,18 @@
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/chrisnyw/AIEffectsKit.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
+				kind = revision;
+				revision = d843aefe84db7869637da272c27c6ead9affff6f;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		CF9AC158309D414600515FF2 /* AIEffectsKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CF9AC157309D414600515FF2 /* XCRemoteSwiftPackageReference "AIEffectsKit" */;
+			productName = AIEffectsKit;
+		};
 		860F26A32CBC31D6004E8D40 /* MarkdownUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 860F26A22CBC31D6004E8D40 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */;

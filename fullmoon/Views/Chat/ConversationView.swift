@@ -6,6 +6,7 @@
 //
 
 import MarkdownUI
+import AIEffectsKit
 import SwiftUI
 
 struct ConversationView: View {
@@ -18,6 +19,7 @@ struct ConversationView: View {
     var onDelete: ((Message) -> Void)? = nil
     var onBranch: ((Message) -> Void)? = nil
     var generatingMessageID: UUID? = nil
+    var generationPhase = AIPhase.idle
 
     @State private var followsResponse = true
     @State private var isUserScrolling = false
@@ -35,6 +37,7 @@ struct ConversationView: View {
                             MessageView(
                                 message: message,
                                 isStreaming: message.id == generatingMessageID,
+                                generationPhase: message.id == generatingMessageID ? generationPhase : nil,
                                 onRegenerate: onRegenerate.map { action in { action(message) } },
                                 onRetry: onRetry.map { action in { action(message) } },
                                 onEdit: onEdit.map { action in { action(message) } },

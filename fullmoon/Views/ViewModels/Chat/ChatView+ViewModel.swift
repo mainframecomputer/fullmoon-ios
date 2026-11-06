@@ -5,6 +5,7 @@
 //  Created by Sébastien DAGUIN on 03/11/2026.
 //
 
+import AIEffectsKit
 import SwiftUI
 import SwiftData
 import Noctis
@@ -21,6 +22,7 @@ extension ChatView {
         private(set) var submissionError: String?
         private(set) var lastFailedPrompt: String?
         private(set) var generatingMessageID: UUID?
+        private(set) var generationPhase = AIPhase.idle
         private(set) var loadPhase = AIModelLoadPhase.loading
         private(set) var loadDuration: TimeInterval?
         private(set) var firstTextDelay: TimeInterval?
@@ -205,6 +207,7 @@ extension ChatView {
             context: ModelContext
         ) {
             isSending = true
+            generationPhase = .thinking
             streamingMessage = response
             generatingMessageID = response.id
             pendingResponse = ""
@@ -245,6 +248,7 @@ extension ChatView {
                             submissionError = error.localizedDescription
                         }
                     }
+                    if case .error = generationPhase {} else { generationPhase = .done }
                     streamingMessage = nil
                     generatingMessageID = nil
                     isSending = false
@@ -273,11 +277,13 @@ extension ChatView {
                     self.lastFailedPrompt = nil
                 } catch is CancellationError {
                     needsNewSession = true
+                    generationPhase = .done
                     if let message = self.streamingMessage, !message.isDeleted {
                         message.isInterrupted = true
                     }
                 } catch {
                     needsNewSession = true
+                    generationPhase = .error(error.localizedDescription)
                     submissionError = error.localizedDescription
                     if let message = self.streamingMessage, !message.isDeleted {
                         message.hasError = true
@@ -293,6 +299,7 @@ extension ChatView {
             }
             guard !chunk.isEmpty else { return }
             if firstText == nil { firstText = ContinuousClock.now }
+            generationPhase = .streaming
             characterCount += chunk.count
             pendingResponse += chunk
             if !hasDisplayedResponse {

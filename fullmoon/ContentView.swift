@@ -60,7 +60,7 @@ struct ContentView: View {
                 .environment(appManager)
                 .presentationDragIndicator(.hidden)
                 .if(appManager.userInterfaceIdiom == .phone) { view in
-                    view.presentationDetents([.medium])
+                    view.presentationDetents([.medium, .large])
                 }
         }
         #if !os(visionOS)
