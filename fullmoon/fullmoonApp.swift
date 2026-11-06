@@ -17,6 +17,7 @@ struct fullmoonApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .noctisAppLock()
                 .modelContainer(for: [Thread.self, Message.self, NoctisUserProfile.self])
                 .environment(appManager)
                 #if os(macOS) || os(visionOS)
