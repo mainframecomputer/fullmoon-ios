@@ -2,6 +2,8 @@ import Contacts
 import ContactsUI
 import SwiftUI
 
+#if os(iOS) || os(visionOS)
+
 /// Presents the system contact picker without requesting full address-book access.
 struct NoctisContactPicker: UIViewControllerRepresentable {
     let onSelect: (CNContact) -> Void
@@ -45,3 +47,5 @@ struct NoctisContactPicker: UIViewControllerRepresentable {
         }
     }
 }
+
+#endif
