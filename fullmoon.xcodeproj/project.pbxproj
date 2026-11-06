@@ -7,9 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		CF9AC159309D414600515FF2 /* AIEffectsKit in Frameworks */ = {isa = PBXBuildFile; productRef = CF9AC158309D414600515FF2 /* AIEffectsKit */; };
 		860F26A42CBC31D6004E8D40 /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = 860F26A32CBC31D6004E8D40 /* MarkdownUI */; };
-		CF7089EE309A4D0400C368FB /* Noctis in Frameworks */ = {isa = PBXBuildFile; productRef = CF7089ED309A4D0400C368FB /* Noctis */; };
+		CF200BB5309D75C000FDFEC2 /* Noctis in Frameworks */ = {isa = PBXBuildFile; productRef = CF200BB4309D75C000FDFEC2 /* Noctis */; };
+		CF9AC159309D414600515FF2 /* AIEffectsKit in Frameworks */ = {isa = PBXBuildFile; productRef = CF9AC158309D414600515FF2 /* AIEffectsKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,8 +42,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF200BB5309D75C000FDFEC2 /* Noctis in Frameworks */,
 				CF9AC159309D414600515FF2 /* AIEffectsKit in Frameworks */,
-				CF7089EE309A4D0400C368FB /* Noctis in Frameworks */,
 				860F26A42CBC31D6004E8D40 /* MarkdownUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -98,7 +98,7 @@
 			packageProductDependencies = (
 				CF9AC158309D414600515FF2 /* AIEffectsKit */,
 				860F26A32CBC31D6004E8D40 /* MarkdownUI */,
-				CF7089ED309A4D0400C368FB /* Noctis */,
+				CF200BB4309D75C000FDFEC2 /* Noctis */,
 			);
 			productName = fullmoon;
 			productReference = 860E9CCE2CB055B000C5BB52 /* fullmoon.app */;
@@ -131,7 +131,7 @@
 			packageReferences = (
 				CF9AC157309D414600515FF2 /* XCRemoteSwiftPackageReference "AIEffectsKit" */,
 				860F26A22CBC31D6004E8D40 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
-				CF7089EC309A4D0400C368FB /* XCLocalSwiftPackageReference "../NoctisAi" */,
+				CF200BB3309D75C000FDFEC2 /* XCRemoteSwiftPackageReference "NoctisAi" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 860E9CCF2CB055B000C5BB52 /* Products */;
@@ -455,13 +455,6 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCLocalSwiftPackageReference section */
-		CF7089EC309A4D0400C368FB /* XCLocalSwiftPackageReference "../NoctisAi" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../NoctisAi;
-		};
-/* End XCLocalSwiftPackageReference section */
-
 /* Begin XCRemoteSwiftPackageReference section */
 		860F26A22CBC31D6004E8D40 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -469,6 +462,14 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 2.4.1;
+			};
+		};
+		CF200BB3309D75C000FDFEC2 /* XCRemoteSwiftPackageReference "NoctisAi" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Sebastien972-collab/NoctisAi.git";
+			requirement = {
+				branch = main;
+				kind = branch;
 			};
 		};
 		CF9AC157309D414600515FF2 /* XCRemoteSwiftPackageReference "AIEffectsKit" */ = {
@@ -482,20 +483,20 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		CF9AC158309D414600515FF2 /* AIEffectsKit */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = CF9AC157309D414600515FF2 /* XCRemoteSwiftPackageReference "AIEffectsKit" */;
-			productName = AIEffectsKit;
-		};
 		860F26A32CBC31D6004E8D40 /* MarkdownUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 860F26A22CBC31D6004E8D40 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */;
 			productName = MarkdownUI;
 		};
-		CF7089ED309A4D0400C368FB /* Noctis */ = {
+		CF200BB4309D75C000FDFEC2 /* Noctis */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = CF7089EC309A4D0400C368FB /* XCLocalSwiftPackageReference "../NoctisAi" */;
+			package = CF200BB3309D75C000FDFEC2 /* XCRemoteSwiftPackageReference "NoctisAi" */;
 			productName = Noctis;
+		};
+		CF9AC158309D414600515FF2 /* AIEffectsKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CF9AC157309D414600515FF2 /* XCRemoteSwiftPackageReference "AIEffectsKit" */;
+			productName = AIEffectsKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
