@@ -1,0 +1,11 @@
+# Created by Sébastien DAGUIN
+
+swiftlint_version: 0.65.1
+included:
+  - fullmoon
+excluded:
+  - .build
+  - build
+  - .git
+baseline: .swiftlint-baseline.json
+cache_path: build/swiftlint-cache

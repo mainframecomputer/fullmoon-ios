@@ -6,7 +6,8 @@ Interface SwiftUI avec conversations locales SwiftData et moteur Noctis exécut�
 
 ## Développement
 
-Le projet Xcode utilise le package local `../NoctisAi`. Conserver les deux dépôts côte à côte :
+Le projet Xcode résout le package Noctis depuis son dépôt GitHub. Les scripts de préparation
+et de packaging SearXNG utilisent encore `../NoctisAi` ; conserver les deux dépôts côte à côte :
 
 ```text
 NoctisAI/
@@ -134,3 +135,19 @@ la réutilisation du cache de session. La taille du modèle et le contexte reste
 Projet d’origine : [Fullmoon](https://github.com/mainframecomputer/fullmoon-ios),
 par Mainframe Computer, Inc. Licence MIT : voir `LICENSE`.
 Le moteur utilise [MLX Swift](https://github.com/ml-explore/mlx-swift).
+
+## SwiftLint et contributions
+
+Le build Xcode exécute SwiftLint avant la compilation. Le contrôle peut aussi être lancé seul :
+
+```sh
+./scripts/lint.sh
+```
+
+Le script télécharge SwiftLint **0.65.1** dans un cache temporaire et vérifie son SHA-256.
+`SWIFTLINT_BIN=/chemin/vers/swiftlint ./scripts/lint.sh` permet d'utiliser une installation
+locale de la même version. La baseline conserve les écarts existants ; les nouvelles
+violations sont bloquantes. Ne pas la régénérer pour masquer une régression.
+
+Les règles de contribution et les commandes de validation sont décrites dans
+[CONTRIBUTING.md](CONTRIBUTING.md).

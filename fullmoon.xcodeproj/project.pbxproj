@@ -82,6 +82,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 860E9CDF2CB055B100C5BB52 /* Build configuration list for PBXNativeTarget "fullmoon" */;
 			buildPhases = (
+				CF5EA2C1309BC000005EA2C0 /* SwiftLint */,
 				860E9CCA2CB055B000C5BB52 /* Sources */,
 				860E9CCB2CB055B000C5BB52 /* Frameworks */,
 				860E9CCC2CB055B000C5BB52 /* Resources */,
@@ -154,6 +155,19 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		CF5EA2C1309BC000005EA2C0 /* SwiftLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = ();
+			inputPaths = ();
+			name = SwiftLint;
+			outputPaths = ();
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/scripts/lint.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		CF5EA2C0309BC000005EA2C0 /* Embed SearXNG */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
