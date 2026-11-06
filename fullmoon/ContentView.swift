@@ -84,6 +84,6 @@ extension View {
 
 #Preview {
     ContentView()
-        .modelContainer(for: [Thread.self, Message.self], inMemory: true)
+        .modelContainer(for: [Thread.self, Message.self, NoctisUserProfile.self], inMemory: true)
         .environment(AppManager())
 }
