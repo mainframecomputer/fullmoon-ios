@@ -1,5 +1,8 @@
 import SwiftData
 import SwiftUI
+#if os(iOS) || os(visionOS)
+import Contacts
+#endif
 
 struct NoctisIdentitySettingsView: View {
     @Environment(\.modelContext) private var modelContext
@@ -11,6 +14,9 @@ struct NoctisIdentitySettingsView: View {
     @State private var preferredLanguage = "fr"
     @State private var personalInstructions = ""
     @State private var errorMessage: String?
+    #if os(iOS) || os(visionOS)
+    @State private var showingContactPicker = false
+    #endif
 
     var body: some View {
         Form {
@@ -23,6 +29,17 @@ struct NoctisIdentitySettingsView: View {
                     Text("English").tag("en")
                 }
             }
+
+            #if os(iOS) || os(visionOS)
+            Section("Contact") {
+                Button("Importer ma fiche contact", systemImage: "person.crop.rectangle") {
+                    showingContactPicker = true
+                }
+                Text("Seuls le nom et le surnom sont copiés dans le formulaire. Vérifiez-les avant de sauvegarder.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            }
+            #endif
 
             Section("Personal preferences") {
                 TextEditor(text: $personalInstructions)
@@ -45,6 +62,19 @@ struct NoctisIdentitySettingsView: View {
         }
         .navigationTitle("Noctis Identity")
         .onAppear(perform: load)
+        #if os(iOS) || os(visionOS)
+        .sheet(isPresented: $showingContactPicker) {
+            NoctisContactPicker { contact in
+                displayName = [contact.givenName, contact.familyName]
+                    .filter { !$0.isEmpty }
+                    .joined(separator: " ")
+                preferredName = contact.nickname
+                showingContactPicker = false
+            } onCancel: {
+                showingContactPicker = false
+            }
+        }
+        #endif
         .alert("Unable to save profile", isPresented: Binding(
             get: { errorMessage != nil },
             set: { if !$0 { errorMessage = nil } }
