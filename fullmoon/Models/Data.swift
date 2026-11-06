@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SwiftData
+import MLXLMCommon
 
 class AppManager: ObservableObject {
     @AppStorage("systemPrompt") var systemPrompt = "you are a helpful assistant"
@@ -51,6 +52,9 @@ class AppManager: ObservableObject {
     
     init() {
         loadInstalledModelsFromUserDefaults()
+        #if os(iOS)
+        currentModelName = ModelConfiguration.defaultModel.name
+        #endif
     }
     
     func incrementNumberOfVisits() {

@@ -11,6 +11,7 @@ import SwiftUI
 
 struct OnboardingInstallModelView: View {
     @EnvironmentObject var appManager: AppManager
+    @Environment(LLMEvaluator.self) var llm
     @State private var deviceSupportsMetal3: Bool = true
     @Binding var showOnboarding: Bool
     @State var selectedModel = ModelConfiguration.defaultModel
@@ -125,6 +126,16 @@ struct OnboardingInstallModelView: View {
     var body: some View {
         ZStack {
             if deviceSupportsMetal3 {
+                #if os(iOS)
+                VStack {
+                    ModelsSettingsView()
+                    if llm.modelStatus == .ready {
+                        Button("done") { showOnboarding = false }
+                            .buttonStyle(.borderedProminent)
+                            .padding()
+                    }
+                }
+                #else
                 modelsList
                 #if os(iOS) || os(visionOS)
                 .toolbar {
@@ -141,6 +152,7 @@ struct OnboardingInstallModelView: View {
                 .task {
                     checkModels()
                 }
+                #endif
             } else {
                 DeviceNotSupportedView()
             }
@@ -186,4 +198,5 @@ struct OnboardingInstallModelView: View {
 
     OnboardingInstallModelView(showOnboarding: .constant(true))
         .environmentObject(appManager)
+        .environment(LLMEvaluator())
 }

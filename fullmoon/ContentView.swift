@@ -38,8 +38,14 @@ struct ContentView: View {
         .environmentObject(appManager)
         .environment(llm)
         .task {
-            if appManager.installedModels.count == 0 {
-                showOnboarding.toggle()
+            llm.refreshModelStatus()
+            #if os(iOS)
+            let needsInstallation = llm.modelStatus == .notDownloaded
+            #else
+            let needsInstallation = appManager.installedModels.isEmpty
+            #endif
+            if needsInstallation {
+                showOnboarding = true
             } else {
                 isPromptFocused = true
                 // load the model

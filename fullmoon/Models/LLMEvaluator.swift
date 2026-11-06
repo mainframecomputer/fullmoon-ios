@@ -23,6 +23,12 @@ class LLMEvaluator {
     var output = ""
     var modelInfo = ""
     var stat = ""
+    private(set) var modelStatus = ModelStatus.notDownloaded
+    private var loadTask: Task<ModelContainer, Error>?
+    private var loadID: UUID?
+
+    var isLoading: Bool { loadTask != nil }
+
     var progress = 0.0
     var thinkingTime: TimeInterval?
     var collapsed: Bool = false
@@ -38,9 +44,13 @@ class LLMEvaluator {
 
     private var startTime: Date?
 
-    var modelConfiguration = ModelConfiguration.defaultModel
+    private(set) var modelConfiguration = ModelConfiguration.defaultModel
 
     func switchModel(_ model: ModelConfiguration) async {
+        guard loadTask == nil else { return }
+        #if os(iOS)
+        let model = ModelConfiguration.defaultModel
+        #endif
         progress = 0.0 // reset progress
         loadState = .idle
         modelConfiguration = model
@@ -63,33 +73,72 @@ class LLMEvaluator {
 
     var loadState = LoadState.idle
 
-    /// load and return the model -- can be called multiple times, subsequent calls will
-    /// just return the loaded model
+    func refreshModelStatus() {
+        guard loadTask == nil else { return }
+        if case .loaded = loadState {
+            modelStatus = .ready
+        } else if case .failed = modelStatus {
+            return
+        } else {
+            modelStatus = ModelStatus.cachedStatus(in: modelConfiguration.modelDirectory())
+        }
+    }
+
+    /// Reuse the current container or share an in-flight MLX load.
     func load(modelName: String) async throws -> ModelContainer {
-        guard let model = ModelConfiguration.getModelByName(modelName) else {
-            throw LLMEvaluatorError.modelNotFound(modelName)
+        if let loadTask {
+            return try await loadTask.value
+        }
+        if case let .loaded(modelContainer) = loadState {
+            return modelContainer
         }
 
-        switch loadState {
-        case .idle:
-            // limit the buffer cache
-            MLX.GPU.set(cacheLimit: 20 * 1024 * 1024)
+        #if os(iOS)
+        let model = ModelConfiguration.defaultModel
+        #else
+        guard let model = ModelConfiguration.getModelByName(modelName) else {
+            modelStatus = .failed("Unknown model: \(modelName)")
+            throw LLMEvaluatorError.modelNotFound(modelName)
+        }
+        #endif
 
-            let modelContainer = try await LLMModelFactory.shared.loadContainer(configuration: model) {
-                [modelConfiguration] progress in
+        modelConfiguration = model
+        progress = 0
+        modelStatus = ModelStatus.cachedStatus(in: model.modelDirectory()) == .downloaded
+            ? .loading : .downloading(0)
+        let id = UUID()
+        loadID = id
+
+        // Share one load between startup, Settings and generation.
+        let task = Task { @MainActor in
+            MLX.GPU.set(cacheLimit: 20 * 1024 * 1024)
+            return try await LLMModelFactory.shared.loadContainer(configuration: model) { progress in
+                let fraction = progress.fractionCompleted
                 Task { @MainActor in
-                    self.modelInfo =
-                        "Downloading \(modelConfiguration.name): \(Int(progress.fractionCompleted * 100))%"
-                    self.progress = progress.fractionCompleted
+                    guard self.loadID == id else { return }
+                    self.modelStatus.updateDownloadProgress(fraction)
+                    self.progress = self.modelStatus.downloadProgress ?? self.progress
+                    self.modelInfo = "Downloading \(model.name): \(Int(self.progress * 100))%"
                 }
             }
-            modelInfo =
-                "Loaded \(modelConfiguration.id).  Weights: \(MLX.GPU.activeMemory / 1024 / 1024)M"
-            loadState = .loaded(modelContainer)
-            return modelContainer
+        }
+        loadTask = task
 
-        case let .loaded(modelContainer):
+        defer {
+            loadID = nil
+            loadTask = nil
+        }
+        do {
+            let modelContainer = try await task.value
+            progress = 1
+            modelInfo = "Loaded \(model.name).  Weights: \(MLX.GPU.activeMemory / 1024 / 1024)M"
+            loadState = .loaded(modelContainer)
+            modelStatus = .ready
             return modelContainer
+        } catch {
+            loadState = .idle
+            modelStatus = .failed(error.localizedDescription)
+            throw error
         }
     }
 

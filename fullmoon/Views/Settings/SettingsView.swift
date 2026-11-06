@@ -27,12 +27,20 @@ struct SettingsView: View {
 
                     NavigationLink(destination: ModelsSettingsView()) {
                         Label {
+                            #if os(iOS)
+                            Text("model")
+                            #else
                             Text("models")
+                            #endif
                                 .fixedSize()
                         } icon: {
                             Image(systemName: "arrow.down.circle")
                         }
+                        #if os(iOS)
+                        .badge(Text(llm.modelStatus.title))
+                        #else
                         .badge(appManager.modelDisplayName(appManager.currentModelName ?? ""))
+                        #endif
                     }
                 }
 
@@ -69,6 +77,7 @@ struct SettingsView: View {
                 }
             }
             .formStyle(.grouped)
+            .task { llm.refreshModelStatus() }
             .navigationTitle("settings")
             #if os(iOS)
                 .navigationBarTitleDisplayMode(.inline)
