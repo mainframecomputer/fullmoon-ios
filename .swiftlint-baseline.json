@@ -1,0 +1,2028 @@
+[
+  {
+    "_comment": "Created by Sébastien DAGUIN",
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 22,
+        "file": "fullmoon/ContentView.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 139 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "            if appManager.userInterfaceIdiom == .pad || appManager.userInterfaceIdiom == .mac || appManager.userInterfaceIdiom == .vision {"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 30,
+        "file": "fullmoon/ContentView.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 172 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "                    ChatView(currentThread: $currentThread, isPromptFocused: $isPromptFocused, showChats: $showChats, showSettings: $showSettings, viewModel: chatViewModel)"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 34,
+        "file": "fullmoon/ContentView.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 168 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "                ChatView(currentThread: $currentThread, isPromptFocused: $isPromptFocused, showChats: $showChats, showSettings: $showSettings, viewModel: chatViewModel)"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "trailing_whitespace",
+      "ruleName": "Trailing Whitespace",
+      "location": {
+        "character": 1,
+        "line": 55,
+        "file": "fullmoon/Domain/Data.swift"
+      },
+      "reason": "Lines should not have trailing whitespace",
+      "ruleDescription": "Lines should not have trailing whitespace"
+    },
+    "text": "    "
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "trailing_whitespace",
+      "ruleName": "Trailing Whitespace",
+      "location": {
+        "character": 1,
+        "line": 67,
+        "file": "fullmoon/Domain/Data.swift"
+      },
+      "reason": "Lines should not have trailing whitespace",
+      "ruleDescription": "Lines should not have trailing whitespace"
+    },
+    "text": "    "
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "trailing_whitespace",
+      "ruleName": "Trailing Whitespace",
+      "location": {
+        "character": 1,
+        "line": 71,
+        "file": "fullmoon/Domain/Data.swift"
+      },
+      "reason": "Lines should not have trailing whitespace",
+      "ruleDescription": "Lines should not have trailing whitespace"
+    },
+    "text": "        "
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "trailing_whitespace",
+      "ruleName": "Trailing Whitespace",
+      "location": {
+        "character": 1,
+        "line": 80,
+        "file": "fullmoon/Domain/Data.swift"
+      },
+      "reason": "Lines should not have trailing whitespace",
+      "ruleDescription": "Lines should not have trailing whitespace"
+    },
+    "text": "    "
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "trailing_whitespace",
+      "ruleName": "Trailing Whitespace",
+      "location": {
+        "character": 1,
+        "line": 84,
+        "file": "fullmoon/Domain/Data.swift"
+      },
+      "reason": "Lines should not have trailing whitespace",
+      "ruleDescription": "Lines should not have trailing whitespace"
+    },
+    "text": "        "
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "trailing_whitespace",
+      "ruleName": "Trailing Whitespace",
+      "location": {
+        "character": 1,
+        "line": 87,
+        "file": "fullmoon/Domain/Data.swift"
+      },
+      "reason": "Lines should not have trailing whitespace",
+      "ruleDescription": "Lines should not have trailing whitespace"
+    },
+    "text": "        "
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "trailing_whitespace",
+      "ruleName": "Trailing Whitespace",
+      "location": {
+        "character": 1,
+        "line": 90,
+        "file": "fullmoon/Domain/Data.swift"
+      },
+      "reason": "Lines should not have trailing whitespace",
+      "ruleDescription": "Lines should not have trailing whitespace"
+    },
+    "text": "        "
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "trailing_whitespace",
+      "ruleName": "Trailing Whitespace",
+      "location": {
+        "character": 1,
+        "line": 94,
+        "file": "fullmoon/Domain/Data.swift"
+      },
+      "reason": "Lines should not have trailing whitespace",
+      "ruleDescription": "Lines should not have trailing whitespace"
+    },
+    "text": "        "
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "vertical_whitespace",
+      "ruleName": "Vertical Whitespace",
+      "location": {
+        "character": 1,
+        "line": 125,
+        "file": "fullmoon/Domain/Data.swift"
+      },
+      "reason": "Limit vertical whitespace to a single empty line; currently 2",
+      "ruleDescription": "Limit vertical whitespace to a single empty line"
+    },
+    "text": ""
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "trailing_whitespace",
+      "ruleName": "Trailing Whitespace",
+      "location": {
+        "character": 1,
+        "line": 128,
+        "file": "fullmoon/Domain/Data.swift"
+      },
+      "reason": "Lines should not have trailing whitespace",
+      "ruleDescription": "Lines should not have trailing whitespace"
+    },
+    "text": "    "
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "cyclomatic_complexity",
+      "ruleName": "Cyclomatic Complexity",
+      "location": {
+        "character": 5,
+        "line": 129,
+        "file": "fullmoon/Domain/Data.swift"
+      },
+      "reason": "Function should have complexity 10 or less; currently complexity is 13",
+      "ruleDescription": "Complexity of function bodies should be limited."
+    },
+    "text": "    func getColor() -> Color {"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "trailing_whitespace",
+      "ruleName": "Trailing Whitespace",
+      "location": {
+        "character": 1,
+        "line": 163,
+        "file": "fullmoon/Domain/Data.swift"
+      },
+      "reason": "Lines should not have trailing whitespace",
+      "ruleDescription": "Lines should not have trailing whitespace"
+    },
+    "text": "    "
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "trailing_whitespace",
+      "ruleName": "Trailing Whitespace",
+      "location": {
+        "character": 1,
+        "line": 180,
+        "file": "fullmoon/Domain/Data.swift"
+      },
+      "reason": "Lines should not have trailing whitespace",
+      "ruleDescription": "Lines should not have trailing whitespace"
+    },
+    "text": "    "
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "trailing_whitespace",
+      "ruleName": "Trailing Whitespace",
+      "location": {
+        "character": 1,
+        "line": 197,
+        "file": "fullmoon/Domain/Data.swift"
+      },
+      "reason": "Lines should not have trailing whitespace",
+      "ruleDescription": "Lines should not have trailing whitespace"
+    },
+    "text": "    "
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 34,
+        "file": "fullmoon/Domain/IOSWebSearchService.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 121 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "            try await withCheckedThrowingContinuation { (continuation: CheckedContinuation<[SearchResult], any Error>) in"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 96,
+        "file": "fullmoon/Domain/IOSWebSearchService.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 126 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "              let scriptURL = Bundle.main.url(forResource: \"ios_searxng\", withExtension: \"py\", subdirectory: \"SearXNG\") else {"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 123,
+        "file": "fullmoon/Domain/IOSWebSearchService.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 121 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "            guard PyStatus_Exception(Py_InitializeFromConfig(&config)) == 0 else { throw SearchError.runtimeUnavailable }"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "trailing_whitespace",
+      "ruleName": "Trailing Whitespace",
+      "location": {
+        "character": 1,
+        "line": 20,
+        "file": "fullmoon/Domain/Message.swift"
+      },
+      "reason": "Lines should not have trailing whitespace",
+      "ruleDescription": "Lines should not have trailing whitespace"
+    },
+    "text": "    "
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "trailing_whitespace",
+      "ruleName": "Trailing Whitespace",
+      "location": {
+        "character": 1,
+        "line": 22,
+        "file": "fullmoon/Domain/Message.swift"
+      },
+      "reason": "Lines should not have trailing whitespace",
+      "ruleDescription": "Lines should not have trailing whitespace"
+    },
+    "text": "    "
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "trailing_whitespace",
+      "ruleName": "Trailing Whitespace",
+      "location": {
+        "character": 1,
+        "line": 15,
+        "file": "fullmoon/Domain/Thread.swift"
+      },
+      "reason": "Lines should not have trailing whitespace",
+      "ruleDescription": "Lines should not have trailing whitespace"
+    },
+    "text": "    "
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "trailing_whitespace",
+      "ruleName": "Trailing Whitespace",
+      "location": {
+        "character": 1,
+        "line": 17,
+        "file": "fullmoon/Domain/Thread.swift"
+      },
+      "reason": "Lines should not have trailing whitespace",
+      "ruleDescription": "Lines should not have trailing whitespace"
+    },
+    "text": "    "
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "trailing_whitespace",
+      "ruleName": "Trailing Whitespace",
+      "location": {
+        "character": 1,
+        "line": 21,
+        "file": "fullmoon/Domain/Thread.swift"
+      },
+      "reason": "Lines should not have trailing whitespace",
+      "ruleDescription": "Lines should not have trailing whitespace"
+    },
+    "text": "    "
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "implicit_optional_initialization",
+      "ruleName": "Implicit Optional Initialization",
+      "location": {
+        "character": 9,
+        "line": 22,
+        "file": "fullmoon/Views/Chat/ChatInputView.swift"
+      },
+      "reason": "Optional should be implicitly initialized without nil",
+      "ruleDescription": "Optionals should be consistently initialized, either with `= nil` or without."
+    },
+    "text": "    var onStop: (() -> Void)? = nil"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 110,
+        "file": "fullmoon/Views/Chat/ChatInputView.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 121 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "            reduceMotion || appManager.appearance.reduceAnimations ? nil : .spring(response: 0.3, dampingFraction: 0.75),"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 136,
+        "file": "fullmoon/Views/Chat/ChatView.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 127 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "                    viewModel.createBranch(from: message, in: currentThread, context: modelContext) { self.currentThread = $0 }"
+  },
+  {
+    "violation": {
+      "severity": "error",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 246,
+        "file": "fullmoon/Views/Chat/ChatView.swift"
+      },
+      "reason": "Line should be 200 characters or less; currently it has 256 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "        Message(role: .assistant, content: \"Le protocole `Sendable` indique qu'un type peut être partagé en toute sécurité à travers des limites concurrentes.\\n\\n```swift\\nstruct UserProfile: Sendable {\\n    let id: UUID\\n    let username: String\\n}\\n```\")"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 24,
+        "file": "fullmoon/Views/Chat/ChatsListView.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 151 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "            ConversationGroup(title: \"7 derniers jours\", threads: matches.filter { !calendar.isDateInToday($0.timestamp) && $0.timestamp >= weekAgo }),"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 51,
+        "file": "fullmoon/Views/Chat/ChatsListView.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 144 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "                                           description: Text(search.isEmpty ? \"Vos conversations apparaîtront ici.\" : \"Essayez d’autres mots.\"))"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "statement_position",
+      "ruleName": "Statement Position",
+      "location": {
+        "character": 50,
+        "line": 81,
+        "file": "fullmoon/Views/Chat/ChatsListView.swift"
+      },
+      "reason": "Else and catch should be on the same line, one space after the previous declaration",
+      "ruleDescription": "Else and catch should be on the same line, one space after the previous declaration"
+    },
+    "text": "                    do { try modelContext.save() }"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "implicit_optional_initialization",
+      "ruleName": "Implicit Optional Initialization",
+      "location": {
+        "character": 9,
+        "line": 16,
+        "file": "fullmoon/Views/Chat/ConversationView.swift"
+      },
+      "reason": "Optional should be implicitly initialized without nil",
+      "ruleDescription": "Optionals should be consistently initialized, either with `= nil` or without."
+    },
+    "text": "    var onRegenerate: ((Message) -> Void)? = nil"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "implicit_optional_initialization",
+      "ruleName": "Implicit Optional Initialization",
+      "location": {
+        "character": 9,
+        "line": 17,
+        "file": "fullmoon/Views/Chat/ConversationView.swift"
+      },
+      "reason": "Optional should be implicitly initialized without nil",
+      "ruleDescription": "Optionals should be consistently initialized, either with `= nil` or without."
+    },
+    "text": "    var onRetry: ((Message) -> Void)? = nil"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "implicit_optional_initialization",
+      "ruleName": "Implicit Optional Initialization",
+      "location": {
+        "character": 9,
+        "line": 18,
+        "file": "fullmoon/Views/Chat/ConversationView.swift"
+      },
+      "reason": "Optional should be implicitly initialized without nil",
+      "ruleDescription": "Optionals should be consistently initialized, either with `= nil` or without."
+    },
+    "text": "    var onEdit: ((Message) -> Void)? = nil"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "implicit_optional_initialization",
+      "ruleName": "Implicit Optional Initialization",
+      "location": {
+        "character": 9,
+        "line": 19,
+        "file": "fullmoon/Views/Chat/ConversationView.swift"
+      },
+      "reason": "Optional should be implicitly initialized without nil",
+      "ruleDescription": "Optionals should be consistently initialized, either with `= nil` or without."
+    },
+    "text": "    var onDelete: ((Message) -> Void)? = nil"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "implicit_optional_initialization",
+      "ruleName": "Implicit Optional Initialization",
+      "location": {
+        "character": 9,
+        "line": 20,
+        "file": "fullmoon/Views/Chat/ConversationView.swift"
+      },
+      "reason": "Optional should be implicitly initialized without nil",
+      "ruleDescription": "Optionals should be consistently initialized, either with `= nil` or without."
+    },
+    "text": "    var onBranch: ((Message) -> Void)? = nil"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "implicit_optional_initialization",
+      "ruleName": "Implicit Optional Initialization",
+      "location": {
+        "character": 9,
+        "line": 21,
+        "file": "fullmoon/Views/Chat/ConversationView.swift"
+      },
+      "reason": "Optional should be implicitly initialized without nil",
+      "ruleDescription": "Optionals should be consistently initialized, either with `= nil` or without."
+    },
+    "text": "    var generatingMessageID: UUID? = nil"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 64,
+        "file": "fullmoon/Views/Chat/ConversationView.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 123 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "                .modifier(ConversationScrollTracking(followsResponse: $followsResponse, isUserScrolling: $isUserScrolling))"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 104,
+        "file": "fullmoon/Views/Chat/ConversationView.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 138 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "                    .accessibilityLabel(isGenerating ? \"Nouveaux messages reçus, faire défiler vers le bas\" : \"Faire défiler vers le bas\")"
+  },
+  {
+    "violation": {
+      "severity": "error",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 153,
+        "file": "fullmoon/Views/Chat/ConversationView.swift"
+      },
+      "reason": "Line should be 200 characters or less; currently it has 236 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "        Message(role: .assistant, content: \"Commencez par **une idée par note**.\\n\\n- Capturez sans trier.\\n- Relisez chaque semaine.\\n- Choisissez une prochaine action.\\n\\n```swift\\nlet prochaineAction = \\\"Faire un premier pas\\\"\\n```\")"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "trailing_whitespace",
+      "ruleName": "Trailing Whitespace",
+      "location": {
+        "character": 1,
+        "line": 20,
+        "file": "fullmoon/Views/Chat/MessageCodeBlock.swift"
+      },
+      "reason": "Lines should not have trailing whitespace",
+      "ruleDescription": "Lines should not have trailing whitespace"
+    },
+    "text": "                "
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "trailing_whitespace",
+      "ruleName": "Trailing Whitespace",
+      "location": {
+        "character": 1,
+        "line": 22,
+        "file": "fullmoon/Views/Chat/MessageCodeBlock.swift"
+      },
+      "reason": "Lines should not have trailing whitespace",
+      "ruleDescription": "Lines should not have trailing whitespace"
+    },
+    "text": "                "
+  },
+  {
+    "violation": {
+      "severity": "error",
+      "ruleIdentifier": "type_body_length",
+      "ruleName": "Type Body Length",
+      "location": {
+        "character": 1,
+        "line": 12,
+        "file": "fullmoon/Views/Chat/MessageView.swift"
+      },
+      "reason": "Struct body should span 350 lines or less excluding comments and whitespace: currently spans 387 lines",
+      "ruleDescription": "Type bodies should not span too many lines"
+    },
+    "text": "struct MessageView: View {"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "implicit_optional_initialization",
+      "ruleName": "Implicit Optional Initialization",
+      "location": {
+        "character": 9,
+        "line": 20,
+        "file": "fullmoon/Views/Chat/MessageView.swift"
+      },
+      "reason": "Optional should be implicitly initialized without nil",
+      "ruleDescription": "Optionals should be consistently initialized, either with `= nil` or without."
+    },
+    "text": "    var generationPhase: AIPhase? = nil"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "implicit_optional_initialization",
+      "ruleName": "Implicit Optional Initialization",
+      "location": {
+        "character": 9,
+        "line": 21,
+        "file": "fullmoon/Views/Chat/MessageView.swift"
+      },
+      "reason": "Optional should be implicitly initialized without nil",
+      "ruleDescription": "Optionals should be consistently initialized, either with `= nil` or without."
+    },
+    "text": "    var onRegenerate: (() -> Void)? = nil"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "implicit_optional_initialization",
+      "ruleName": "Implicit Optional Initialization",
+      "location": {
+        "character": 9,
+        "line": 22,
+        "file": "fullmoon/Views/Chat/MessageView.swift"
+      },
+      "reason": "Optional should be implicitly initialized without nil",
+      "ruleDescription": "Optionals should be consistently initialized, either with `= nil` or without."
+    },
+    "text": "    var onRetry: (() -> Void)? = nil"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "implicit_optional_initialization",
+      "ruleName": "Implicit Optional Initialization",
+      "location": {
+        "character": 9,
+        "line": 23,
+        "file": "fullmoon/Views/Chat/MessageView.swift"
+      },
+      "reason": "Optional should be implicitly initialized without nil",
+      "ruleDescription": "Optionals should be consistently initialized, either with `= nil` or without."
+    },
+    "text": "    var onEdit: (() -> Void)? = nil"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "implicit_optional_initialization",
+      "ruleName": "Implicit Optional Initialization",
+      "location": {
+        "character": 9,
+        "line": 24,
+        "file": "fullmoon/Views/Chat/MessageView.swift"
+      },
+      "reason": "Optional should be implicitly initialized without nil",
+      "ruleDescription": "Optionals should be consistently initialized, either with `= nil` or without."
+    },
+    "text": "    var onDelete: (() -> Void)? = nil"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "implicit_optional_initialization",
+      "ruleName": "Implicit Optional Initialization",
+      "location": {
+        "character": 9,
+        "line": 25,
+        "file": "fullmoon/Views/Chat/MessageView.swift"
+      },
+      "reason": "Optional should be implicitly initialized without nil",
+      "ruleDescription": "Optionals should be consistently initialized, either with `= nil` or without."
+    },
+    "text": "    var onBranch: (() -> Void)? = nil"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "file_length",
+      "ruleName": "File Length",
+      "location": {
+        "character": 1,
+        "line": 492,
+        "file": "fullmoon/Views/Chat/MessageView.swift"
+      },
+      "reason": "File should contain 400 lines or less: currently contains 492",
+      "ruleDescription": "Files should not span too many lines."
+    },
+    "text": "}"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 17,
+        "file": "fullmoon/Views/Settings/AppearanceSettingsView.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 130 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "                        Label(color.rawValue.capitalized, systemImage: \"circle.fill\").foregroundStyle(color.getColor()).tag(color)"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 81,
+        "file": "fullmoon/Views/Settings/AppearanceSettingsView.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 123 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "                    ValueSlider(title: \"Taille\", value: $appearance.thinkingDotSize, range: 3...12, step: 1, suffix: \" pt\")"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 82,
+        "file": "fullmoon/Views/Settings/AppearanceSettingsView.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 127 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "                    ValueSlider(title: \"Espacement\", value: $appearance.thinkingSpacing, range: 1...12, step: 1, suffix: \" pt\")"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 83,
+        "file": "fullmoon/Views/Settings/AppearanceSettingsView.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 142 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "                    ValueSlider(title: \"Période\", value: $appearance.thinkingPeriodMilliseconds, range: 500...2_500, step: 100, suffix: \" ms\")"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 90,
+        "file": "fullmoon/Views/Settings/AppearanceSettingsView.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 139 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "                    ValueSlider(title: \"Épaisseur\", value: $appearance.intelligenceGlowLineWidth, range: 0.5...5, step: 0.5, suffix: \" pt\")"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 91,
+        "file": "fullmoon/Views/Settings/AppearanceSettingsView.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 135 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "                    ValueSlider(title: \"Rayon\", value: $appearance.intelligenceGlowCornerRadius, range: 4...36, step: 1, suffix: \" pt\")"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 92,
+        "file": "fullmoon/Views/Settings/AppearanceSettingsView.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 131 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "                    Text(\"Le flou et la vitesse du halo sont calculés par AIEffectsKit et ne sont pas configurables publiquement.\")"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 110,
+        "file": "fullmoon/Views/Settings/AppearanceSettingsView.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 133 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "            ValueSlider(title: \"Période\", value: $appearance.shimmerPeriodMilliseconds, range: 400...3_000, step: 100, suffix: \" ms\")"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 114,
+        "file": "fullmoon/Views/Settings/AppearanceSettingsView.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 134 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "            ValueSlider(title: \"Intervalle\", value: $appearance.scrambleIntervalMilliseconds, range: 15...150, step: 5, suffix: \" ms\")"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 117,
+        "file": "fullmoon/Views/Settings/AppearanceSettingsView.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 129 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "            ValueSlider(title: \"Décalage\", value: $appearance.effectStaggerMilliseconds, range: 10...600, step: 5, suffix: \" ms\")"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 151,
+        "file": "fullmoon/Views/Settings/AppearanceSettingsView.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 132 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "                                  spacing: appearance.thinkingSpacing, period: .milliseconds(appearance.thinkingPeriodMilliseconds))"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 163,
+        "file": "fullmoon/Views/Settings/AppearanceSettingsView.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 130 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "                                  activeWhen: appearance.aiEffectsEnabled && appearance.intelligenceGlowEnabled && phase.isActive)"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 185,
+        "file": "fullmoon/Views/Settings/AppearanceSettingsView.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 174 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "        switch phase { case .idle: \"Prêt\"; case .thinking: \"Réflexion\"; case .streaming: \"Génération\"; case .done: \"Terminé\"; case .error: \"Erreur\"; case .listening: \"Prêt\" }"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "switch_case_alignment",
+      "ruleName": "Switch and Case Statement Alignment",
+      "location": {
+        "character": 24,
+        "line": 185,
+        "file": "fullmoon/Views/Settings/AppearanceSettingsView.swift"
+      },
+      "reason": "Case statements should vertically aligned with their closing brace",
+      "ruleDescription": "Case statements should vertically align with their closing brace, or indented if configured otherwise."
+    },
+    "text": "        switch phase { case .idle: \"Prêt\"; case .thinking: \"Réflexion\"; case .streaming: \"Génération\"; case .done: \"Terminé\"; case .error: \"Erreur\"; case .listening: \"Prêt\" }"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "switch_case_alignment",
+      "ruleName": "Switch and Case Statement Alignment",
+      "location": {
+        "character": 44,
+        "line": 185,
+        "file": "fullmoon/Views/Settings/AppearanceSettingsView.swift"
+      },
+      "reason": "Case statements should vertically aligned with their closing brace",
+      "ruleDescription": "Case statements should vertically align with their closing brace, or indented if configured otherwise."
+    },
+    "text": "        switch phase { case .idle: \"Prêt\"; case .thinking: \"Réflexion\"; case .streaming: \"Génération\"; case .done: \"Terminé\"; case .error: \"Erreur\"; case .listening: \"Prêt\" }"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "switch_case_alignment",
+      "ruleName": "Switch and Case Statement Alignment",
+      "location": {
+        "character": 73,
+        "line": 185,
+        "file": "fullmoon/Views/Settings/AppearanceSettingsView.swift"
+      },
+      "reason": "Case statements should vertically aligned with their closing brace",
+      "ruleDescription": "Case statements should vertically align with their closing brace, or indented if configured otherwise."
+    },
+    "text": "        switch phase { case .idle: \"Prêt\"; case .thinking: \"Réflexion\"; case .streaming: \"Génération\"; case .done: \"Terminé\"; case .error: \"Erreur\"; case .listening: \"Prêt\" }"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "switch_case_alignment",
+      "ruleName": "Switch and Case Statement Alignment",
+      "location": {
+        "character": 104,
+        "line": 185,
+        "file": "fullmoon/Views/Settings/AppearanceSettingsView.swift"
+      },
+      "reason": "Case statements should vertically aligned with their closing brace",
+      "ruleDescription": "Case statements should vertically align with their closing brace, or indented if configured otherwise."
+    },
+    "text": "        switch phase { case .idle: \"Prêt\"; case .thinking: \"Réflexion\"; case .streaming: \"Génération\"; case .done: \"Terminé\"; case .error: \"Erreur\"; case .listening: \"Prêt\" }"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "switch_case_alignment",
+      "ruleName": "Switch and Case Statement Alignment",
+      "location": {
+        "character": 127,
+        "line": 185,
+        "file": "fullmoon/Views/Settings/AppearanceSettingsView.swift"
+      },
+      "reason": "Case statements should vertically aligned with their closing brace",
+      "ruleDescription": "Case statements should vertically align with their closing brace, or indented if configured otherwise."
+    },
+    "text": "        switch phase { case .idle: \"Prêt\"; case .thinking: \"Réflexion\"; case .streaming: \"Génération\"; case .done: \"Terminé\"; case .error: \"Erreur\"; case .listening: \"Prêt\" }"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "switch_case_alignment",
+      "ruleName": "Switch and Case Statement Alignment",
+      "location": {
+        "character": 150,
+        "line": 185,
+        "file": "fullmoon/Views/Settings/AppearanceSettingsView.swift"
+      },
+      "reason": "Case statements should vertically aligned with their closing brace",
+      "ruleDescription": "Case statements should vertically align with their closing brace, or indented if configured otherwise."
+    },
+    "text": "        switch phase { case .idle: \"Prêt\"; case .thinking: \"Réflexion\"; case .streaming: \"Génération\"; case .done: \"Terminé\"; case .error: \"Erreur\"; case .listening: \"Prêt\" }"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 7,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 133 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "    var scheme: ColorScheme? { switch self { case .system: nil; case .light, .forest: .light; case .dark, .midnight, .dusk: .dark } }"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "switch_case_alignment",
+      "ruleName": "Switch and Case Statement Alignment",
+      "location": {
+        "character": 46,
+        "line": 7,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Case statements should vertically aligned with their closing brace",
+      "ruleDescription": "Case statements should vertically align with their closing brace, or indented if configured otherwise."
+    },
+    "text": "    var scheme: ColorScheme? { switch self { case .system: nil; case .light, .forest: .light; case .dark, .midnight, .dusk: .dark } }"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "switch_case_alignment",
+      "ruleName": "Switch and Case Statement Alignment",
+      "location": {
+        "character": 65,
+        "line": 7,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Case statements should vertically aligned with their closing brace",
+      "ruleDescription": "Case statements should vertically align with their closing brace, or indented if configured otherwise."
+    },
+    "text": "    var scheme: ColorScheme? { switch self { case .system: nil; case .light, .forest: .light; case .dark, .midnight, .dusk: .dark } }"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "switch_case_alignment",
+      "ruleName": "Switch and Case Statement Alignment",
+      "location": {
+        "character": 95,
+        "line": 7,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Case statements should vertically aligned with their closing brace",
+      "ruleDescription": "Case statements should vertically align with their closing brace, or indented if configured otherwise."
+    },
+    "text": "    var scheme: ColorScheme? { switch self { case .system: nil; case .light, .forest: .light; case .dark, .midnight, .dusk: .dark } }"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "switch_case_alignment",
+      "ruleName": "Switch and Case Statement Alignment",
+      "location": {
+        "character": 42,
+        "line": 19,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Case statements should vertically aligned with their closing brace",
+      "ruleDescription": "Case statements should vertically align with their closing brace, or indented if configured otherwise."
+    },
+    "text": "    var spacing: CGFloat { switch self { case .compact: 8; case .standard: 16; case .comfortable: 24 } }"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "switch_case_alignment",
+      "ruleName": "Switch and Case Statement Alignment",
+      "location": {
+        "character": 60,
+        "line": 19,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Case statements should vertically aligned with their closing brace",
+      "ruleDescription": "Case statements should vertically align with their closing brace, or indented if configured otherwise."
+    },
+    "text": "    var spacing: CGFloat { switch self { case .compact: 8; case .standard: 16; case .comfortable: 24 } }"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "switch_case_alignment",
+      "ruleName": "Switch and Case Statement Alignment",
+      "location": {
+        "character": 80,
+        "line": 19,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Case statements should vertically aligned with their closing brace",
+      "ruleDescription": "Case statements should vertically align with their closing brace, or indented if configured otherwise."
+    },
+    "text": "    var spacing: CGFloat { switch self { case .compact: 8; case .standard: 16; case .comfortable: 24 } }"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "switch_case_alignment",
+      "ruleName": "Switch and Case Statement Alignment",
+      "location": {
+        "character": 41,
+        "line": 24,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Case statements should vertically aligned with their closing brace",
+      "ruleDescription": "Case statements should vertically align with their closing brace, or indented if configured otherwise."
+    },
+    "text": "    var opacity: Double { switch self { case .subtle: 0.06; case .balanced: 0.12; case .expressive: 0.20 } }"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "switch_case_alignment",
+      "ruleName": "Switch and Case Statement Alignment",
+      "location": {
+        "character": 61,
+        "line": 24,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Case statements should vertically aligned with their closing brace",
+      "ruleDescription": "Case statements should vertically align with their closing brace, or indented if configured otherwise."
+    },
+    "text": "    var opacity: Double { switch self { case .subtle: 0.06; case .balanced: 0.12; case .expressive: 0.20 } }"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "switch_case_alignment",
+      "ruleName": "Switch and Case Statement Alignment",
+      "location": {
+        "character": 83,
+        "line": 24,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Case statements should vertically aligned with their closing brace",
+      "ruleDescription": "Case statements should vertically align with their closing brace, or indented if configured otherwise."
+    },
+    "text": "    var opacity: Double { switch self { case .subtle: 0.06; case .balanced: 0.12; case .expressive: 0.20 } }"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "switch_case_alignment",
+      "ruleName": "Switch and Case Statement Alignment",
+      "location": {
+        "character": 36,
+        "line": 39,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Case statements should vertically aligned with their closing brace",
+      "ruleDescription": "Case statements should vertically align with their closing brace, or indented if configured otherwise."
+    },
+    "text": "        case .none: \"Aucun effet\"; case .trailingShimmer: \"Scintillement final\"; case .typewriter: \"Machine à écrire\""
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "switch_case_alignment",
+      "ruleName": "Switch and Case Statement Alignment",
+      "location": {
+        "character": 82,
+        "line": 39,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Case statements should vertically aligned with their closing brace",
+      "ruleDescription": "Case statements should vertically align with their closing brace, or indented if configured otherwise."
+    },
+    "text": "        case .none: \"Aucun effet\"; case .trailingShimmer: \"Scintillement final\"; case .typewriter: \"Machine à écrire\""
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 40,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 125 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "        case .wordReveal: \"Révélation par mots\"; case .tokenChunks: \"Fragments successifs\"; case .fadeRise: \"Fondu ascendant\""
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "switch_case_alignment",
+      "ruleName": "Switch and Case Statement Alignment",
+      "location": {
+        "character": 50,
+        "line": 40,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Case statements should vertically aligned with their closing brace",
+      "ruleDescription": "Case statements should vertically align with their closing brace, or indented if configured otherwise."
+    },
+    "text": "        case .wordReveal: \"Révélation par mots\"; case .tokenChunks: \"Fragments successifs\"; case .fadeRise: \"Fondu ascendant\""
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "switch_case_alignment",
+      "ruleName": "Switch and Case Statement Alignment",
+      "location": {
+        "character": 93,
+        "line": 40,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Case statements should vertically aligned with their closing brace",
+      "ruleDescription": "Case statements should vertically align with their closing brace, or indented if configured otherwise."
+    },
+    "text": "        case .wordReveal: \"Révélation par mots\"; case .tokenChunks: \"Fragments successifs\"; case .fadeRise: \"Fondu ascendant\""
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "switch_case_alignment",
+      "ruleName": "Switch and Case Statement Alignment",
+      "location": {
+        "character": 43,
+        "line": 41,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Case statements should vertically aligned with their closing brace",
+      "ruleDescription": "Case statements should vertically align with their closing brace, or indented if configured otherwise."
+    },
+    "text": "        case .blurFocus: \"Mise au point\"; case .shimmerWipe: \"Balayage lumineux\"; case .skeleton: \"Squelette\""
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "switch_case_alignment",
+      "ruleName": "Switch and Case Statement Alignment",
+      "location": {
+        "character": 83,
+        "line": 41,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Case statements should vertically aligned with their closing brace",
+      "ruleDescription": "Case statements should vertically align with their closing brace, or indented if configured otherwise."
+    },
+    "text": "        case .blurFocus: \"Mise au point\"; case .shimmerWipe: \"Balayage lumineux\"; case .skeleton: \"Squelette\""
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "switch_case_alignment",
+      "ruleName": "Switch and Case Statement Alignment",
+      "location": {
+        "character": 39,
+        "line": 42,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Case statements should vertically aligned with their closing brace",
+      "ruleDescription": "Case statements should vertically align with their closing brace, or indented if configured otherwise."
+    },
+    "text": "        case .scramble: \"Brouillage\"; case .letterDrop: \"Chute de lettres\"; case .lineCascade: \"Cascade de lignes\""
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "switch_case_alignment",
+      "ruleName": "Switch and Case Statement Alignment",
+      "location": {
+        "character": 77,
+        "line": 42,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Case statements should vertically aligned with their closing brace",
+      "ruleDescription": "Case statements should vertically align with their closing brace, or indented if configured otherwise."
+    },
+    "text": "        case .scramble: \"Brouillage\"; case .letterDrop: \"Chute de lettres\"; case .lineCascade: \"Cascade de lignes\""
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 66,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 146 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "    var title: String { switch self { case .noctis: \"Noctis\"; case .ocean: \"Océan\"; case .sunset: \"Crépuscule\"; case .monochrome: \"Monochrome\" } }"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "switch_case_alignment",
+      "ruleName": "Switch and Case Statement Alignment",
+      "location": {
+        "character": 39,
+        "line": 66,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Case statements should vertically aligned with their closing brace",
+      "ruleDescription": "Case statements should vertically align with their closing brace, or indented if configured otherwise."
+    },
+    "text": "    var title: String { switch self { case .noctis: \"Noctis\"; case .ocean: \"Océan\"; case .sunset: \"Crépuscule\"; case .monochrome: \"Monochrome\" } }"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "switch_case_alignment",
+      "ruleName": "Switch and Case Statement Alignment",
+      "location": {
+        "character": 63,
+        "line": 66,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Case statements should vertically aligned with their closing brace",
+      "ruleDescription": "Case statements should vertically align with their closing brace, or indented if configured otherwise."
+    },
+    "text": "    var title: String { switch self { case .noctis: \"Noctis\"; case .ocean: \"Océan\"; case .sunset: \"Crépuscule\"; case .monochrome: \"Monochrome\" } }"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "switch_case_alignment",
+      "ruleName": "Switch and Case Statement Alignment",
+      "location": {
+        "character": 85,
+        "line": 66,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Case statements should vertically aligned with their closing brace",
+      "ruleDescription": "Case statements should vertically align with their closing brace, or indented if configured otherwise."
+    },
+    "text": "    var title: String { switch self { case .noctis: \"Noctis\"; case .ocean: \"Océan\"; case .sunset: \"Crépuscule\"; case .monochrome: \"Monochrome\" } }"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "switch_case_alignment",
+      "ruleName": "Switch and Case Statement Alignment",
+      "location": {
+        "character": 113,
+        "line": 66,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Case statements should vertically aligned with their closing brace",
+      "ruleDescription": "Case statements should vertically align with their closing brace, or indented if configured otherwise."
+    },
+    "text": "    var title: String { switch self { case .noctis: \"Noctis\"; case .ocean: \"Océan\"; case .sunset: \"Crépuscule\"; case .monochrome: \"Monochrome\" } }"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 111,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 133 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "        aiEffectsEnabled = value.aiEffectsEnabled; aiTextRenderingMode = value.aiTextRenderingMode; streamEffect = value.streamEffect"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 112,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 130 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "        effectStaggerMilliseconds = value.effectStaggerMilliseconds; effectDurationMilliseconds = value.effectDurationMilliseconds"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 113,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 145 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "        shimmerWindow = value.shimmerWindow; shimmerStrength = value.shimmerStrength; shimmerPeriodMilliseconds = value.shimmerPeriodMilliseconds"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 116,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 131 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "        thinkingDotCount = value.thinkingDotCount; thinkingDotSize = value.thinkingDotSize; thinkingSpacing = value.thinkingSpacing"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 117,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 126 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "        thinkingPeriodMilliseconds = value.thinkingPeriodMilliseconds; intelligenceGlowEnabled = value.intelligenceGlowEnabled"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 118,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 124 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "        intelligenceGlowPalette = value.intelligenceGlowPalette; intelligenceGlowLineWidth = value.intelligenceGlowLineWidth"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 159,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 133 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "        case theme, density, messageStyle, intensity, fontSize, contentWidth, showAvatars, showTimestamps, reduceAnimations, useGlass"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 161,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 138 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "        case shimmerWindow, shimmerStrength, shimmerPeriodMilliseconds, typewriterCaret, scrambleIntervalMilliseconds, scrambleProbability"
+  },
+  {
+    "violation": {
+      "severity": "error",
+      "ruleIdentifier": "identifier_name",
+      "ruleName": "Identifier Name",
+      "location": {
+        "character": 13,
+        "line": 168,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Variable name 'c' should be between 3 and 40 characters long",
+      "ruleDescription": "Identifier names should only contain alphanumeric characters and start with a lowercase character or should only contain capital letters. In an exception to the above, variable names may start with a capital letter when they are declared as static. Variable names should not be too long or too short."
+    },
+    "text": "        let c = try decoder.container(keyedBy: CodingKeys.self)"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 180,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 130 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "        aiTextRenderingMode = try c.decodeIfPresent(AITextRenderingMode.self, forKey: .aiTextRenderingMode) ?? aiTextRenderingMode"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 182,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 135 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "        effectStaggerMilliseconds = try c.decodeIfPresent(Double.self, forKey: .effectStaggerMilliseconds) ?? effectStaggerMilliseconds"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 183,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 138 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "        effectDurationMilliseconds = try c.decodeIfPresent(Double.self, forKey: .effectDurationMilliseconds) ?? effectDurationMilliseconds"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 186,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 135 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "        shimmerPeriodMilliseconds = try c.decodeIfPresent(Double.self, forKey: .shimmerPeriodMilliseconds) ?? shimmerPeriodMilliseconds"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 188,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 144 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "        scrambleIntervalMilliseconds = try c.decodeIfPresent(Double.self, forKey: .scrambleIntervalMilliseconds) ?? scrambleIntervalMilliseconds"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 190,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 130 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "        thinkingIndicatorEnabled = try c.decodeIfPresent(Bool.self, forKey: .thinkingIndicatorEnabled) ?? thinkingIndicatorEnabled"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 194,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 138 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "        thinkingPeriodMilliseconds = try c.decodeIfPresent(Double.self, forKey: .thinkingPeriodMilliseconds) ?? thinkingPeriodMilliseconds"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 195,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 127 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "        intelligenceGlowEnabled = try c.decodeIfPresent(Bool.self, forKey: .intelligenceGlowEnabled) ?? intelligenceGlowEnabled"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 196,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 146 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "        intelligenceGlowPalette = try c.decodeIfPresent(IntelligenceGlowPalette.self, forKey: .intelligenceGlowPalette) ?? intelligenceGlowPalette"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 197,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 135 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "        intelligenceGlowLineWidth = try c.decodeIfPresent(Double.self, forKey: .intelligenceGlowLineWidth) ?? intelligenceGlowLineWidth"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 198,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 144 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "        intelligenceGlowCornerRadius = try c.decodeIfPresent(Double.self, forKey: .intelligenceGlowCornerRadius) ?? intelligenceGlowCornerRadius"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 221,
+        "file": "fullmoon/Views/Settings/ChatAppearance.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 144 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "                if reduceMotion || appManager.appearance.reduceAnimations { transaction.animation = nil; transaction.disablesAnimations = true }"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "trailing_whitespace",
+      "ruleName": "Trailing Whitespace",
+      "location": {
+        "character": 1,
+        "line": 16,
+        "file": "fullmoon/Views/Settings/ChatsSettingsView.swift"
+      },
+      "reason": "Lines should not have trailing whitespace",
+      "ruleDescription": "Lines should not have trailing whitespace"
+    },
+    "text": "    "
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "trailing_whitespace",
+      "ruleName": "Trailing Whitespace",
+      "location": {
+        "character": 1,
+        "line": 25,
+        "file": "fullmoon/Views/Settings/ChatsSettingsView.swift"
+      },
+      "reason": "Lines should not have trailing whitespace",
+      "ruleDescription": "Lines should not have trailing whitespace"
+    },
+    "text": "            "
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "trailing_whitespace",
+      "ruleName": "Trailing Whitespace",
+      "location": {
+        "character": 1,
+        "line": 32,
+        "file": "fullmoon/Views/Settings/ChatsSettingsView.swift"
+      },
+      "reason": "Lines should not have trailing whitespace",
+      "ruleDescription": "Lines should not have trailing whitespace"
+    },
+    "text": "            "
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "trailing_whitespace",
+      "ruleName": "Trailing Whitespace",
+      "location": {
+        "character": 1,
+        "line": 57,
+        "file": "fullmoon/Views/Settings/ChatsSettingsView.swift"
+      },
+      "reason": "Lines should not have trailing whitespace",
+      "ruleDescription": "Lines should not have trailing whitespace"
+    },
+    "text": "    "
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "multiple_closures_with_trailing_closure",
+      "ruleName": "Multiple Closures with Trailing Closure",
+      "location": {
+        "character": 55,
+        "line": 57,
+        "file": "fullmoon/Views/Settings/SettingsView.swift"
+      },
+      "reason": "Trailing closure syntax should not be used when passing more than one closure argument",
+      "ruleDescription": "Trailing closure syntax should not be used when passing more than one closure argument"
+    },
+    "text": "                        Button(action: { dismiss() }) {"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "multiple_closures_with_trailing_closure",
+      "ruleName": "Multiple Closures with Trailing Closure",
+      "location": {
+        "character": 55,
+        "line": 63,
+        "file": "fullmoon/Views/Settings/SettingsView.swift"
+      },
+      "reason": "Trailing closure syntax should not be used when passing more than one closure argument",
+      "ruleDescription": "Trailing closure syntax should not be used when passing more than one closure argument"
+    },
+    "text": "                        Button(action: { dismiss() }) {"
+  },
+  {
+    "violation": {
+      "severity": "error",
+      "ruleIdentifier": "type_body_length",
+      "ruleName": "Type Body Length",
+      "location": {
+        "character": 22,
+        "line": 16,
+        "file": "fullmoon/Views/ViewModels/Chat/ChatView+ViewModel.swift"
+      },
+      "reason": "Class body should span 350 lines or less excluding comments and whitespace: currently spans 410 lines",
+      "ruleDescription": "Type bodies should not span too many lines"
+    },
+    "text": "    @MainActor final class ViewModel {"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 78,
+        "file": "fullmoon/Views/ViewModels/Chat/ChatView+ViewModel.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 122 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "            thread?.title ?? thread?.sortedMessages.first.map { String($0.content.prefix(70)) } ?? \"Nouvelle conversation\""
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "cyclomatic_complexity",
+      "ruleName": "Cyclomatic Complexity",
+      "location": {
+        "character": 17,
+        "line": 202,
+        "file": "fullmoon/Views/ViewModels/Chat/ChatView+ViewModel.swift"
+      },
+      "reason": "Function should have complexity 10 or less; currently complexity is 13",
+      "ruleDescription": "Complexity of function bodies should be limited."
+    },
+    "text": "        private func startGeneration("
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "function_body_length",
+      "ruleName": "Function Body Length",
+      "location": {
+        "character": 17,
+        "line": 202,
+        "file": "fullmoon/Views/ViewModels/Chat/ChatView+ViewModel.swift"
+      },
+      "reason": "Function body should span 50 lines or less excluding comments and whitespace: currently spans 81 lines",
+      "ruleDescription": "Function bodies should not span too many lines"
+    },
+    "text": "        private func startGeneration("
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 234,
+        "file": "fullmoon/Views/ViewModels/Chat/ChatView+ViewModel.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 122 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "                            charactersPerSecond = generationSeconds > 0 ? Double(characterCount) / generationSeconds : nil"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "line_length",
+      "ruleName": "Line Length",
+      "location": {
+        "character": 1,
+        "line": 236,
+        "file": "fullmoon/Views/ViewModels/Chat/ChatView+ViewModel.swift"
+      },
+      "reason": "Line should be 120 characters or less; currently it has 197 characters",
+      "ruleDescription": "Lines should not span too many characters."
+    },
+    "text": "                        Self.logger.info(\"Response: first text \\(self.firstTextDelay ?? -1) s, total \\(elapsed) s, \\(self.characterCount) characters, \\(self.charactersPerSecond ?? 0) characters/s\")"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "statement_position",
+      "ruleName": "Statement Position",
+      "location": {
+        "character": 72,
+        "line": 311,
+        "file": "fullmoon/Views/ViewModels/Chat/ChatView+ViewModel.swift"
+      },
+      "reason": "Else and catch should be on the same line, one space after the previous declaration",
+      "ruleDescription": "Else and catch should be on the same line, one space after the previous declaration"
+    },
+    "text": "                    do { try await Task.sleep(for: .milliseconds(100)) }"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "function_body_length",
+      "ruleName": "Function Body Length",
+      "location": {
+        "character": 9,
+        "line": 334,
+        "file": "fullmoon/Views/ViewModels/Chat/ChatView+ViewModel.swift"
+      },
+      "reason": "Function body should span 50 lines or less excluding comments and whitespace: currently spans 56 lines",
+      "ruleDescription": "Function bodies should not span too many lines"
+    },
+    "text": "        func regenerate(_ message: Message, in thread: Thread, context: ModelContext) {"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "file_length",
+      "ruleName": "File Length",
+      "location": {
+        "character": 1,
+        "line": 475,
+        "file": "fullmoon/Views/ViewModels/Chat/ChatView+ViewModel.swift"
+      },
+      "reason": "File should contain 400 lines or less: currently contains 475",
+      "ruleDescription": "Files should not span too many lines."
+    },
+    "text": "}"
+  },
+  {
+    "violation": {
+      "severity": "error",
+      "ruleIdentifier": "type_name",
+      "ruleName": "Type Name",
+      "location": {
+        "character": 8,
+        "line": 11,
+        "file": "fullmoon/fullmoonApp.swift"
+      },
+      "reason": "Type name 'fullmoonApp' should start with an uppercase character",
+      "ruleDescription": "Type name should only contain alphanumeric characters, start with an uppercase character and span between 3 and 40 characters in length.\nPrivate types may start with an underscore."
+    },
+    "text": "struct fullmoonApp: App {"
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "trailing_whitespace",
+      "ruleName": "Trailing Whitespace",
+      "location": {
+        "character": 1,
+        "line": 16,
+        "file": "fullmoon/fullmoonApp.swift"
+      },
+      "reason": "Lines should not have trailing whitespace",
+      "ruleDescription": "Lines should not have trailing whitespace"
+    },
+    "text": "    "
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "trailing_whitespace",
+      "ruleName": "Trailing Whitespace",
+      "location": {
+        "character": 1,
+        "line": 51,
+        "file": "fullmoon/fullmoonApp.swift"
+      },
+      "reason": "Lines should not have trailing whitespace",
+      "ruleDescription": "Lines should not have trailing whitespace"
+    },
+    "text": "    "
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "trailing_whitespace",
+      "ruleName": "Trailing Whitespace",
+      "location": {
+        "character": 1,
+        "line": 56,
+        "file": "fullmoon/fullmoonApp.swift"
+      },
+      "reason": "Lines should not have trailing whitespace",
+      "ruleDescription": "Lines should not have trailing whitespace"
+    },
+    "text": "    "
+  },
+  {
+    "violation": {
+      "severity": "warning",
+      "ruleIdentifier": "trailing_whitespace",
+      "ruleName": "Trailing Whitespace",
+      "location": {
+        "character": 1,
+        "line": 69,
+        "file": "fullmoon/fullmoonApp.swift"
+      },
+      "reason": "Lines should not have trailing whitespace",
+      "ruleDescription": "Lines should not have trailing whitespace"
+    },
+    "text": "    "
+  }
+]

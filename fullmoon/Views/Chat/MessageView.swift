@@ -5,6 +5,7 @@
 //  Created by Xavier on 16/12/2024.
 //
 
+import AIEffectsKit
 import MarkdownUI
 import SwiftUI
 
@@ -16,6 +17,7 @@ struct MessageView: View {
 
     let message: Message
     var isStreaming = false
+    var generationPhase: AIPhase? = nil
     var onRegenerate: (() -> Void)? = nil
     var onRetry: (() -> Void)? = nil
     var onEdit: (() -> Void)? = nil
@@ -26,6 +28,9 @@ struct MessageView: View {
     @State private var showDeleteConfirmation = false
     @State private var responseVisible = false
     @State private var markdownContent = MarkdownContent("")
+    @State private var effectState = AIState()
+    @State private var animatedText = AnimatedTextRelay()
+    @State private var animatedTextRun = 0
 
     private var isUser: Bool {
         message.role == .user
@@ -81,6 +86,13 @@ struct MessageView: View {
                     .contextMenu {
                         messageContextMenu
                     }
+                    .intelligenceGlow(
+                        colors: appearance.intelligenceGlowPalette.colors,
+                        lineWidth: appearance.intelligenceGlowLineWidth,
+                        cornerRadius: appearance.intelligenceGlowCornerRadius,
+                        activeWhen: appearance.aiEffectsEnabled && appearance.intelligenceGlowEnabled
+                            && !isUser && isStreaming && (generationPhase?.isActive ?? false)
+                    )
 
                 // Status banner if interrupted or errored
                 if message.hasError {
@@ -116,7 +128,26 @@ struct MessageView: View {
         .onChange(of: message.content, initial: true) { _, content in
             if !isUser {
                 markdownContent = MarkdownContent(content)
+                if isStreaming {
+                    animatedText.update(with: content)
+                }
             }
+        }
+        .onChange(of: isStreaming, initial: true) { _, streaming in
+            if streaming {
+                animatedText.reset()
+                animatedTextRun += 1
+                animatedText.update(with: message.content)
+            } else {
+                animatedText.finish()
+            }
+        }
+        .onChange(of: generationPhase, initial: true) { _, phase in
+            effectState.phase = phase ?? .idle
+        }
+        .onDisappear {
+            animatedText.finish()
+            effectState.phase = .idle
         }
         .accessibilityElement(children: .combine)
         .accessibilityLabel(accessibilityDescription)
@@ -150,14 +181,32 @@ struct MessageView: View {
                     .foregroundStyle(userTextColor)
                     .textSelection(.enabled)
             } else if isStreaming && message.content.isEmpty {
-                HStack(spacing: 8) {
-                    ProgressView()
-                        .controlSize(.small)
-                    Text("Noctis réfléchit…")
-                        .font(.subheadline)
-                        .foregroundStyle(.secondary)
+                if appearance.aiEffectsEnabled && appearance.thinkingIndicatorEnabled {
+                    HStack(spacing: 8) {
+                        ThinkingIndicator(
+                            dotCount: appearance.thinkingDotCount,
+                            dotSize: appearance.thinkingDotSize,
+                            spacing: appearance.thinkingSpacing,
+                            period: .milliseconds(appearance.thinkingPeriodMilliseconds)
+                        )
+                        Text("Noctis réfléchit…").font(.subheadline).foregroundStyle(.secondary)
+                    }
+                    .aiState(effectState)
+                    .padding(.vertical, 4)
+                } else {
+                    HStack(spacing: 8) {
+                        ProgressView().controlSize(.small)
+                        Text("Noctis réfléchit…").font(.subheadline).foregroundStyle(.secondary)
+                    }
+                    .padding(.vertical, 4)
                 }
-                .padding(.vertical, 4)
+            } else if isStreaming && appearance.aiEffectsEnabled
+                        && appearance.aiTextRenderingMode == .animatedText
+                        && appearance.streamEffect != .none && !reducesAnimations {
+                StreamText(animatedText.stream, style: appearance.streamTextStyle)
+                    .id(animatedTextRun)
+                    .font(.system(size: appearance.fontSize * textScale))
+                    .textSelection(.enabled)
             } else {
                 // MarkdownUI preserves unchanged blocks; keep the same renderer when streaming ends.
                 Markdown(markdownContent)
@@ -401,5 +450,43 @@ struct MessageView: View {
             desc += ": \(message.content)"
         }
         return desc
+    }
+}
+
+private final class AnimatedTextRelay: @unchecked Sendable {
+    private(set) var stream: AsyncStream<String>
+    private var continuation: AsyncStream<String>.Continuation?
+    private var delivered = ""
+
+    init() {
+        let pair = AsyncStream<String>.makeStream()
+        stream = pair.stream
+        continuation = pair.continuation
+    }
+
+    func reset() {
+        continuation?.finish()
+        let pair = AsyncStream<String>.makeStream()
+        stream = pair.stream
+        continuation = pair.continuation
+        delivered = ""
+    }
+
+    func update(with content: String) {
+        guard content.hasPrefix(delivered) else {
+            reset()
+            continuation?.yield(content)
+            delivered = content
+            return
+        }
+        let suffix = content.dropFirst(delivered.count)
+        guard !suffix.isEmpty else { return }
+        continuation?.yield(String(suffix))
+        delivered = content
+    }
+
+    func finish() {
+        continuation?.finish()
+        continuation = nil
     }
 }

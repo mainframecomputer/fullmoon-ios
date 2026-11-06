@@ -135,7 +135,8 @@ struct ChatView: View {
                 onBranch: { message in
                     viewModel.createBranch(from: message, in: currentThread, context: modelContext) { self.currentThread = $0 }
                 },
-                generatingMessageID: viewModel.generatingMessageID
+                generatingMessageID: viewModel.generatingMessageID,
+                generationPhase: viewModel.generationPhase
             )
         } else {
             emptyConversation

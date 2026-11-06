@@ -8,7 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		860F26A42CBC31D6004E8D40 /* MarkdownUI in Frameworks */ = {isa = PBXBuildFile; productRef = 860F26A32CBC31D6004E8D40 /* MarkdownUI */; };
-		CF7089EE309A4D0400C368FB /* Noctis in Frameworks */ = {isa = PBXBuildFile; productRef = CF7089ED309A4D0400C368FB /* Noctis */; };
+		CF200BB5309D75C000FDFEC2 /* Noctis in Frameworks */ = {isa = PBXBuildFile; productRef = CF200BB4309D75C000FDFEC2 /* Noctis */; };
+		CF9AC159309D414600515FF2 /* AIEffectsKit in Frameworks */ = {isa = PBXBuildFile; productRef = CF9AC158309D414600515FF2 /* AIEffectsKit */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,7 +42,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF7089EE309A4D0400C368FB /* Noctis in Frameworks */,
+				CF200BB5309D75C000FDFEC2 /* Noctis in Frameworks */,
+				CF9AC159309D414600515FF2 /* AIEffectsKit in Frameworks */,
 				860F26A42CBC31D6004E8D40 /* MarkdownUI in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -80,6 +82,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 860E9CDF2CB055B100C5BB52 /* Build configuration list for PBXNativeTarget "fullmoon" */;
 			buildPhases = (
+				CF5EA2C1309BC000005EA2C0 /* SwiftLint */,
 				860E9CCA2CB055B000C5BB52 /* Sources */,
 				860E9CCB2CB055B000C5BB52 /* Frameworks */,
 				860E9CCC2CB055B000C5BB52 /* Resources */,
@@ -94,8 +97,9 @@
 			);
 			name = fullmoon;
 			packageProductDependencies = (
+				CF9AC158309D414600515FF2 /* AIEffectsKit */,
 				860F26A32CBC31D6004E8D40 /* MarkdownUI */,
-				CF7089ED309A4D0400C368FB /* Noctis */,
+				CF200BB4309D75C000FDFEC2 /* Noctis */,
 			);
 			productName = fullmoon;
 			productReference = 860E9CCE2CB055B000C5BB52 /* fullmoon.app */;
@@ -126,9 +130,9 @@
 			mainGroup = 860E9CC52CB055B000C5BB52;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				860F26A22CBC31D6004E8D40 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
-				CF7089EC309A4D0400C368FB /* XCLocalSwiftPackageReference "../NoctisAi" */,
 				CF9AC157309D414600515FF2 /* XCRemoteSwiftPackageReference "AIEffectsKit" */,
+				860F26A22CBC31D6004E8D40 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */,
+				CF200BB3309D75C000FDFEC2 /* XCRemoteSwiftPackageReference "NoctisAi" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 860E9CCF2CB055B000C5BB52 /* Products */;
@@ -151,6 +155,19 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		CF5EA2C1309BC000005EA2C0 /* SwiftLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			alwaysOutOfDate = 1;
+			buildActionMask = 2147483647;
+			files = ();
+			inputPaths = ();
+			name = SwiftLint;
+			outputPaths = ();
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/scripts/lint.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		CF5EA2C0309BC000005EA2C0 /* Embed SearXNG */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -452,13 +469,6 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCLocalSwiftPackageReference section */
-		CF7089EC309A4D0400C368FB /* XCLocalSwiftPackageReference "../NoctisAi" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../NoctisAi;
-		};
-/* End XCLocalSwiftPackageReference section */
-
 /* Begin XCRemoteSwiftPackageReference section */
 		860F26A22CBC31D6004E8D40 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */ = {
 			isa = XCRemoteSwiftPackageReference;
@@ -468,12 +478,20 @@
 				minimumVersion = 2.4.1;
 			};
 		};
+		CF200BB3309D75C000FDFEC2 /* XCRemoteSwiftPackageReference "NoctisAi" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Sebastien972-collab/NoctisAi.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 		CF9AC157309D414600515FF2 /* XCRemoteSwiftPackageReference "AIEffectsKit" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/chrisnyw/AIEffectsKit.git";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 1.0.0;
+				kind = revision;
+				revision = d843aefe84db7869637da272c27c6ead9affff6f;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
@@ -484,10 +502,15 @@
 			package = 860F26A22CBC31D6004E8D40 /* XCRemoteSwiftPackageReference "swift-markdown-ui" */;
 			productName = MarkdownUI;
 		};
-		CF7089ED309A4D0400C368FB /* Noctis */ = {
+		CF200BB4309D75C000FDFEC2 /* Noctis */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = CF7089EC309A4D0400C368FB /* XCLocalSwiftPackageReference "../NoctisAi" */;
+			package = CF200BB3309D75C000FDFEC2 /* XCRemoteSwiftPackageReference "NoctisAi" */;
 			productName = Noctis;
+		};
+		CF9AC158309D414600515FF2 /* AIEffectsKit */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = CF9AC157309D414600515FF2 /* XCRemoteSwiftPackageReference "AIEffectsKit" */;
+			productName = AIEffectsKit;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
