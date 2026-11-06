@@ -26,6 +26,15 @@ struct SettingsView: View {
                 }
 
                 Section {
+                    NavigationLink(destination: NoctisIdentitySettingsView()) {
+                        Label("Mon identité", systemImage: "person.crop.circle")
+                    }
+                    NavigationLink(destination: NoctisPrivacySettingsView()) {
+                        Label("Confidentialité et iCloud", systemImage: "lock.icloud")
+                    }
+                }
+
+                Section {
                     NavigationLink(destination: CreditsView()) {
                         Text("Crédits")
                     }
