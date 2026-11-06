@@ -17,7 +17,7 @@ struct fullmoonApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .modelContainer(for: [Thread.self, Message.self])
+                .modelContainer(for: [Thread.self, Message.self, NoctisUserProfile.self])
                 .environment(appManager)
                 #if os(macOS) || os(visionOS)
                 .frame(minWidth: 640, maxWidth: .infinity, minHeight: 420, maxHeight: .infinity)
