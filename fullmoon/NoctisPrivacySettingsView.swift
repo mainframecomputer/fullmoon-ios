@@ -7,6 +7,7 @@ struct NoctisPrivacySettingsView: View {
     @AppStorage("noctis.icloud.requested") private var iCloudRequested = false
     @State private var errorMessage: String?
     @State private var showingCloudExplanation = false
+    @State private var showingDisableConfirmation = false
 
     var body: some View {
         Form {
@@ -15,7 +16,7 @@ struct NoctisPrivacySettingsView: View {
                     get: { lockEnabled },
                     set: { enabled in
                         if !enabled {
-                            lockEnabled = false
+                            showingDisableConfirmation = true
                         } else {
                             Task {
                                 do {
@@ -46,7 +47,7 @@ struct NoctisPrivacySettingsView: View {
                         }
                     }
                 ))
-                .disabled(!iCloudRequested)
+                .disabled(true)
                 Label("Non disponible dans cette version", systemImage: "icloud.slash")
                     .foregroundStyle(.secondary)
                 Text("Les données restent locales. La synchronisation sera proposée après validation de la migration CloudKit et des règles de suppression.")
@@ -55,6 +56,18 @@ struct NoctisPrivacySettingsView: View {
             }
         }
         .navigationTitle("Confidentialité")
+        .confirmationDialog("Désactiver le verrouillage ?", isPresented: $showingDisableConfirmation) {
+            Button("Confirmer avec Face ID ou le code") {
+                Task {
+                    do {
+                        try await NoctisDeviceAuthenticator().unlock(reason: "Désactiver le verrouillage Noctis")
+                        lockEnabled = false
+                    } catch {
+                        errorMessage = error.localizedDescription
+                    }
+                }
+            }
+        }
         .alert("Authentification impossible", isPresented: Binding(
             get: { errorMessage != nil },
             set: { if !$0 { errorMessage = nil } }
